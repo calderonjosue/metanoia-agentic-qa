@@ -2,12 +2,12 @@
 
 ## Phase 0: Verification & Backup
 
-- [ ] 0.1 [MODIFY] Run existing test suite: `pytest tests/ --tb=short` — capture baseline
-- [ ] 0.2 [NEW] Create backup tag: `git tag -a backup-v1.0.0 -m "Pre-v2.0 baseline"`
-- [ ] 0.3 [NEW] Verify current LLM works: `python -c "from src.llm.gemini import GeminiProvider; print(GeminiProvider().health_check())"`
-- [ ] 0.4 [MODIFY] Document current `AgentType` enum locations — list all files with enum definitions
-- [ ] 0.5 [NEW] Create rollback script: `scripts/rollback-v1.sh` with git revert instructions
-- [ ] 0.6 [NEW] Verify LangGraph checkpoint saver works: `python -c "from langgraph.checkpoint.postgres import PostgresSaver; print('OK')"`
+- [x] 0.1 [MODIFY] Run existing test suite: `pytest tests/ --tb=short` — capture baseline
+- [x] 0.2 [NEW] Create backup tag: `git tag -a backup-v1.0.0 -m "Pre-v2.0 baseline"`
+- [x] 0.3 [NEW] Verify current LLM works: `python -c "from src.llm.gemini import GeminiProvider; print(GeminiProvider().health_check())"`
+- [x] 0.4 [MODIFY] Document current `AgentType` enum locations — list all files with enum definitions
+- [x] 0.5 [NEW] Create rollback script: `scripts/rollback-v1.sh` with git revert instructions
+- [x] 0.6 [NEW] Verify LangGraph checkpoint saver works: `python -c "from langgraph.checkpoint.postgres import PostgresSaver; print('OK')"`
 
 ---
 
