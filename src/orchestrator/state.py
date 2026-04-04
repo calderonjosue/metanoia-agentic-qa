@@ -9,17 +9,7 @@ from datetime import datetime
 from enum import Enum
 from pydantic import BaseModel, Field
 
-
-class AgentType(str, Enum):
-    """Enumeration of agent types in the STLC pipeline."""
-    CONTEXT_ANALYST = "context_analyst"
-    STRATEGY_MANAGER = "strategy_manager"
-    DESIGN_LEAD = "design_lead"
-    UI_AUTOMATION = "ui_automation"
-    PERFORMANCE = "performance"
-    SECURITY = "security"
-    INTEGRATION = "integration"
-    RELEASE_ANALYST = "release_analyst"
+from src.agents.types import AgentType  # Re-export for backward compatibility
 
 
 class AgentStatus(str, Enum):
