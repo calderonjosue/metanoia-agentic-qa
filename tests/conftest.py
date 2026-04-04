@@ -1,5 +1,10 @@
 """Pytest configuration and fixtures for Metanoia-QA tests."""
 
+import os
+
+os.environ.setdefault('SUPABASE_URL', 'http://localhost:54321')
+os.environ.setdefault('SUPABASE_KEY', 'test-key')
+
 import pytest
 from unittest.mock import Mock, AsyncMock
 

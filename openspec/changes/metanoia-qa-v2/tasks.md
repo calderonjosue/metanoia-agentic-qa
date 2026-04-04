@@ -79,10 +79,10 @@
 - [ ] 3.7 [NEW] Create `src/observability/apm/datadog.py` — Datadog APM client
 - [ ] 3.8 [NEW] Create `src/observability/apm/newrelic.py` — New Relic APM client
 - [ ] 3.9 [NEW] Create `src/observability/apm/opentelemetry.py` — OpenTelemetry exporter
-- [ ] 3.10 [NEW] Create `src/agents/chaos_agent.py` — `ChaosAgent` implementation
-- [ ] 3.11 [NEW] Create `src/agents/chaos_engineer.py` — `ChaosEngineer` with abort triggers
-- [ ] 3.12 [NEW] Create `src/chaos/experiments.py` — declarative experiment definitions
-- [ ] 3.13 [NEW] Create `src/chaos/abort_controller.py` — cascade failure detection and abort
+- [x] 3.10 [NEW] Create `src/agents/chaos_agent.py` — `ChaosAgent` implementation
+- [x] 3.11 [NEW] Create `src/agents/chaos_engineer.py` — `ChaosEngineer` with abort triggers
+- [x] 3.12 [NEW] Create `src/chaos/experiments.py` — declarative experiment definitions
+- [x] 3.13 [NEW] Create `src/chaos/abort_controller.py` — cascade failure detection and abort
 - [ ] 3.14 [NEW] Create `tests/skill_hub/test_cli.py` — CLI command tests
 - [ ] 3.15 [NEW] Create `tests/observability/test_telemetry.py` — telemetry ingestion tests
 - [ ] 3.16 [NEW] Create `tests/chaos/test_abort.py` — chaos abort trigger tests
