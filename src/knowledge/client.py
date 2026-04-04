@@ -72,7 +72,6 @@ def get_supabase_client() -> Client:
         options = ClientOptions(
             auto_refresh_token=True,
             persist_session=True,
-            detect_session_in_url=True,
         )
 
         _supabase_client = create_client(url, key, options=options)

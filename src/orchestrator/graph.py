@@ -335,9 +335,9 @@ class MetanoiaGraph:
                             "iteration_count": state.iteration_count,
                         }
                     else:
-                        logger.warning(f"DesignLead failed: {response.error}")
+                        logger.warning(f"TestDesignLead failed: {response.error}")
                 except Exception as e:
-                    logger.error(f"DesignLead execution error: {e}")
+                    logger.error(f"TestDesignLead execution error: {e}")
 
             test_cases = [
                 TestCase(
