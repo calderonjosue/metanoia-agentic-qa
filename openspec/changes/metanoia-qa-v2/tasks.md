@@ -13,16 +13,16 @@
 
 ## Phase 1: Foundation (LLM Abstraction)
 
-- [ ] 1.1 [NEW] Create `src/llm/base.py` — abstract `LLMProvider` ABC with `complete()`, `health_check()`, `supports_functions()` methods
-- [ ] 1.2 [NEW] Create `src/llm/openai.py` — `OpenAIProvider` implementation
-- [ ] 1.3 [NEW] Create `src/llm/ollama.py` — `OllamaProvider` with offline detection and model caching
-- [ ] 1.4 [NEW] Create `src/llm/vllm.py` — `vLLMProvider` implementation
-- [ ] 1.5 [NEW] Create `src/llm/llamacpp.py` — `LlamaCppProvider` implementation
-- [ ] 1.6 [NEW] Create `src/llm/registry.py` — provider factory: `get_provider(name: str) -> LLMProvider`
-- [ ] 1.7 [NEW] Create `src/llm/__init__.py` — export `get_provider`, `LLMProvider`
-- [ ] 1.8 [MODIFY] Update `src/orchestrator/agents.py` — consolidate duplicate `AgentType` enums into single source
-- [ ] 1.9 [NEW] Create `tests/llm/test_providers.py` — unit tests for each provider with mocked responses
-- [ ] 1.10 [ROLLBACK] Tag checkpoint: `git tag phase1-complete`
+- [x] 1.1 [NEW] Create `src/llm/base.py` — abstract `LLMProvider` ABC with `complete()`, `health_check()`, `supports_functions()` methods
+- [x] 1.2 [NEW] Create `src/llm/openai.py` — `OpenAIProvider` implementation
+- [x] 1.3 [NEW] Create `src/llm/ollama.py` — `OllamaProvider` with offline detection and model caching
+- [x] 1.4 [NEW] Create `src/llm/vllm.py` — `vLLMProvider` implementation
+- [x] 1.5 [NEW] Create `src/llm/llamacpp.py` — `LlamaCppProvider` implementation
+- [x] 1.6 [NEW] Create `src/llm/registry.py` — provider factory: `get_provider(name: str) -> LLMProvider`
+- [x] 1.7 [NEW] Create `src/llm/__init__.py` — export `get_provider`, `LLMProvider`
+- [x] 1.8 [MODIFY] Update `src/orchestrator/agents.py` — consolidate duplicate `AgentType` enums into single source
+- [x] 1.9 [NEW] Create `tests/llm/test_providers.py` — unit tests for each provider with mocked responses
+- [x] 1.10 [ROLLBACK] Tag checkpoint: `git tag phase1-complete`
 
 ### Phase 1 Rollback
 - [ ] RB1.1 Revert `src/llm/` to empty state: `git checkout HEAD -- src/llm/`
