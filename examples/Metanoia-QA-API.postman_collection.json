@@ -1,0 +1,379 @@
+{
+  "info": {
+    "name": "Metanoia-QA API",
+    "description": "API collection for Metanoia-QA: Autonomous Agentic STLC Framework",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "sprintId",
+      "value": "SP-001"
+    }
+  ],
+  "item": [
+    {
+      "name": "Sprint Lifecycle",
+      "item": [
+        {
+          "name": "Start Sprint",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sprint_id\": \"{{sprintId}}\",\n  \"sprint_goal\": \"Test checkout flow with payment gateway\",\n  \"risk_tolerance\": \"Low\",\n  \"historical_lookback_sprints\": 3\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/metanoia/sprint/start",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "metanoia", "sprint", "start"]
+            },
+            "description": "Start a new quality mission for a sprint"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Sprint Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/metanoia/sprint/{{sprintId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "metanoia", "sprint", "{{sprintId}}", "status"]
+            },
+            "description": "Get the current status of a sprint"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Test Plan",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/metanoia/sprint/{{sprintId}}/test-plan",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "metanoia", "sprint", "{{sprintId}}", "test-plan"]
+            },
+            "description": "Get the generated test plan from Strategy Manager"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Certification Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/metanoia/sprint/{{sprintId}}/certification",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "metanoia", "sprint", "{{sprintId}}", "certification"]
+            },
+            "description": "Get the release certification report"
+          },
+          "response": []
+        },
+        {
+          "name": "Stop Sprint",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/metanoia/sprint/{{sprintId}}/stop",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "metanoia", "sprint", "{{sprintId}}", "stop"]
+            },
+            "description": "Stop an active sprint"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Agent Control",
+      "item": [
+        {
+          "name": "List All Agents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/metanoia/agents/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "metanoia", "agents", "status"]
+            },
+            "description": "Get status of all agents"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Specific Agent",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/metanoia/agents/context-analyst",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "metanoia", "agents", "context-analyst"]
+            },
+            "description": "Get status of a specific agent"
+          },
+          "response": []
+        },
+        {
+          "name": "Pause Agent",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/metanoia/agents/context-analyst/pause",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "metanoia", "agents", "context-analyst", "pause"]
+            },
+            "description": "Pause a specific agent"
+          },
+          "response": []
+        },
+        {
+          "name": "Resume Agent",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/metanoia/agents/context-analyst/resume",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "metanoia", "agents", "context-analyst", "resume"]
+            },
+            "description": "Resume a paused agent"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Skills",
+      "item": [
+        {
+          "name": "List Skills",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/metanoia/skills",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "metanoia", "skills"]
+            },
+            "description": "List all available skills"
+          },
+          "response": []
+        },
+        {
+          "name": "Execute Playwright Skill",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"skill\": \"playwright-executor\",\n  \"input\": {\n    \"action\": \"goto\",\n    \"url\": \"https://example.com\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/metanoia/skills/execute",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "metanoia", "skills", "execute"]
+            },
+            "description": "Execute a skill directly"
+          },
+          "response": []
+        },
+        {
+          "name": "Execute k6 Skill",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"skill\": \"k6-executor\",\n  \"input\": {\n    \"script\": [\n      {\n        \"method\": \"GET\",\n        \"path\": \"/api/products\"\n      }\n    ],\n    \"vus\": 10,\n    \"duration\": \"30s\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/metanoia/skills/execute",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "metanoia", "skills", "execute"]
+            },
+            "description": "Execute k6 performance test"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Knowledge Base",
+      "item": [
+        {
+          "name": "Search Historical Context",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"checkout payment failures\",\n  \"max_results\": 5\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/metanoia/knowledge/search",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "metanoia", "knowledge", "search"]
+            },
+            "description": "Search historical testing memory"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Lesson Learned",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"agent_role\": \"performance_engineer\",\n  \"tool_used\": \"k6\",\n  \"issue_encountered\": \"firewall blocking load test\",\n  \"resolution_applied\": \"use authenticated endpoint with header\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/metanoia/knowledge/lessons",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "metanoia", "knowledge", "lessons"]
+            },
+            "description": "Add a lesson learned by an agent"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Lessons Learned",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/metanoia/knowledge/lessons",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "metanoia", "knowledge", "lessons"]
+            },
+            "description": "Get all lessons learned"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "Get Sprint Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/metanoia/reports/sprint/{{sprintId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "metanoia", "reports", "sprint", "{{sprintId}}"]
+            },
+            "description": "Get comprehensive sprint report"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Test Results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/metanoia/reports/sprint/{{sprintId}}/results",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "metanoia", "reports", "sprint", "{{sprintId}}", "results"]
+            },
+            "description": "Get test execution results"
+          },
+          "response": []
+        },
+        {
+          "name": "Export Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/metanoia/reports/sprint/{{sprintId}}/export?format=json",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "metanoia", "reports", "sprint", "{{sprintId}}", "export"],
+              "query": [
+                {
+                  "key": "format",
+                  "value": "json"
+                }
+              ]
+            },
+            "description": "Export report in specified format"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Health & Info",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            },
+            "description": "Check API health status"
+          },
+          "response": []
+        },
+        {
+          "name": "API Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            },
+            "description": "Get API information and version"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

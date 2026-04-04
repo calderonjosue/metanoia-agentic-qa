@@ -1,0 +1,60 @@
+# Metanoia-QA Configuration for E-Commerce Demo
+
+version: "1.0"
+
+sprint:
+  default_risk_tolerance: Medium
+  historical_lookback: 3
+  auto_heal_selectors: true
+
+agents:
+  context_analyzer:
+    enabled: true
+    vector_store: supabase
+    similarity_threshold: 0.75
+    max_context_results: 10
+
+  strategy_manager:
+    defect_clustering: true
+    risk_based_effort: true
+
+  design_lead:
+    edge_case_generation: true
+    synthetic_data: true
+
+  playwright:
+    browsers:
+      - chromium
+      - firefox
+    visual_healing: true
+    screenshot_on_failure: true
+    timeout_ms: 30000
+    retry_count: 3
+
+  k6:
+    default_vus: 50
+    default_duration: "30s"
+    thresholds:
+      http_req_duration: "p(95)<500"
+      error_rate: "rate<0.1"
+
+  zap:
+    baseline_scan: true
+    full_scan: false
+    owasp_top_10: true
+
+knowledge:
+  provider: supabase
+  connection: postgresql://postgres:demo@localhost:5432/metanoia
+  embedding_model: text-embedding-004
+  vector_dimensions: 768
+
+api:
+  base_url: http://localhost:8000
+  health_endpoint: /health
+  sprint_endpoint: /v1/metanoia/sprint
+
+logging:
+  level: INFO
+  format: json
+  output: stdout

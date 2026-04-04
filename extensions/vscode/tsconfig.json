@@ -1,0 +1,15 @@
+{
+  "name": "@metanoia/vscode",
+  "version": "1.0.0",
+  "description": "AI-powered QA automation for VS Code",
+  "main": "out/extension.js",
+  "types": "out/extension.d.ts",
+  "scripts": {
+    "compile": "tsc -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.75.0",
+    "typescript": "^5.0.0"
+  }
+}

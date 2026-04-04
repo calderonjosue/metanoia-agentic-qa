@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Skill Template Schema",
+  "description": "Base schema template for Metanoia-QA skills",
+  "type": "object",
+  "definitions": {
+    "skill_metadata": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Unique skill identifier (kebab-case)"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Semantic version"
+        },
+        "author": {
+          "type": "string",
+          "description": "Skill author"
+        },
+        "description": {
+          "type": "string",
+          "description": "What the skill does"
+        }
+      },
+      "required": ["name", "version", "author", "description"]
+    },
+    "skill_input": {
+      "type": "object",
+      "properties": {
+        "type": "object",
+        "properties": {
+          "param1": {
+            "type": "string",
+            "description": "Example parameter 1"
+          },
+          "param2": {
+            "type": "number",
+            "description": "Example parameter 2"
+          }
+        },
+        "required": ["param1"]
+      }
+    },
+    "skill_output": {
+      "type": "object",
+      "properties": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["success", "error"],
+            "description": "Execution status"
+          },
+          "data": {
+            "type": "object",
+            "description": "Result data"
+          },
+          "error": {
+            "type": "string",
+            "description": "Error message if status is error"
+          }
+        },
+        "required": ["status"]
+      }
+    }
+  }
+}

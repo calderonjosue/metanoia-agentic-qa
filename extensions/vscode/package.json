@@ -1,0 +1,77 @@
+{
+  "name": "metanoia-qa",
+  "displayName": "Metanoia-QA",
+  "description": "AI-powered QA automation for VS Code",
+  "version": "1.0.0",
+  "publisher": "metanoia",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Other",
+    "Testing"
+  ],
+  "activationEvents": [
+    "onCommand:metanoia.startSprint",
+    "onCommand:metanoia.viewStatus",
+    "onCommand:metanoia.viewDashboard",
+    "onWebviewPanel:metanoia-qa"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "metanoia.startSprint",
+        "title": "Metanoia: Start Sprint",
+        "category": "Metanoia",
+        "description": "Start a new QA sprint with AI agents"
+      },
+      {
+        "command": "metanoia.viewStatus",
+        "title": "Metanoia: View Status",
+        "category": "Metanoia",
+        "description": "View current test execution status"
+      },
+      {
+        "command": "metanoia.viewDashboard",
+        "title": "Metanoia: Dashboard",
+        "category": "Metanoia",
+        "description": "Open the Metanoia-QA dashboard"
+      }
+    ],
+    "configuration": {
+      "title": "Metanoia-QA",
+      "properties": {
+        "metanoia.apiUrl": {
+          "type": "string",
+          "default": "http://localhost:3000",
+          "description": "Metanoia-QA API server URL"
+        },
+        "metanoia.autoRefresh": {
+          "type": "boolean",
+          "default": true,
+          "description": "Auto-refresh status panel"
+        },
+        "metanoia.refreshInterval": {
+          "type": "number",
+          "default": 5000,
+          "description": "Refresh interval in milliseconds"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "postinstall": "cd out && node ../../node_modules/.bin/vscode-test-host",
+    "package": "cd out && npx vsce package"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.75.0",
+    "typescript": "^5.0.0",
+    "vsce": "^2.15.0"
+  }
+}

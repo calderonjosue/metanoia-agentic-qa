@@ -1,0 +1,57 @@
+{
+  "input": {
+    "type": "object",
+    "properties": {
+      "action": {
+        "type": "string",
+        "enum": ["goto", "click", "fill", "screenshot", "hover", "select"],
+        "description": "Action to perform"
+      },
+      "target": {
+        "type": "string",
+        "description": "CSS selector, XPath, or element identifier"
+      },
+      "url": {
+        "type": "string",
+        "description": "URL to navigate to"
+      },
+      "timeout": {
+        "type": "integer",
+        "description": "Timeout in milliseconds",
+        "default": 30000
+      },
+      "value": {
+        "type": "string",
+        "description": "Value for fill/select actions"
+      },
+      "wait_for_selectors": {
+        "type": "array",
+        "items": {"type": "string"},
+        "description": "Selectors to wait for before action"
+      }
+    },
+    "required": ["action", "url"]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": ["success", "error"]
+      },
+      "screenshot": {
+        "type": "string",
+        "description": "Base64-encoded screenshot if requested"
+      },
+      "healed_selector": {
+        "type": "string",
+        "description": "Repaired selector if original failed"
+      },
+      "error": {
+        "type": "string",
+        "description": "Error message if status is error"
+      }
+    },
+    "required": ["status"]
+  }
+}

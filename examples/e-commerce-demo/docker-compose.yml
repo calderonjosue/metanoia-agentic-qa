@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: metanoia-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: demo
+      POSTGRES_DB: metanoia
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./data/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  supabase:
+    image: supabase/postgres:15.1.0.117
+    container_name: metanoia-supabase
+    environment:
+      POSTGRES_DB: metanoia
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: demo
+      POSTGRES_HOST: localhost
+    ports:
+      - "5433:5432"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./data/supabase-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: metanoia-app
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      DATABASE_URL: postgresql://postgres:demo@postgres:5432/metanoia
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: metanoia-api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:demo@postgres:5432/metanoia
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-demo_key}
+      SUPABASE_URL: http://localhost:5433
+      SUPABASE_SERVICE_KEY: demo
+    depends_on:
+      postgres:
+        condition: service_healthy
+      supabase:
+        condition: service_started
+
+  zap:
+    image: ghcr.io/zaproxy/zaproxy:stable
+    container_name: metanoia-zap
+    ports:
+      - "8080:8080"
+      - "8090:8090"
+    volumes:
+      - ./data/zap:/zap/wrk:rw
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
+    name: metanoia-network

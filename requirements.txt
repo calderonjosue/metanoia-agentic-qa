@@ -1,0 +1,34 @@
+# Core
+fastapi>=0.109.0
+uvicorn>=0.27.0
+pydantic>=2.5.0
+
+# LangGraph / LangChain
+langgraph>=0.0.20
+langchain>=0.1.0
+langchain-google-genai>=0.0.5
+langchain-openai>=0.1.0
+langchain-postgres>=0.1.0
+
+# WeasyPrint for PDF generation
+weasyprint>=60.0
+
+# Supabase
+supabase>=2.3.0
+pgvector>=0.2.0
+
+# Testing / Execution
+playwright>=1.40.0
+k6>=0.50.0
+
+# Utilities
+python-dotenv>=1.0.0
+httpx>=0.26.0
+tenacity>=8.2.0
+
+# Development
+pytest>=7.4.0
+pytest-asyncio>=0.23.0
+pytest-cov>=4.1.0
+ruff>=0.1.0
+mypy>=1.8.0

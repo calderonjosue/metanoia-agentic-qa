@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: metanoia-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-metanoia}
+      POSTGRES_DB: metanoia
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - metanoia-network
+
+  supabase:
+    image: supabase/postgres:15.1.0.117
+    container_name: metanoia-supabase
+    environment:
+      POSTGRES_DB: metanoia
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-metanoia}
+      POSTGRES_HOST: localhost
+    ports:
+      - "5433:5432"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./src/knowledge/migrations/collaboration.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./src/knowledge/migrations/self_learning.sql:/docker-entrypoint-initdb.d/02-self-learning.sql
+    networks:
+      - metanoia-network
+
+  metanoia-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: metanoia-api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-metanoia}@postgres:5432/metanoia
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      SUPABASE_URL: http://supabase:5432
+      SUPABASE_SERVICE_KEY: ${POSTGRES_PASSWORD:-metanoia}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      supabase:
+        condition: service_started
+    networks:
+      - metanoia-network
+
+  zap:
+    image: ghcr.io/zaproxy/zaproxy:stable
+    container_name: metanoia-zap
+    ports:
+      - "8080:8080"
+      - "8090:8090"
+    volumes:
+      - zap_data:/zap/wrk:rw
+    networks:
+      - metanoia-network
+
+volumes:
+  postgres_data:
+  zap_data:
+
+networks:
+  metanoia-network:
+    name: metanoia-network

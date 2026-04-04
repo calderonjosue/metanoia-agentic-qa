@@ -1,0 +1,60 @@
+{
+  "input": {
+    "type": "object",
+    "properties": {
+      "screenshot": {
+        "type": "string",
+        "description": "Base64-encoded screenshot of the page"
+      },
+      "failed_selector": {
+        "type": "string",
+        "description": "The selector that failed"
+      },
+      "action_intent": {
+        "type": "string",
+        "enum": ["click", "fill", "hover", "select", "check"],
+        "description": "What action was being attempted"
+      },
+      "page_html": {
+        "type": "string",
+        "description": "Optional HTML source for additional context"
+      },
+      "context": {
+        "type": "object",
+        "description": "Additional context (tags, classes, etc.)"
+      }
+    },
+    "required": ["failed_selector", "action_intent"]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": ["success", "error"]
+      },
+      "healed_selector": {
+        "type": "string",
+        "description": "Repaired selector"
+      },
+      "confidence": {
+        "type": "number",
+        "description": "Confidence score (0-1)"
+      },
+      "alternative_selectors": {
+        "type": "array",
+        "items": {"type": "string"},
+        "description": "Alternative selectors to try"
+      },
+      "analysis": {
+        "type": "string",
+        "description": "Explanation of the repair"
+      },
+      "error": {
+        "type": "string",
+        "description": "Error message if status is error"
+      }
+    },
+    "required": ["status"]
+  }
+}

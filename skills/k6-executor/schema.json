@@ -1,0 +1,57 @@
+{
+  "input": {
+    "type": "object",
+    "properties": {
+      "script": {
+        "type": "string",
+        "description": "k6 script content OR JSON configuration array"
+      },
+      "vus": {
+        "type": "integer",
+        "description": "Number of virtual users",
+        "default": 10
+      },
+      "duration": {
+        "type": "string",
+        "description": "Test duration (e.g., '30s', '5m', '1h')",
+        "default": "30s"
+      },
+      "base_url": {
+        "type": "string",
+        "description": "Base URL for JSON endpoint configuration"
+      },
+      "thresholds": {
+        "type": "object",
+        "description": "k6 threshold configurations"
+      },
+      "output_json": {
+        "type": "boolean",
+        "description": "Output results as JSON",
+        "default": true
+      }
+    },
+    "required": ["script"]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": ["success", "error"]
+      },
+      "metrics": {
+        "type": "object",
+        "description": "Performance metrics from k6"
+      },
+      "summary": {
+        "type": "string",
+        "description": "Human-readable summary"
+      },
+      "error": {
+        "type": "string",
+        "description": "Error message if status is error"
+      }
+    },
+    "required": ["status"]
+  }
+}
