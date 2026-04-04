@@ -42,12 +42,12 @@
 - [ ] 2.3 [NEW] Create `src/infrastructure/iac_providers/base.py` — abstract `IaCProvider` protocol
 - [ ] 2.4 [NEW] Create `src/infrastructure/iac_providers/terraform.py` — Terraform provider implementation
 - [ ] 2.5 [NEW] Create `src/infrastructure/lab_lifecycle_manager.py` — provision, teardown, status
-- [ ] 2.6 [NEW] Create `src/infrastructure/cost_controller.py` — spend watchdog with thresholds
-- [ ] 2.7 [NEW] Create `src/github/integration.py` — GitHub API client for PR/commit checks
-- [ ] 2.8 [NEW] Create `src/gitlab/integration.py` — GitLab API client
-- [ ] 2.9 [NEW] Create `src/ci/orchestrator.py` — CI/CD pipeline orchestration
-- [ ] 2.10 [NEW] Create `src/ci/quality_gate.py` — quality gate with `regression_score` threshold
-- [ ] 2.11 [NEW] Create `src/ci/quality_webhook.py` — webhook handler for GitHub/GitLab events
+- [x] 2.6 [NEW] Create `src/infrastructure/cost_controller.py` — spend watchdog with thresholds
+- [x] 2.7 [NEW] Create `src/github/integration.py` — GitHub API client for PR/commit checks
+- [x] 2.8 [NEW] Create `src/gitlab/integration.py` — GitLab API client
+- [x] 2.9 [NEW] Create `src/ci/orchestrator.py` — CI/CD pipeline orchestration
+- [x] 2.10 [NEW] Create `src/ci/quality_gate.py` — quality gate with `regression_score` threshold
+- [x] 2.11 [NEW] Create `src/ci/quality_webhook.py` — webhook handler for GitHub/GitLab events
 - [ ] 2.12 [NEW] Create `src/config/secrets.py` — secrets management with env var and vault support
 - [ ] 2.13 [NEW] Create `tests/infrastructure/test_lifecycle.py` — lab provisioning tests (mocked)
 - [ ] 2.14 [NEW] Create `tests/ci/test_quality_gate.py` — quality gate threshold tests

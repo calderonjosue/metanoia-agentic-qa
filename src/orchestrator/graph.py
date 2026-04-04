@@ -66,6 +66,7 @@ from typing import Literal, Optional, Any, Callable
 from datetime import datetime
 
 from langgraph.graph import StateGraph, END
+from langgraph.types import Send
 from langgraph.checkpoint.base import BaseCheckpointSaver
 
 from src.orchestrator.state import MetanoiaState, AgentType, AgentStatus, ExecutionResult
@@ -155,23 +156,29 @@ class MetanoiaGraph:
         graph: The compiled StateGraph
         agents: Dictionary of registered agent nodes
         checkpointer: Optional checkpoint saver for persistence
+        agent_registry: Optional registry of real agent instances for execution
     """
 
     def __init__(
         self,
         checkpointer: Optional[BaseCheckpointSaver] = None,
         max_iterations: int = 100,
+        agent_registry: Optional[dict[str, Any]] = None,
     ):
         """Initialize the MetanoiaGraph.
 
         Args:
             checkpointer: Optional checkpoint saver for state persistence
             max_iterations: Maximum iterations before circuit breaker
+            agent_registry: Optional dictionary mapping agent names to
+                           agent instances (e.g., {"context_analyst": ContextAnalyst instance})
         """
         self.graph = None
         self.agents: dict[str, AgentNode] = {}
         self.checkpointer = checkpointer
         self.max_iterations = max_iterations
+        self.agent_registry = agent_registry or {}
+        self._use_real_agents = len(self.agent_registry) > 0
         self._build_graph()
 
     def _build_graph(self) -> None:
@@ -183,6 +190,7 @@ class MetanoiaGraph:
         self._add_execution_phase(builder)
         self._add_close_node(builder)
         self._add_edges(builder)
+        self._add_fan_out_edges(builder)
 
         self.graph = builder.compile(
             checkpointer=self.checkpointer,
@@ -220,6 +228,25 @@ class MetanoiaGraph:
             logger.info("ContextAnalyst analyzing historical context...")
             state.update_phase("plan")
 
+            if self._use_real_agents and "context_analyst" in self.agent_registry:
+                try:
+                    agent = self.agent_registry["context_analyst"]
+                    agent_input = {
+                        "sprint_id": state.sprint_id,
+                        "sprint_goal": state.sprint_goal,
+                        "test_cases": [tc.model_dump() for tc in state.test_cases],
+                    }
+                    response = agent.run(agent_input)
+                    if response.status.value == "completed":
+                        return {
+                            "context_analysis": response.output,
+                            "iteration_count": state.iteration_count,
+                        }
+                    else:
+                        logger.warning(f"ContextAnalyst failed: {response.error}")
+                except Exception as e:
+                    logger.error(f"ContextAnalyst execution error: {e}")
+
             context = {
                 "historical_risks": ["legacy_auth_issues", "api_versioning_deprecations"],
                 "regression_score": 0.45,
@@ -241,6 +268,25 @@ class MetanoiaGraph:
         def strategy_manager_node(state: MetanoiaState) -> dict[str, Any]:
             """StrategyManager: Test planning."""
             logger.info("StrategyManager creating test strategy...")
+
+            if self._use_real_agents and "strategy_manager" in self.agent_registry:
+                try:
+                    agent = self.agent_registry["strategy_manager"]
+                    agent_input = {
+                        "sprint_id": state.sprint_id,
+                        "sprint_goal": state.sprint_goal,
+                        "context_analysis": state.context_analysis,
+                    }
+                    response = agent.run(agent_input)
+                    if response.status.value == "completed":
+                        return {
+                            "test_plan": response.output,
+                            "iteration_count": state.iteration_count,
+                        }
+                    else:
+                        logger.warning(f"StrategyManager failed: {response.error}")
+                except Exception as e:
+                    logger.error(f"StrategyManager execution error: {e}")
 
             test_plan = {
                 "approach": "risk-based testing with ISTQB defect clustering",
@@ -270,6 +316,28 @@ class MetanoiaGraph:
             logger.info("TestDesignLead designing test cases...")
 
             from src.orchestrator.state import TestCase, TestPlan
+
+            if self._use_real_agents and "design_lead" in self.agent_registry:
+                try:
+                    agent = self.agent_registry["design_lead"]
+                    agent_input = {
+                        "sprint_id": state.sprint_id,
+                        "sprint_goal": state.sprint_goal,
+                        "context_analysis": state.context_analysis,
+                        "test_plan": state.test_plan,
+                    }
+                    response = agent.run(agent_input)
+                    if response.status.value == "completed":
+                        tc_data = response.output.get("test_cases", [])
+                        test_cases = [TestCase(**tc) for tc in tc_data]
+                        return {
+                            "test_cases": test_cases,
+                            "iteration_count": state.iteration_count,
+                        }
+                    else:
+                        logger.warning(f"DesignLead failed: {response.error}")
+                except Exception as e:
+                    logger.error(f"DesignLead execution error: {e}")
 
             test_cases = [
                 TestCase(
@@ -339,6 +407,34 @@ class MetanoiaGraph:
             """UIAutomationEngineer: Execute functional tests."""
             logger.info("UIAutomationEngineer executing functional tests...")
 
+            if self._use_real_agents and "ui_automation" in self.agent_registry:
+                try:
+                    agent = self.agent_registry["ui_automation"]
+                    agent_input = {
+                        "sprint_id": state.sprint_id,
+                        "test_cases": [tc.model_dump() for tc in state.test_cases],
+                    }
+                    response = agent.run(agent_input)
+                    if response.status.value == "completed":
+                        return {
+                            "execution_results": {
+                                **state.execution_results,
+                                "ui_automation": ExecutionResult(
+                                    agent_id="ui_automation",
+                                    agent_type=AgentType.UI_AUTOMATION_ENGINEER,
+                                    status=AgentStatus.COMPLETED,
+                                    output=response.output,
+                                    completed_at=datetime.utcnow(),
+                                    duration_seconds=response.duration_seconds,
+                                ),
+                            },
+                            "iteration_count": state.iteration_count,
+                        }
+                    else:
+                        logger.warning(f"UIAutomation failed: {response.error}")
+                except Exception as e:
+                    logger.error(f"UIAutomation execution error: {e}")
+
             return {
                 "execution_results": {
                     **state.execution_results,
@@ -362,6 +458,34 @@ class MetanoiaGraph:
         def performance_node(state: MetanoiaState) -> dict[str, Any]:
             """PerformanceEngineer: Execute performance tests."""
             logger.info("PerformanceEngineer executing performance tests...")
+
+            if self._use_real_agents and "performance" in self.agent_registry:
+                try:
+                    agent = self.agent_registry["performance"]
+                    agent_input = {
+                        "sprint_id": state.sprint_id,
+                        "test_plan": state.test_plan,
+                    }
+                    response = agent.run(agent_input)
+                    if response.status.value == "completed":
+                        return {
+                            "execution_results": {
+                                **state.execution_results,
+                                "performance": ExecutionResult(
+                                    agent_id="performance",
+                                    agent_type=AgentType.PERFORMANCE_ENGINEER,
+                                    status=AgentStatus.COMPLETED,
+                                    output=response.output,
+                                    completed_at=datetime.utcnow(),
+                                    duration_seconds=response.duration_seconds,
+                                ),
+                            },
+                            "iteration_count": state.iteration_count,
+                        }
+                    else:
+                        logger.warning(f"PerformanceEngineer failed: {response.error}")
+                except Exception as e:
+                    logger.error(f"PerformanceEngineer execution error: {e}")
 
             return {
                 "execution_results": {
@@ -387,6 +511,34 @@ class MetanoiaGraph:
         def security_node(state: MetanoiaState) -> dict[str, Any]:
             """SecurityEngineer: Execute security tests."""
             logger.info("SecurityEngineer executing security tests...")
+
+            if self._use_real_agents and "security" in self.agent_registry:
+                try:
+                    agent = self.agent_registry["security"]
+                    agent_input = {
+                        "sprint_id": state.sprint_id,
+                        "test_plan": state.test_plan,
+                    }
+                    response = agent.run(agent_input)
+                    if response.status.value == "completed":
+                        return {
+                            "execution_results": {
+                                **state.execution_results,
+                                "security": ExecutionResult(
+                                    agent_id="security",
+                                    agent_type=AgentType.SECURITY_ENGINEER,
+                                    status=AgentStatus.COMPLETED,
+                                    output=response.output,
+                                    completed_at=datetime.utcnow(),
+                                    duration_seconds=response.duration_seconds,
+                                ),
+                            },
+                            "iteration_count": state.iteration_count,
+                        }
+                    else:
+                        logger.warning(f"SecurityEngineer failed: {response.error}")
+                except Exception as e:
+                    logger.error(f"SecurityEngineer execution error: {e}")
 
             return {
                 "execution_results": {
@@ -420,6 +572,34 @@ class MetanoiaGraph:
         def integration_node(state: MetanoiaState) -> dict[str, Any]:
             """IntegrationEngineer: Execute integration tests."""
             logger.info("IntegrationEngineer executing integration tests...")
+
+            if self._use_real_agents and "integration" in self.agent_registry:
+                try:
+                    agent = self.agent_registry["integration"]
+                    agent_input = {
+                        "sprint_id": state.sprint_id,
+                        "test_cases": [tc.model_dump() for tc in state.test_cases],
+                    }
+                    response = agent.run(agent_input)
+                    if response.status.value == "completed":
+                        return {
+                            "execution_results": {
+                                **state.execution_results,
+                                "integration": ExecutionResult(
+                                    agent_id="integration",
+                                    agent_type=AgentType.INTEGRATION_ENGINEER,
+                                    status=AgentStatus.COMPLETED,
+                                    output=response.output,
+                                    completed_at=datetime.utcnow(),
+                                    duration_seconds=response.duration_seconds,
+                                ),
+                            },
+                            "iteration_count": state.iteration_count,
+                        }
+                    else:
+                        logger.warning(f"IntegrationEngineer failed: {response.error}")
+                except Exception as e:
+                    logger.error(f"IntegrationEngineer execution error: {e}")
 
             return {
                 "execution_results": {
@@ -459,6 +639,37 @@ class MetanoiaGraph:
             logger.info("ReleaseAnalyst generating release certification...")
 
             from src.orchestrator.state import ReleaseCertification
+
+            if self._use_real_agents and "release_analyst" in self.agent_registry:
+                try:
+                    agent = self.agent_registry["release_analyst"]
+                    agent_input = {
+                        "sprint_id": state.sprint_id,
+                        "execution_results": {
+                            k: {"output": v.output, "status": v.status.value}
+                            for k, v in state.execution_results.items()
+                        },
+                    }
+                    response = agent.run(agent_input)
+                    if response.status.value == "completed":
+                        cert_data = response.output
+                        certification = ReleaseCertification(
+                            sprint_id=state.sprint_id,
+                            certified=cert_data.get("certified", False),
+                            confidence_score=cert_data.get("confidence_score", 0.0),
+                            blockers=cert_data.get("blockers", []),
+                            recommendations=cert_data.get("recommendations", []),
+                            summary=cert_data.get("summary", ""),
+                        )
+                        return {
+                            "release_certification": certification,
+                            "current_phase": "close",
+                            "iteration_count": state.iteration_count,
+                        }
+                    else:
+                        logger.warning(f"ReleaseAnalyst failed: {response.error}")
+                except Exception as e:
+                    logger.error(f"ReleaseAnalyst execution error: {e}")
 
             total_tests = sum(
                 r.output.get("tests_passed", 0)
@@ -531,26 +742,54 @@ class MetanoiaGraph:
         builder.add_edge("execute_phase", "release_analyst")
         builder.add_edge("release_analyst", END)
 
-    def _parallel_execution_node(self, state: MetanoiaState) -> dict[str, Any]:
-        """Execute all test agents in parallel.
+    def _create_fan_out(self, state: MetanoiaState) -> list[Send]:
+        """Create fan-out Send objects for parallel agent execution.
 
-        This node fans out to multiple agents that run concurrently.
-        In a real implementation, this would use Send() for parallel execution.
+        Uses LangGraph's Send() API to fan out to multiple test execution
+        agents that run concurrently.
 
         Args:
             state: Current MetanoiaState
 
         Returns:
-            Aggregated state updates from all agents
+            List of Send objects for parallel execution
+        """
+        return [
+            Send("ui_automation", state),
+            Send("performance", state),
+            Send("security", state),
+            Send("integration", state),
+        ]
+
+    def _add_fan_out_edges(self, builder: StateGraph) -> None:
+        """Add conditional fan-out edges for parallel execution using Send().
+
+        Args:
+            builder: StateGraph builder
+        """
+        builder.add_conditional_edges(
+            "execute_phase",
+            self._create_fan_out,
+            ["ui_automation", "performance", "security", "integration"],
+        )
+
+    def _parallel_execution_node(self, state: MetanoiaState) -> dict[str, Any]:
+        """Execute parallel fan-out to test agents.
+
+        This node uses LangGraph's Send() API to fan out to multiple agents
+        that run concurrently. The actual parallel execution is handled by
+        the fan-out edges created in _add_fan_out_edges.
+
+        Args:
+            state: Current MetanoiaState
+
+        Returns:
+            Empty dict - actual execution happens via Send() fan-out
         """
         state.update_phase("execute")
+        logger.info("Starting parallel test execution fan-out...")
 
-        logger.info("Starting parallel test execution phase...")
-
-        return {
-            "execution_results": state.execution_results,
-            "iteration_count": state.iteration_count,
-        }
+        return {}
 
     def get_graph(self) -> StateGraph:
         """Get the compiled graph for execution.
@@ -605,12 +844,14 @@ class MetanoiaGraph:
 def create_graph(
     checkpointer: Optional[BaseCheckpointSaver] = None,
     max_iterations: int = 100,
+    agent_registry: Optional[dict[str, Any]] = None,
 ) -> MetanoiaGraph:
     """Factory function to create a configured MetanoiaGraph.
 
     Args:
         checkpointer: Optional checkpoint saver
         max_iterations: Maximum iterations before circuit breaker
+        agent_registry: Optional dictionary mapping agent names to instances
 
     Returns:
         Configured MetanoiaGraph instance
@@ -618,4 +859,5 @@ def create_graph(
     return MetanoiaGraph(
         checkpointer=checkpointer,
         max_iterations=max_iterations,
+        agent_registry=agent_registry,
     )
