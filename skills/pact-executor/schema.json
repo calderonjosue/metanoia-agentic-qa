@@ -1,0 +1,125 @@
+{
+  "input": {
+    "type": "object",
+    "oneOf": [
+      {
+        "title": "Consumer Mode",
+        "properties": {
+          "mode": {"const": "consumer"},
+          "consumer": {"type": "string", "description": "Consumer service name"},
+          "provider": {"type": "string", "description": "Provider service name"},
+          "interactions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "description": {"type": "string"},
+                "request": {
+                  "type": "object",
+                  "properties": {
+                    "method": {"type": "string"},
+                    "path": {"type": "string"},
+                    "headers": {"type": "object"},
+                    "body": {"type": "object"}
+                  },
+                  "required": ["method", "path"]
+                },
+                "response": {
+                  "type": "object",
+                  "properties": {
+                    "status": {"type": "integer"},
+                    "headers": {"type": "object"},
+                    "body": {"type": "object"}
+                  },
+                  "required": ["status"]
+                },
+                "provider_state": {"type": "string"}
+              },
+              "required": ["description", "request", "response"]
+            }
+          },
+          "pact_dir": {"type": "string"},
+          "version": {"type": "string"}
+        },
+        "required": ["mode", "consumer", "provider", "interactions"]
+      },
+      {
+        "title": "Provider Mode",
+        "properties": {
+          "mode": {"const": "provider"},
+          "provider": {"type": "string", "description": "Provider service name"},
+          "pact_url": {"type": "string", "description": "Path to pact file or pact:// URL"},
+          "provider_base_url": {"type": "string", "description": "Base URL of provider"},
+          "docker": {
+            "type": "object",
+            "properties": {
+              "enabled": {"type": "boolean"},
+              "image": {"type": "string"},
+              "port": {"type": "integer"},
+              "health_check": {"type": "string"},
+              "startup_timeout": {"type": "integer"}
+            }
+          },
+          "state_handlers": {
+            "type": "object",
+            "description": "URLs for state change handlers",
+            "additionalProperties": {"type": "string"}
+          }
+        },
+        "required": ["mode", "provider", "pact_url"]
+      },
+      {
+        "title": "Publish Mode",
+        "properties": {
+          "mode": {"const": "publish"},
+          "pact_files": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Glob patterns for pact files"
+          },
+          "broker_url": {"type": "string", "description": "Pact Broker URL"},
+          "broker_token": {"type": "string"},
+          "consumer_version": {"type": "string"}
+        },
+        "required": ["mode", "pact_files", "broker_url"]
+      }
+    ]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": ["success", "error"]
+      },
+      "pact_file": {
+        "type": "string",
+        "description": "Path to generated or used pact file"
+      },
+      "verification_result": {
+        "type": "object",
+        "properties": {
+          "verified": {"type": "boolean"},
+          "output": {"type": "string"},
+          "publish_results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "file": {"type": "string"},
+                "consumer": {"type": "string"},
+                "provider": {"type": "string"},
+                "result": {"type": "object"}
+              }
+            }
+          }
+        }
+      },
+      "error": {
+        "type": "string",
+        "description": "Error message if status is error"
+      }
+    },
+    "required": ["status"]
+  }
+}

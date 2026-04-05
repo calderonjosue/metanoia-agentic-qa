@@ -1,0 +1,150 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "A11y Tester Schema",
+  "description": "Schema for accessibility testing skill with axe-core",
+  "type": "object",
+  "definitions": {
+    "skill_metadata": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Unique skill identifier (kebab-case)"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Semantic version"
+        },
+        "author": {
+          "type": "string",
+          "description": "Skill author"
+        },
+        "description": {
+          "type": "string",
+          "description": "What the skill does"
+        }
+      },
+      "required": ["name", "version", "author", "description"]
+    },
+    "a11y_input": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "URL or file path to audit for accessibility"
+        },
+        "standards": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["wcag21a", "wcag21aa", "wcag21aaa", "section508", "bestpractice"]
+          },
+          "description": "Accessibility standards to check against",
+          "default": ["wcag21aa", "section508"]
+        },
+        "include_html": {
+          "type": "boolean",
+          "description": "Include HTML snippets in violation reports",
+          "default": false
+        },
+        "output_format": {
+          "type": "string",
+          "enum": ["json", "html", "sarif"],
+          "description": "Report output format",
+          "default": "json"
+        },
+        "depth": {
+          "type": "integer",
+          "description": "DOM traversal depth for scanning",
+          "default": 1,
+          "minimum": 1
+        }
+      },
+      "required": ["url"]
+    },
+    "a11y_output": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["success", "error"],
+          "description": "Execution status"
+        },
+        "url": {
+          "type": "string",
+          "description": "URL that was audited"
+        },
+        "violation_count": {
+          "type": "integer",
+          "description": "Total number of violations found"
+        },
+        "violations": {
+          "type": "array",
+          "description": "Detailed list of accessibility violations",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "string", "description": "Rule identifier"},
+              "impact": {"type": "string", "enum": ["critical", "serious", "moderate", "minor"]},
+              "description": {"type": "string", "description": "What the rule checks for"},
+              "help": {"type": "string", "description": "How to fix the issue"},
+              "helpUrl": {"type": "string", "description": "Documentation link"},
+              "tags": {"type": "array", "items": {"type": "string"}, "description": "Related WCAG criteria"},
+              "nodes": {
+                "type": "array",
+                "description": "Affected DOM elements",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "html": {"type": "string", "description": "HTML snippet"},
+                    "target": {"type": "array", "description": "CSS selector path"},
+                    "failureSummary": {"type": "string", "description": "How to fix"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "critical_count": {
+          "type": "integer",
+          "description": "Number of critical violations"
+        },
+        "serious_count": {
+          "type": "integer",
+          "description": "Number of serious violations"
+        },
+        "moderate_count": {
+          "type": "integer",
+          "description": "Number of moderate violations"
+        },
+        "minor_count": {
+          "type": "integer",
+          "description": "Number of minor violations"
+        },
+        "standards_passed": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Standards that passed with no violations"
+        },
+        "standards_failed": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Standards that had violations"
+        },
+        "report": {
+          "type": "string",
+          "description": "Formatted report in specified output format"
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message if status is error"
+        }
+      },
+      "required": ["status", "url", "violation_count"]
+    }
+  },
+  "input": {"$ref": "#/definitions/a11y_input"},
+  "output": {"$ref": "#/definitions/a11y_output"}
+}

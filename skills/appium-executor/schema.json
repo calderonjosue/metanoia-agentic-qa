@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AppiumExecutor Configuration",
+  "type": "object",
+  "required": ["platform"],
+  "properties": {
+    "platform": {
+      "type": "string",
+      "enum": ["android", "ios"],
+      "description": "Target mobile platform"
+    },
+    "app_path": {
+      "type": "string",
+      "description": "Path to the mobile app (.apk for Android, .app for iOS)"
+    },
+    "bundle_id": {
+      "type": "string",
+      "description": "iOS app bundle identifier (iOS only)"
+    },
+    "port": {
+      "type": "integer",
+      "default": 4723,
+      "description": "Appium server port"
+    },
+    "device_name": {
+      "type": "string",
+      "description": "Target device name"
+    },
+    "platform_version": {
+      "type": "string",
+      "description": "OS version (e.g., '14.0', '11')"
+    },
+    "implicit_wait": {
+      "type": "number",
+      "default": 10,
+      "description": "Implicit wait timeout in seconds"
+    },
+    "explicit_wait": {
+      "type": "number",
+      "default": 20,
+      "description": "Explicit wait timeout in seconds"
+    },
+    "appium_server": {
+      "type": "string",
+      "default": "localhost",
+      "description": "Appium server host"
+    },
+    "full_reset": {
+      "type": "boolean",
+      "default": false,
+      "description": "Perform full app reset between sessions"
+    },
+    "no_reset": {
+      "type": "boolean",
+      "default": false,
+      "description": "Skip app reset"
+    },
+    "orientation": {
+      "type": "string",
+      "enum": ["PORTRAIT", "LANDSCAPE"],
+      "default": "PORTRAIT",
+      "description": "Device orientation"
+    },
+    "locale": {
+      "type": "string",
+      "description": "Device locale (e.g., 'en_US')"
+    },
+    "language": {
+      "type": "string",
+      "description": "Device language (e.g., 'en')"
+    },
+    "capabilities": {
+      "type": "object",
+      "description": "Additional Appium capabilities",
+      "additionalProperties": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "platform": {
+            "const": "android"
+          }
+        }
+      },
+      "then": {
+        "required": ["app_path"],
+        "properties": {
+          "app_path": {
+            "pattern": "\\.apk$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "platform": {
+            "const": "ios"
+          }
+        }
+      },
+      "then": {
+        "anyOf": [
+          { "required": ["app_path"] },
+          { "required": ["bundle_id"] }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Locust Task Definition",
+  "type": "object",
+  "required": ["name", "tasks"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the load test"
+    },
+    "host": {
+      "type": "string",
+      "description": "Target host URL"
+    },
+    "tasks": {
+      "type": "array",
+      "description": "List of task definitions",
+      "items": {
+        "$ref": "#/definitions/task"
+      }
+    },
+    "user_class": {
+      "type": "object",
+      "description": "Custom user class configuration",
+      "properties": {
+        "wait_time": {
+          "oneOf": [
+            {"type": "number"},
+            {"type": "object", "properties": {"min": {"type": "number"}, "max": {"type": "number"}}}
+          ]
+        },
+        "weight": {
+          "type": "number",
+          "description": "Task weight for weighted random selection"
+        }
+      }
+    },
+    "http_config": {
+      "type": "object",
+      "description": "HTTP client configuration",
+      "properties": {
+        "timeout": {"type": "number"},
+        "verify_ssl": {"type": "boolean"},
+        "max_redirects": {"type": "integer"},
+        "user_agent": {"type": "string"}
+      }
+    }
+  },
+  "definitions": {
+    "task": {
+      "type": "object",
+      "required": ["name", "method", "path"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Task identifier"
+        },
+        "method": {
+          "type": "string",
+          "enum": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]
+        },
+        "path": {
+          "type": "string",
+          "description": "Request path"
+        },
+        "weight": {
+          "type": "number",
+          "default": 1,
+          "description": "Execution weight"
+        },
+        "headers": {
+          "type": "object",
+          "description": "Request headers"
+        },
+        "data": {
+          "type": ["string", "object"],
+          "description": "Request body"
+        },
+        "json": {
+          "type": "object",
+          "description": "JSON request body"
+        },
+        "tag": {
+          "type": "string",
+          "description": "Task tag for filtering"
+        }
+      }
+    }
+  }
+}

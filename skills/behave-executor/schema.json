@@ -1,0 +1,68 @@
+{
+  "input": {
+    "type": "object",
+    "properties": {
+      "features": {
+        "type": "array",
+        "items": {"type": "string"},
+        "description": "List of feature files or directories containing .feature files"
+      },
+      "tags": {
+        "type": "array",
+        "items": {"type": "string"},
+        "description": "Tags to filter scenarios (e.g., ['@smoke', '@auth'])"
+      },
+      "steps_module": {
+        "type": "string",
+        "description": "Python module path for step definitions"
+      },
+      "format": {
+        "type": "string",
+        "enum": ["json", "plain", "progress", "behave"],
+        "description": "Output format",
+        "default": "json"
+      },
+      "define": {
+        "type": "object",
+        "additionalProperties": {"type": "string"},
+        "description": "User-defined attributes (key=value pairs)"
+      },
+      "userdata": {
+        "type": "object",
+        "additionalProperties": {"type": "string"},
+        "description": "Additional user data passed to step definitions"
+      }
+    },
+    "required": ["features"]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": ["success", "error"]
+      },
+      "passed": {
+        "type": "integer",
+        "description": "Number of passed scenarios"
+      },
+      "failed": {
+        "type": "integer",
+        "description": "Number of failed scenarios"
+      },
+      "skipped": {
+        "type": "integer",
+        "description": "Number of skipped scenarios"
+      },
+      "results": {
+        "type": "string",
+        "description": "JSON-formatted test results if format=json"
+      },
+      "error": {
+        "type": "string",
+        "description": "Error message if status is error"
+      }
+    },
+    "required": ["status", "passed", "failed", "skipped"]
+  }
+}

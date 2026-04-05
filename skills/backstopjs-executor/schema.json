@@ -1,0 +1,207 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BackstopJS Executor Schema",
+  "description": "Schema for BackstopJS visual regression testing executor",
+  "type": "object",
+  "definitions": {
+    "viewport": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Viewport name (phone, tablet, desktop, wide, or custom)"
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Viewport width in pixels"
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Viewport height in pixels"
+        }
+      },
+      "required": ["width", "height"]
+    },
+    "scenario": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Human-readable label for the scenario"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to capture"
+        },
+        "referenceUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Reference URL for comparison (optional)"
+        },
+        "viewport": {
+          "oneOf": [
+            {"type": "string", "enum": ["phone", "tablet", "desktop", "wide"]},
+            {"$ref": "#/definitions/viewport"}
+          ],
+          "description": "Viewport for this scenario"
+        },
+        "delay": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Milliseconds to wait after page load before capture"
+        },
+        "waitForSelector": {
+          "type": "string",
+          "description": "CSS selector to wait for before capture"
+        },
+        "onReadyScript": {
+          "type": "string",
+          "description": "Path to JavaScript file to execute before capture"
+        },
+        "hideSelectors": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "CSS selectors to hide (visibility: hidden)"
+        },
+        "removeSelectors": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "CSS selectors to remove (display: none)"
+        },
+        "cookiePath": {
+          "type": "string",
+          "description": "Path to JSON file with cookies"
+        },
+        "ignoreSelectors": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "CSS selectors to ignore in diff comparison"
+        },
+        "matchScreenshot": {
+          "type": "string",
+          "description": "Path to reference screenshot to match against"
+        }
+      },
+      "required": ["label", "url"]
+    },
+    "paths": {
+      "type": "object",
+      "properties": {
+        "bitmaps_reference": {
+          "type": "string",
+          "description": "Path to reference screenshots directory"
+        },
+        "bitmaps_test": {
+          "type": "string",
+          "description": "Path to test screenshots directory"
+        },
+        "html_report": {
+          "type": "string",
+          "description": "Path to HTML report directory"
+        },
+        "ci_report": {
+          "type": "string",
+          "description": "Path to CI report directory"
+        }
+      }
+    },
+    "engine_options": {
+      "type": "object",
+      "properties": {
+        "headless": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run browser in headless mode"
+        },
+        "args": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Additional Chrome/Puppeteer arguments"
+        },
+        "viewport": {
+          "$ref": "#/definitions/viewport"
+        },
+        "ignoreHTTPSErrors": {
+          "type": "boolean",
+          "default": false,
+          "description": "Ignore HTTPS certificate errors"
+        }
+      }
+    },
+    "backstop_input": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": ["reference", "test", "approve"],
+          "description": "Action to perform: reference (capture), test (compare), approve (accept diffs)"
+        },
+        "config": {
+          "type": "object",
+          "description": "BackstopJS configuration overrides",
+          "properties": {
+            "id": {"type": "string"},
+            "paths": {"$ref": "#/definitions/paths"},
+            "engine": {"type": "string", "enum": ["puppeteer", "playwright"]},
+            "engineOptions": {"$ref": "#/definitions/engine_options"},
+            "asyncCaptureLimit": {"type": "integer", "minimum": 1},
+            "asyncCompareLimit": {"type": "integer", "minimum": 1},
+            "debug": {"type": "boolean"}
+          }
+        },
+        "scenarios": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/scenario"},
+          "minItems": 1,
+          "description": "Array of test scenarios"
+        },
+        "viewports": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {"type": "string", "enum": ["phone", "tablet", "desktop", "wide"]},
+              {"$ref": "#/definitions/viewport"}
+            ]
+          },
+          "description": "Viewport configurations (applied to all scenarios if not overridden)"
+        },
+        "paths": {
+          "$ref": "#/definitions/paths",
+          "description": "Paths configuration for test output"
+        }
+      },
+      "required": ["action"]
+    },
+    "backstop_output": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["success", "failed", "error"],
+          "description": "Execution status"
+        },
+        "report_path": {
+          "type": ["string", "null"],
+          "description": "Path to HTML report directory"
+        },
+        "passed": {
+          "type": ["integer", "null"],
+          "description": "Number of passed scenarios"
+        },
+        "failed": {
+          "type": ["integer", "null"],
+          "description": "Number of failed scenarios"
+        },
+        "error": {
+          "type": ["string", "null"],
+          "description": "Error message if status is error"
+        }
+      },
+      "required": ["status"]
+    }
+  },
+  "$ref": "#/definitions/backstop_input"
+}
