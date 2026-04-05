@@ -7,7 +7,7 @@ from pathlib import Path
 import click
 import yaml
 
-from metanoia.src.skill_hub.registry import get_hub_registry, CommunitySkillRegistry
+from metanoia.src.skill_hub.registry import get_hub_registry
 from metanoia.src.skill_hub.manifest import validate_manifest, parse_manifest
 
 

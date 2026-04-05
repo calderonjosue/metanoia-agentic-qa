@@ -1,7 +1,6 @@
 """Pytest configuration for observability tests."""
 
 import sys
-import importlib.util
 from unittest.mock import Mock
 
 import pytest

@@ -3,7 +3,6 @@
 Collects evidence from various sources for compliance reporting.
 """
 
-from typing import Optional
 from datetime import datetime
 
 

@@ -69,7 +69,7 @@ class QualityGate:
         regression_score = test_results.get("regression_score", 0.0)
         coverage = test_results.get("coverage", 0.0)
         passed_tests = test_results.get("passed_tests", 0)
-        failed_tests = test_results.get("failed_tests", 0)
+        test_results.get("failed_tests", 0)
         total_tests = test_results.get("total_tests", 1)
 
         if total_tests == 0:

@@ -1,6 +1,5 @@
 """Ollama LLM provider for air-gapped operation."""
 
-import os
 import socket
 from typing import Any
 

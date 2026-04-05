@@ -4,13 +4,11 @@ WireMock Executor - API mocking with WireMock.
 """
 
 import json
-import os
 import subprocess
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Optional
-from urllib.parse import urljoin
+from typing import Optional
 
 
 @dataclass

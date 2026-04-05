@@ -1,13 +1,11 @@
 """Tests for ReleaseAnalyst agent."""
 
 import pytest
-from unittest.mock import AsyncMock, Mock
 
 from src.agents.release_analyst import (
     ReleaseAnalyst,
     AgentResult,
     ReleaseScore,
-    TestResult,
 )
 
 

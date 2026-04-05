@@ -4,12 +4,11 @@ This skill provides UI automation capabilities using Playwright with
 automatic recovery when selectors break due to DOM changes.
 """
 
-import asyncio
 import logging
 from typing import Any, TypedDict
 
 from playwright.async_api import async_playwright, Page, Browser, BrowserContext
-from metanoia.skills.base import SkillExecutor, SkillInput, SkillOutput
+from metanoia.skills.base import SkillExecutor
 
 logger = logging.getLogger(__name__)
 

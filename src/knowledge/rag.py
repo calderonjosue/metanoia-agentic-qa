@@ -5,7 +5,6 @@ embedding generation using Gemini, and CRUD operations for agent lessons learned
 """
 
 import os
-import json
 from typing import Optional, Any
 from datetime import datetime
 from dataclasses import dataclass, field

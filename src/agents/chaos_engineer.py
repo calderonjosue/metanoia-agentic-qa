@@ -6,11 +6,9 @@ Orchestrates chaos experiments with advanced abort triggers.
 import logging
 from typing import Any, Optional
 
-from src.agents.base import AgentConfig, AgentResponse, AgentStatus
-from src.agents.types import AgentType
-from src.agents.chaos_agent import ChaosAgent, ChaosExperimentResult
+from src.agents.base import AgentConfig, AgentResponse
+from src.agents.chaos_agent import ChaosAgent
 from src.chaos.experiments import ChaosExperiment, AbortCondition
-from src.chaos.abort_controller import AbortController
 
 logger = logging.getLogger(__name__)
 

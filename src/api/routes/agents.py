@@ -4,7 +4,7 @@ This module provides endpoints for monitoring and controlling
 the various agents in the STLC pipeline.
 """
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter
 from pydantic import BaseModel, Field
 from typing import Optional
 

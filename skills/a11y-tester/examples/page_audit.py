@@ -68,7 +68,7 @@ def print_audit_summary(result: dict) -> None:
 
     print(f"\nAudit Status: {result['status'].upper()}")
     print(f"URL: {result['url']}")
-    print(f"\nViolation Summary:")
+    print("\nViolation Summary:")
     print(f"  Critical: {result['critical_count']}")
     print(f"  Serious:  {result['serious_count']}")
     print(f"  Moderate: {result['moderate_count']}")

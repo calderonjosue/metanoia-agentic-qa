@@ -3,12 +3,10 @@
 This skill provides E2E testing capabilities using Cypress.
 """
 
-import asyncio
 import logging
-import subprocess
 from typing import Any, TypedDict
 
-from metanoia.skills.base import SkillExecutor, SkillInput, SkillOutput
+from metanoia.skills.base import SkillExecutor
 
 logger = logging.getLogger(__name__)
 

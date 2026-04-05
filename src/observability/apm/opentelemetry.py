@@ -110,9 +110,7 @@ class OpenTelemetryExporter:
             from opentelemetry.sdk.metrics import MeterProvider
             from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
             from opentelemetry.sdk.resources import Resource, SERVICE_NAME
-            from opentelemetry.instrumentation.dependencies import (
-                get_auto_filtered,
-            )
+
 
             resource = Resource.create({SERVICE_NAME: self.service_name})
 

@@ -8,7 +8,7 @@ import base64
 import logging
 from typing import Any, TypedDict
 
-from metanoia.skills.base import SkillExecutor, SkillInput, SkillOutput
+from metanoia.skills.base import SkillExecutor
 
 logger = logging.getLogger(__name__)
 

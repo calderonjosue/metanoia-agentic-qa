@@ -12,7 +12,7 @@ import subprocess
 from typing import Any, TypedDict
 from pathlib import Path
 
-from metanoia.skills.base import SkillExecutor, SkillInput, SkillOutput
+from metanoia.skills.base import SkillExecutor
 
 logger = logging.getLogger(__name__)
 
@@ -137,7 +137,6 @@ class DockerProviderRunner:
 
     async def start(self) -> str:
         """Start the Docker container and return base URL."""
-        import urllib.request
         
         docker_host = os.getenv("DOCKER_HOST", "unix:///var/run/docker.sock")
         
@@ -173,7 +172,6 @@ class DockerProviderRunner:
     async def _wait_for_health(self, base_url: str) -> None:
         """Wait for container to be healthy."""
         import urllib.request
-        import time
         
         url = f"{base_url}{self.health_check}"
         elapsed = 0

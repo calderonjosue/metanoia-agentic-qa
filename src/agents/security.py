@@ -108,7 +108,7 @@ class SecurityEngineer:
                 owasp_top_10=owasp_mapping
             )
 
-        except Exception as e:
+        except Exception:
             logger.exception("Security test execution failed")
             return TestResult(
                 passed=0,
@@ -129,7 +129,7 @@ class SecurityEngineer:
             Investigation result with recommendations.
         """
         vuln_type = failure.get("vuln_type", "")
-        url = failure.get("url", "")
+        failure.get("url", "")
         
         recommendations = []
         

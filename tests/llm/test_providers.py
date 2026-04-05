@@ -1,6 +1,5 @@
 """Tests for LLM providers."""
 import pytest
-from unittest.mock import Mock, patch
 
 class TestLLMProvider:
     """Tests for LLMProvider ABC."""

@@ -6,7 +6,6 @@ from src.agents.strategy_manager import (
     StrategyManager,
     EffortDistribution,
     TestPriority,
-    TestPlan,
 )
 
 

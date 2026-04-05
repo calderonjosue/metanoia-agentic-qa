@@ -1,8 +1,8 @@
 """Team management and collaboration API routes."""
 
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, status
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import List
 from datetime import datetime
 
 

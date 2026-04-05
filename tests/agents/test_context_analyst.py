@@ -1,7 +1,7 @@
 """Tests for ContextAnalyst agent."""
 
 import pytest
-from unittest.mock import AsyncMock, Mock, patch
+from unittest.mock import AsyncMock, Mock
 
 from src.agents.context_analyst import (
     ContextAnalyst,
@@ -9,7 +9,6 @@ from src.agents.context_analyst import (
     HistoricalSimilarity,
     FlakyTest,
     ModuleRisk,
-    ContextAnalysisResult,
 )
 
 

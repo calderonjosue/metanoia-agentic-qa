@@ -138,7 +138,7 @@ class StrategyManager:
             EffortDistribution with percentages for each test type.
         """
         risk_level = context.get("risk_level", "medium")
-        risk_score = context.get("risk_score", 0.5)
+        context.get("risk_score", 0.5)
         flaky_test_count = len(context.get("flaky_tests", []))
         module_risks = context.get("module_risks", [])
         
@@ -486,7 +486,7 @@ class StrategyManager:
                 security=effort_distribution.security * scale
             )
         
-        module_weights = self._apply_defect_clustering(context)
+        self._apply_defect_clustering(context)
         
         prioritized_tests = self._prioritize_tests(
             context, effort_distribution, sprint_goal

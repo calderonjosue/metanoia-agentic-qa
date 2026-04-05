@@ -3,7 +3,6 @@
 import sys
 from unittest.mock import Mock
 
-import pytest
 
 
 class MockKnowledgeClient:
@@ -21,7 +20,7 @@ class MockKnowledgeClient:
 sys.modules['src.knowledge'] = Mock()
 sys.modules['src.knowledge.client'] = MockKnowledgeClient()
 
-from src.observability.telemetry import (
+from src.observability.telemetry import (  # noqa: E402
     TelemetryCollector,
     TelemetryConfig,
     TestMetrics,

@@ -1,7 +1,5 @@
 """Tests for abort controller."""
 
-import pytest
-from unittest.mock import Mock, patch
 
 from metanoia.src.chaos.abort_controller import AbortController
 from metanoia.src.chaos.experiments import ChaosExperiment, AbortCondition

@@ -335,7 +335,7 @@ class A11yTesterExecutor(SkillExecutor):
             "</style>",
             "</head>",
             "<body>",
-            f"<h1>Accessibility Audit Report</h1>",
+            "<h1>Accessibility Audit Report</h1>",
             f"<p>Total violations: {len(violations)}</p>"
         ]
 

@@ -13,12 +13,10 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException, status, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-from google.genai import Client as GeminiClient
 
 from src.orchestrator.graph import MetanoiaGraph, create_graph
-from src.orchestrator.state import MetanoiaState, AgentType, AgentStatus
-from src.orchestrator.checkpointing import PostgresCheckpointSaver, get_checkpointer
-from src.knowledge.rag import MetanoiaRAG, AgentLessonsLearned
+from src.orchestrator.state import MetanoiaState, AgentStatus
+from src.orchestrator.checkpointing import get_checkpointer
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

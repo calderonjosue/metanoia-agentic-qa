@@ -237,9 +237,9 @@ Return as JSON array."""
                     "Verify response matches expected result"
                 ],
                 expected_results=[
-                    f"Operation completes successfully",
-                    f"Data is persisted correctly",
-                    f"UI reflects the changes"
+                    "Operation completes successfully",
+                    "Data is persisted correctly",
+                    "UI reflects the changes"
                 ],
                 happy_path=True,
                 edge_cases=[]
@@ -282,7 +282,7 @@ Return as JSON array."""
             scenarios.append(scenario)
         
         if any(k in sprint_goal_lower for k in ["performance", "load"]):
-            scenario_id = f"SCEN_PERF_01"
+            scenario_id = "SCEN_PERF_01"
             scenarios.append(TestScenario(
                 scenario_id=scenario_id,
                 scenario_name="Performance Benchmark Scenario",

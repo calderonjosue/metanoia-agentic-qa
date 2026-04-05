@@ -1,7 +1,7 @@
 """Tests for RAG (Retrieval-Augmented Generation) knowledge module."""
 
 import pytest
-from unittest.mock import Mock, AsyncMock, patch
+from unittest.mock import Mock, patch
 import os
 
 from src.knowledge.rag import (
@@ -150,7 +150,7 @@ class TestMetanoiaRAG:
 
     def test_rag_get_table(self, rag, mock_client):
         """Test getting table reference."""
-        table = rag._get_table()
+        rag._get_table()
         
         mock_client.table.assert_called_once_with("metanoia_rag")
 

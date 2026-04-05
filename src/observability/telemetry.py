@@ -6,7 +6,7 @@ metrics using Supabase for storage with 30-day retention.
 
 from datetime import datetime, timedelta
 from typing import Optional
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from pydantic import BaseModel, Field
 

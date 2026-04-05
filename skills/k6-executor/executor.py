@@ -10,9 +10,9 @@ import logging
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import Any, TypedDict
+from typing import TypedDict
 
-from metanoia.skills.base import SkillExecutor, SkillInput, SkillOutput
+from metanoia.skills.base import SkillExecutor
 
 logger = logging.getLogger(__name__)
 

@@ -1,7 +1,7 @@
 """Abstract base class for Metanoia-QA skill executors."""
 
 from abc import ABC, abstractmethod
-from typing import Any, TypedDict
+from typing import TypedDict
 
 
 class SkillInput(TypedDict):

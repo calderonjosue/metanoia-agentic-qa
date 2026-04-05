@@ -87,7 +87,7 @@ class DatadogAPM:
                 self._initialized = True
 
             tags = [f"{k}:{v}" for k, v in metric.tags.items()]
-            tags.append(f"service:metanoia-qa")
+            tags.append("service:metanoia-qa")
 
             statsd.gauge(
                 metric.metric_name,

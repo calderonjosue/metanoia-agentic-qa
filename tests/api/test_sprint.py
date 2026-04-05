@@ -1,8 +1,7 @@
 """Tests for Sprint API routes."""
 
 import pytest
-from unittest.mock import AsyncMock, Mock, patch
-from datetime import datetime
+from unittest.mock import AsyncMock, patch
 
 from fastapi import FastAPI
 from fastapi.testclient import TestClient

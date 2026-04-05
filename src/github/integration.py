@@ -149,7 +149,7 @@ class GitHubIntegration:
         try:
             merge_result = pr.merge(
                 commit_title=commit_title or f"Merge PR #{pr_number}",
-                commit_message=commit_message or f"Merged via Metanoia-QA",
+                commit_message=commit_message or "Merged via Metanoia-QA",
             )
             return MergeResult(
                 merged=True,

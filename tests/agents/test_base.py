@@ -2,7 +2,6 @@
 
 import pytest
 from datetime import datetime
-from unittest.mock import Mock
 
 from src.agents.base import (
     AgentType,

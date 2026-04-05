@@ -1,6 +1,5 @@
 """CLI for Metanoia-QA."""
 import click
-import asyncio
 
 @click.group()
 @click.version_option(version="2.1.0")

@@ -1,9 +1,9 @@
 """End-to-end shift-right tests."""
 
 import pytest
-from unittest.mock import Mock, AsyncMock, patch
+from unittest.mock import Mock
 
-from metanoia.src.observability.telemetry import TelemetryCollector, TelemetryConfig
+from metanoia.src.observability.telemetry import TelemetryCollector
 from metanoia.src.chaos.abort_controller import AbortController
 from metanoia.src.chaos.experiments import ChaosExperiment, AbortCondition
 
@@ -73,11 +73,11 @@ class TestShiftRightWorkflow:
         mock_table.delete = Mock(return_value=mock_table)
         mock_table.lt = Mock(return_value=mock_table)
         
-        collector = TelemetryCollector(supabase_client=mock_supabase)
+        TelemetryCollector(supabase_client=mock_supabase)
         
         controller = AbortController(default_error_rate_threshold=0.3)
         
-        experiment = ChaosExperiment(
+        ChaosExperiment(
             name="chaos-latency",
             description="Chaos latency injection",
             target="network",
@@ -113,7 +113,7 @@ class TestShiftRightWorkflow:
         mock_table.delete = Mock(return_value=mock_table)
         mock_table.lt = Mock(return_value=mock_table)
         
-        collector = TelemetryCollector(supabase_client=mock_supabase)
+        TelemetryCollector(supabase_client=mock_supabase)
         
         controller = AbortController()
         

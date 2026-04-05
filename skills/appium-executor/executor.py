@@ -2,9 +2,7 @@
 AppiumExecutor - Mobile testing automation for Android and iOS.
 """
 
-import time
-import base64
-from typing import Optional, List, Dict, Any, Tuple
+from typing import Optional, List, Dict, Any
 from appium import webdriver
 from appium.webdriver.webdriver import WebDriver
 from appium.webdriver.common.appiumby import AppiumBy

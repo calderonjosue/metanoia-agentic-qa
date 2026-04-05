@@ -315,7 +315,7 @@ class MetanoiaGraph:
             """TestDesignLead: Test case design."""
             logger.info("TestDesignLead designing test cases...")
 
-            from src.orchestrator.state import TestCase, TestPlan
+            from src.orchestrator.state import TestCase
 
             if self._use_real_agents and "design_lead" in self.agent_registry:
                 try:

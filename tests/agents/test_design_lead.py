@@ -8,8 +8,6 @@ from src.agents.design_lead import (
     TestScenario,
     TestCase,
     TestEnvironment,
-    SyntheticDataTemplate,
-    TestDesignResult,
 )
 
 

@@ -4,7 +4,7 @@ This module provides endpoints for starting, monitoring, and
 managing quality missions (sprints) in the STLC pipeline.
 """
 
-from fastapi import APIRouter, HTTPException, BackgroundTasks, status
+from fastapi import APIRouter
 from pydantic import BaseModel, Field
 from typing import Optional
 

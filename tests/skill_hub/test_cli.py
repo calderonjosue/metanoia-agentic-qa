@@ -1,10 +1,9 @@
 """Tests for Skill Hub CLI."""
 
-import pytest
 from unittest.mock import patch, Mock, AsyncMock
 from click.testing import CliRunner
 
-from metanoia.src.skill_hub.cli import skill, install, list as list_cmd, search
+from metanoia.src.skill_hub.cli import install, list as list_cmd, search
 
 
 class TestInstallCommand:

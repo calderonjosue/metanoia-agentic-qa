@@ -101,7 +101,6 @@ class ChaosAgent(BaseAgent):
             ChaosExperimentResult with execution details.
         """
         import time
-        from datetime import datetime
         
         start_time = time.time()
         self._active_experiments[experiment.name] = experiment

@@ -1,9 +1,8 @@
 """MCP Server implementation."""
 import logging
-from typing import Any
 
 from .handlers import MCPHandlers
-from .models import MCPRequest, MCPResponse
+from .models import MCPResponse
 
 logger = logging.getLogger(__name__)
 

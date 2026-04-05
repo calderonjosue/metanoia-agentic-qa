@@ -5,7 +5,6 @@ various reports from the STLC execution.
 """
 
 from fastapi import APIRouter
-from typing import Optional
 from pydantic import BaseModel
 
 router = APIRouter(prefix="/v1/metanoia/reports", tags=["Reports"])

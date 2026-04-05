@@ -5,9 +5,7 @@ Uses simple statistical methods to predict which test cases
 are likely to fail based on historical patterns.
 """
 
-from typing import Optional
 from pydantic import BaseModel
-import numpy as np
 
 
 class FailurePrediction(BaseModel):

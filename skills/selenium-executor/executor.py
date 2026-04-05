@@ -4,8 +4,6 @@ This skill provides UI automation capabilities using Selenium WebDriver
 with built-in support for the page object model (POM) pattern.
 """
 
-import asyncio
-import base64
 import logging
 from typing import Any, TypedDict
 
@@ -17,7 +15,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
-from metanoia.skills.base import SkillExecutor, SkillInput, SkillOutput
+from metanoia.skills.base import SkillExecutor
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +78,7 @@ class ElementLocator:
             wait = WebDriverWait(self.driver, self.timeout)
             element = wait.until(EC.presence_of_element_located((by, target)))
             return element
-        except (TimeoutException, NoSuchElementException) as e:
+        except (TimeoutException, NoSuchElementException):
             logger.warning(f"Element not found: {target} ({strategy})")
             return None
 
@@ -95,7 +93,7 @@ class ElementLocator:
             wait = WebDriverWait(self.driver, self.timeout)
             element = wait.until(EC.element_to_be_clickable((by, target)))
             return element
-        except (TimeoutException, NoSuchElementException) as e:
+        except (TimeoutException, NoSuchElementException):
             logger.warning(f"Clickable element not found: {target}")
             return None
 

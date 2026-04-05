@@ -51,7 +51,6 @@ class SelfLearningAgent:
         correction: Optional[str] = None
     ) -> LearnedPattern:
         """Record an outcome and learn from it."""
-        pattern_type = LearningType.MISTAKE.value if outcome == "failure" else LearningType.CORRECTION.value
         
         existing = await self._find_pattern(agent_role, action, context)
         
@@ -158,7 +157,7 @@ class SelfLearningAgent:
         context: dict
     ) -> Optional[str]:
         """Get optimized prompt/response based on learned patterns."""
-        trigger_context = str(context.get("trigger", ""))
+        str(context.get("trigger", ""))
         
         response = self.supabase.table("agent_patterns").select(
             "response", "success_rate", "times_applied"

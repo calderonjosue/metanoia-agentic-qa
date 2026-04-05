@@ -101,7 +101,6 @@ class NewRelicAPM:
         headers = {
             "Content-Type": "application/json",
             "Api-Key": self.license_key,
-            "Content-Type": "application/json",
         }
 
         metric_attrs = {

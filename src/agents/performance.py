@@ -3,7 +3,6 @@
 Executes k6 load tests and analyzes performance metrics.
 """
 
-import asyncio
 import logging
 import re
 from typing import Optional
@@ -11,7 +10,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 from skill_runtime.loader import SkillLoader
-from skill_runtime.executor import SkillExecutorEngine, create_executor
+from skill_runtime.executor import create_executor
 
 logger = logging.getLogger(__name__)
 

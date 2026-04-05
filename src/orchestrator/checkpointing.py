@@ -15,12 +15,10 @@ from langgraph.checkpoint.base import (
     BaseCheckpointSaver,
     Checkpoint,
     CheckpointMetadata,
-    ChannelProtocol,
 )
 from langgraph.checkpoint.serde.base import SerializerProtocol
 
-from supabase import create_client, Client
-from supabase.lib.client_options import ClientOptions
+from supabase import Client
 
 from src.knowledge.client import get_supabase_client
 
