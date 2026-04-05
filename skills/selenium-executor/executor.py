@@ -124,7 +124,7 @@ class SeleniumExecutor(SkillExecutor):
         target = input_data.get("target", "")
         url = input_data.get("url", "about:blank")
         value = input_data.get("value", "")
-        timeout = input_data.get("timeout", 30)
+        input_data.get("timeout", 30)
         strategy = input_data.get("locator_strategy", "CSS_SELECTOR")
         browser = input_data.get("browser", self._browser)
 

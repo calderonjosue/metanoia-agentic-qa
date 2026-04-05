@@ -3,7 +3,7 @@
 from unittest.mock import patch, Mock, AsyncMock
 from click.testing import CliRunner
 
-from metanoia.src.skill_hub.cli import install, list as list_cmd, search
+from src.skill_hub.cli import install, list as list_cmd, search
 
 
 class TestInstallCommand:
@@ -12,7 +12,7 @@ class TestInstallCommand:
     def test_install_command(self):
         """Test install command."""
         runner = CliRunner()
-        with patch("metanoia.src.skill_hub.cli.get_hub_registry") as mock_get_registry:
+        with patch("src.skill_hub.cli.get_hub_registry") as mock_get_registry:
             mock_registry = Mock()
             mock_registry.install = AsyncMock(return_value=True)
             mock_get_registry.return_value = mock_registry
@@ -28,7 +28,7 @@ class TestListCommand:
     def test_list_command_shows_installed_skills(self):
         """Test list shows installed skills."""
         runner = CliRunner()
-        with patch("metanoia.src.skill_hub.cli.get_hub_registry") as mock_get_registry:
+        with patch("src.skill_hub.cli.get_hub_registry") as mock_get_registry:
             mock_manifest = Mock()
             mock_manifest.name = "test-skill"
             mock_manifest.version = "1.0.0"
@@ -51,7 +51,7 @@ class TestSearchCommand:
     def test_search_command_queries_registry(self):
         """Test search queries registry."""
         runner = CliRunner()
-        with patch("metanoia.src.skill_hub.cli.get_hub_registry") as mock_get_registry:
+        with patch("src.skill_hub.cli.get_hub_registry") as mock_get_registry:
             mock_manifest = Mock()
             mock_manifest.name = "pytest-skill"
             mock_manifest.version = "2.0.0"

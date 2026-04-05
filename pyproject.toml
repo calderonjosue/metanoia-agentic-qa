@@ -50,3 +50,7 @@ line-length = 88
 
 [tool.ruff]
 line-length = 88
+exclude = [
+    "examples/**",
+    "skills/*/examples/**",
+]

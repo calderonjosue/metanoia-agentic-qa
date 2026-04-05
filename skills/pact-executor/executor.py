@@ -138,7 +138,7 @@ class DockerProviderRunner:
     async def start(self) -> str:
         """Start the Docker container and return base URL."""
         
-        docker_host = os.getenv("DOCKER_HOST", "unix:///var/run/docker.sock")
+        os.getenv("DOCKER_HOST", "unix:///var/run/docker.sock")
         
         try:
             result = subprocess.run(

@@ -1,8 +1,8 @@
 """Tests for abort controller."""
 
 
-from metanoia.src.chaos.abort_controller import AbortController
-from metanoia.src.chaos.experiments import ChaosExperiment, AbortCondition
+from src.chaos.abort_controller import AbortController
+from src.chaos.experiments import ChaosExperiment, AbortCondition
 
 
 class TestAbortController:

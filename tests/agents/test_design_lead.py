@@ -4,7 +4,7 @@ import pytest
 from unittest.mock import AsyncMock, Mock
 
 from src.agents.design_lead import (
-    DesignLead,
+    TestDesignLead,
     TestScenario,
     TestCase,
     TestEnvironment,
@@ -104,8 +104,8 @@ class TestTestEnvironment:
             )
 
 
-class TestDesignLead:
-    """Tests for DesignLead agent."""
+class TestTestDesignLead:
+    """Tests for TestDesignLead agent."""
 
     @pytest.fixture
     def mock_gemini(self):
@@ -118,13 +118,13 @@ class TestDesignLead:
 
     @pytest.fixture
     def design_lead(self, mock_gemini):
-        """Create DesignLead instance."""
-        return DesignLead(gemini_client=mock_gemini)
+        """Create TestDesignLead instance."""
+        return TestDesignLead(gemini_client=mock_gemini)
 
     @pytest.fixture
     def design_lead_no_llm(self):
-        """Create DesignLead without LLM."""
-        return DesignLead(gemini_client=None)
+        """Create TestDesignLead without LLM."""
+        return TestDesignLead(gemini_client=None)
 
     @pytest.fixture
     def sample_test_plan(self):

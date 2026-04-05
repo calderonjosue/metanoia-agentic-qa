@@ -55,13 +55,8 @@ class VisionHealer:
         try:
             screenshot_bytes = await page.screenshot()
             import base64
-            screenshot_b64 = base64.b64encode(screenshot_bytes).decode()
+            base64.b64encode(screenshot_bytes).decode()
             
-            prompt = f"""Analyze this UI screenshot. The original selector '{broken_selector}' 
-            failed when trying to: {original_action}. 
-            
-            Identify the visible element that matches this action and provide a new 
-            CSS selector or XPath that will reliably find it. Return ONLY the new selector."""
 
             # This would call Gemini Vision API
             # For now, return a fallback strategy

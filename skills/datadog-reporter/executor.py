@@ -104,7 +104,7 @@ def submit_command(args):
 def validate_command(args):
     schema_path = os.path.join(os.path.dirname(__file__), "schema.json")
     with open(schema_path, "r") as f:
-        schema = json.load(f)
+        json.load(f)
 
     try:
         data = json.loads(args.payload)

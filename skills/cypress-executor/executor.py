@@ -76,7 +76,7 @@ class CypressExecutor(SkillExecutor):
         url = input_data.get("url", "")
         text = input_data.get("text", "")
         timeout = input_data.get("timeout", 5000)
-        options = input_data.get("options", {})
+        input_data.get("options", {})
 
         try:
             if command == "visit":
@@ -99,7 +99,7 @@ class CypressExecutor(SkillExecutor):
     async def _execute_visit(self, url: str, timeout: int) -> CypressOutput:
         """Execute cy.visit() command."""
         logger.info(f"Visiting URL: {url}")
-        cmd = CommandBuilder.build("visit", url=url, options={"timeout": timeout})
+        CommandBuilder.build("visit", url=url, options={"timeout": timeout})
         return {
             "status": "success",
             "command": "visit",
@@ -110,7 +110,7 @@ class CypressExecutor(SkillExecutor):
     async def _execute_click(self, target: str, timeout: int) -> CypressOutput:
         """Execute cy.click() command."""
         logger.info(f"Clicking element: {target}")
-        cmd = CommandBuilder.build("click", target=target, options={"timeout": timeout})
+        CommandBuilder.build("click", target=target, options={"timeout": timeout})
         return {
             "status": "success",
             "command": "click",
@@ -121,7 +121,7 @@ class CypressExecutor(SkillExecutor):
     async def _execute_type(self, target: str, text: str, timeout: int) -> CypressOutput:
         """Execute cy.type() command."""
         logger.info(f"Typing '{text}' into: {target}")
-        cmd = CommandBuilder.build("type", target=target, text=text, options={"timeout": timeout})
+        CommandBuilder.build("type", target=target, text=text, options={"timeout": timeout})
         return {
             "status": "success",
             "command": "type",
@@ -132,7 +132,7 @@ class CypressExecutor(SkillExecutor):
     async def _execute_contains(self, text: str, timeout: int) -> CypressOutput:
         """Execute cy.contains() command."""
         logger.info(f"Finding element containing: {text}")
-        cmd = CommandBuilder.build("contains", text=text, options={"timeout": timeout})
+        CommandBuilder.build("contains", text=text, options={"timeout": timeout})
         return {
             "status": "success",
             "command": "contains",
@@ -143,7 +143,7 @@ class CypressExecutor(SkillExecutor):
     async def _execute_get(self, selector: str, timeout: int) -> CypressOutput:
         """Execute cy.get() command."""
         logger.info(f"Getting element: {selector}")
-        cmd = CommandBuilder.build("get", target=selector, options={"timeout": timeout})
+        CommandBuilder.build("get", target=selector, options={"timeout": timeout})
         return {
             "status": "success",
             "command": "get",

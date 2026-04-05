@@ -3,9 +3,9 @@
 import pytest
 from unittest.mock import Mock
 
-from metanoia.src.observability.telemetry import TelemetryCollector
-from metanoia.src.chaos.abort_controller import AbortController
-from metanoia.src.chaos.experiments import ChaosExperiment, AbortCondition
+from src.observability.telemetry import TelemetryCollector
+from src.chaos.abort_controller import AbortController
+from src.chaos.experiments import ChaosExperiment, AbortCondition
 
 
 class TestShiftRightWorkflow:

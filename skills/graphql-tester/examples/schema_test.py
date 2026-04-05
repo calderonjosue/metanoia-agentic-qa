@@ -42,7 +42,7 @@ def validate_introspection_endpoint(endpoint: str):
     client = GraphQLTester(endpoint=endpoint)
 
     try:
-        schema = client.introspect()
+        client.introspect()
         validation = client.validate_schema()
 
         print(f"Introspection successful: {validation['valid']}")
