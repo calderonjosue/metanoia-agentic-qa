@@ -1,0 +1,56 @@
+{
+  "input": {
+    "type": "object",
+    "properties": {
+      "jmx_file": {
+        "type": "string",
+        "description": "Path to JMX test plan file"
+      },
+      "report_output": {
+        "type": "string",
+        "description": "Directory path for HTML report output"
+      },
+      "results_file": {
+        "type": "string",
+        "description": "Path for results file (JTL format)",
+        "default": "results.jtl"
+      },
+      "jmeter_properties": {
+        "type": "object",
+        "description": "JMeter properties to set via -J flag"
+      },
+      "heap_size": {
+        "type": "string",
+        "description": "JVM heap size for JMeter",
+        "default": "512m"
+      }
+    },
+    "required": ["jmx_file"]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": ["success", "error"]
+      },
+      "report_path": {
+        "type": "string",
+        "description": "Path to generated HTML report directory"
+      },
+      "metrics": {
+        "type": "object",
+        "description": "Performance metrics from JMeter"
+      },
+      "summary": {
+        "type": "string",
+        "description": "Human-readable summary"
+      },
+      "error": {
+        "type": "string",
+        "description": "Error message if status is error"
+      }
+    },
+    "required": ["status"]
+  }
+}

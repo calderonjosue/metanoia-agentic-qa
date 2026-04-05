@@ -1,0 +1,68 @@
+{
+  "input": {
+    "type": "object",
+    "properties": {
+      "action": {
+        "type": "string",
+        "enum": ["goto", "click", "send_keys", "clear", "submit", "get_text", "get_attribute", "is_displayed", "screenshot"],
+        "description": "Action to perform"
+      },
+      "target": {
+        "type": "string",
+        "description": "Element selector (CSS, XPath, ID, etc.)"
+      },
+      "url": {
+        "type": "string",
+        "description": "URL to navigate to"
+      },
+      "value": {
+        "type": "string",
+        "description": "Value for send_keys or attribute name for get_attribute"
+      },
+      "timeout": {
+        "type": "integer",
+        "description": "Timeout in seconds",
+        "default": 30
+      },
+      "locator_strategy": {
+        "type": "string",
+        "enum": ["ID", "NAME", "CSS_SELECTOR", "XPATH", "LINK_TEXT", "PARTIAL_LINK_TEXT", "TAG_NAME", "CLASS_NAME"],
+        "description": "How to locate the element",
+        "default": "CSS_SELECTOR"
+      },
+      "browser": {
+        "type": "string",
+        "enum": ["chrome", "firefox", "edge", "safari"],
+        "description": "Browser to use",
+        "default": "chrome"
+      }
+    },
+    "required": ["action"]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": ["success", "error"]
+      },
+      "screenshot": {
+        "type": "string",
+        "description": "Base64-encoded screenshot if requested"
+      },
+      "healed_selector": {
+        "type": "string",
+        "description": "Repaired selector if original failed"
+      },
+      "error": {
+        "type": "string",
+        "description": "Error message if status is error"
+      },
+      "result": {
+        "type": "object",
+        "description": "Action result data"
+      }
+    },
+    "required": ["status"]
+  }
+}

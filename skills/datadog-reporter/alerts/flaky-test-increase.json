@@ -1,0 +1,25 @@
+{
+  "name": "Flaky Test Increase Alert",
+  "type": "metric alert",
+  "query": "avg:test.flakiness{*} > 3",
+  "message": "Test flakiness rate has exceeded 3%, indicating potential instability. \n\nSuite: {{suite.name}}\nFlakiness Rate: {{value}}%\n\n Review recent test changes and flaky test patterns.",
+  "tags": ["team:engineering", "monitor:test-alerts"],
+  "options": {
+    "thresholds": {
+      "critical": 3,
+      "warning": 1
+    },
+    "evaluation_delay": 300,
+    "new_host_delay": 300,
+    "no_data_timeframe": 20,
+    "renotify_interval": 120,
+    "notify_audit": true,
+    "notify_no_data": true,
+    "timeout_h": 0
+  },
+  "priority": 2,
+  "restricted_to": {
+    "organizations": [],
+    "roles": []
+  }
+}

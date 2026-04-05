@@ -1,0 +1,25 @@
+{
+  "name": "Test Failure Spike Alert",
+  "type": "metric alert",
+  "query": "100 * sum:test.results.failed{*} / (sum:test.results.passed{*} + sum:test.results.failed{*}) > 5",
+  "message": "Test failure rate has exceeded 5% in the last 5 minutes. \n\nSuite: {{suite.name}}\nFailure Rate: {{value}}%\n\n Investigate recent changes to identify the cause.",
+  "tags": ["team:engineering", "monitor:test-alerts"],
+  "options": {
+    "thresholds": {
+      "critical": 5,
+      "warning": 2
+    },
+    "evaluation_delay": 60,
+    "new_host_delay": 300,
+    "no_data_timeframe": 10,
+    "renotify_interval": 60,
+    "notify_audit": true,
+    "notify_no_data": true,
+    "timeout_h": 0
+  },
+  "priority": 2,
+  "restricted_to": {
+    "organizations": [],
+    "roles": []
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Postman Executor Schema",
+  "description": "Schema for Postman API test execution skill",
+  "type": "object",
+  "definitions": {
+    "skill_metadata": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Unique skill identifier (kebab-case)"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Semantic version"
+        },
+        "author": {
+          "type": "string",
+          "description": "Skill author"
+        },
+        "description": {
+          "type": "string",
+          "description": "What the skill does"
+        }
+      },
+      "required": ["name", "version", "author", "description"]
+    },
+    "postman_input": {
+      "type": "object",
+      "properties": {
+        "collection": {
+          "type": "string",
+          "description": "Path to Postman collection JSON file"
+        },
+        "environment": {
+          "type": "string",
+          "description": "Path to Postman environment JSON file"
+        },
+        "iteration_count": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of iterations to run"
+        },
+        "iteration_data": {
+          "type": "string",
+          "description": "Path to CSV/JSON data file for iterations"
+        },
+        "delay_request": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Delay between requests in milliseconds"
+        },
+        "export_results": {
+          "type": "boolean",
+          "description": "Whether to export results to file"
+        },
+        "report_format": {
+          "type": "string",
+          "enum": ["json", "html", "cli", "junit"],
+          "description": "Output report format"
+        },
+        "folder": {
+          "type": "string",
+          "description": "Specific folder in collection to run"
+        },
+        "working_dir": {
+          "type": "string",
+          "description": "Working directory for execution"
+        }
+      },
+      "required": ["collection"]
+    },
+    "postman_output": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["success", "error"],
+          "description": "Execution status"
+        },
+        "summary": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "description": "Total number of requests"
+            },
+            "passed": {
+              "type": "integer",
+              "description": "Number of passed tests"
+            },
+            "failed": {
+              "type": "integer",
+              "description": "Number of failed tests"
+            },
+            "skipped": {
+              "type": "integer",
+              "description": "Number of skipped tests"
+            }
+          },
+          "description": "Run summary statistics"
+        },
+        "results": {
+          "type": "object",
+          "description": "Detailed execution results"
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message if status is error"
+        }
+      },
+      "required": ["status"]
+    }
+  },
+  "input": {
+    "$ref": "#/definitions/postman_input"
+  },
+  "output": {
+    "$ref": "#/definitions/postman_output"
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "title": "Test Flakiness Monitor",
+  "description": "Monitor and track flaky tests across suites",
+  "widgets": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Flakiness Rate Over Time",
+      "requests": [
+        {
+          "q": "avg:test.flakiness{*}",
+          "style": {
+            "palette": "yellow"
+          }
+        }
+      ],
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "width": 8,
+        "height": 4
+      }
+    },
+    {
+      "id": 2,
+      "type": "query_value",
+      "title": "Current Flakiness Rate",
+      "requests": [
+        {
+          "q": "avg:test.flakiness{*}",
+          "style": {
+            "palette": "yellow"
+          }
+        }
+      ],
+      "layout": {
+        "x": 8,
+        "y": 0,
+        "width": 4,
+        "height": 4
+      }
+    },
+    {
+      "id": 3,
+      "type": "toplist",
+      "title": "Suites with Most Flakiness",
+      "requests": [
+        {
+          "q": "avg:test.flakiness{*} by {suite}",
+          "sort": {
+            "order": "desc"
+          },
+          "limit": 10
+        }
+      ],
+      "layout": {
+        "x": 0,
+        "y": 4,
+        "width": 6,
+        "height": 4
+      }
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Flaky Tests Count",
+      "requests": [
+        {
+          "q": "avg:test.flakiness{*} * (sum:test.results.passed{*} + sum:test.results.failed{*}) / 100",
+          "style": {
+            "palette": "orange"
+          }
+        }
+      ],
+      "layout": {
+        "x": 6,
+        "y": 4,
+        "width": 6,
+        "height": 4
+      }
+    }
+  ],
+  "template_variables": [
+    {
+      "name": "suite",
+      "prefix": "suite",
+      "default": "*"
+    }
+  ],
+  "layout_type": "free"
+}

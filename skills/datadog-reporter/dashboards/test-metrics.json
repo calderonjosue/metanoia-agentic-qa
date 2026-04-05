@@ -1,0 +1,153 @@
+{
+  "title": "Test Metrics Overview",
+  "description": "Overview of test suite metrics including pass rates, duration, and flakiness",
+  "widgets": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Test Pass Rate (%)",
+      "requests": [
+        {
+          "q": "100 * sum:test.results.passed{*} / (sum:test.results.passed{*} + sum:test.results.failed{*} + sum:test.results.skipped{*})",
+          "style": {
+            "palette": "green"
+          }
+        }
+      ],
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "width": 6,
+        "height": 4
+      }
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Test Duration (seconds)",
+      "requests": [
+        {
+          "q": "avg:test.duration{*}",
+          "style": {
+            "palette": "blue"
+          }
+        }
+      ],
+      "layout": {
+        "x": 6,
+        "y": 0,
+        "width": 6,
+        "height": 4
+      }
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Passed vs Failed Tests",
+      "requests": [
+        {
+          "q": "sum:test.results.passed{*}",
+          "style": {
+            "palette": "green"
+          }
+        },
+        {
+          "q": "sum:test.results.failed{*}",
+          "style": {
+            "palette": "red"
+          }
+        }
+      ],
+      "layout": {
+        "x": 0,
+        "y": 4,
+        "width": 6,
+        "height": 4
+      }
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Flakiness Rate (%)",
+      "requests": [
+        {
+          "q": "avg:test.flakiness{*}",
+          "style": {
+            "palette": "yellow"
+          }
+        }
+      ],
+      "layout": {
+        "x": 6,
+        "y": 4,
+        "width": 6,
+        "height": 4
+      }
+    },
+    {
+      "id": 5,
+      "type": "query_value",
+      "title": "Total Tests",
+      "requests": [
+        {
+          "q": "sum:test.results.passed{*} + sum:test.results.failed{*}",
+          "style": {
+            "palette": "purple"
+          }
+        }
+      ],
+      "layout": {
+        "x": 0,
+        "y": 8,
+        "width": 3,
+        "height": 2
+      }
+    },
+    {
+      "id": 6,
+      "type": "query_value",
+      "title": "Failed Tests",
+      "requests": [
+        {
+          "q": "sum:test.results.failed{*}",
+          "style": {
+            "palette": "red"
+          }
+        }
+      ],
+      "layout": {
+        "x": 3,
+        "y": 8,
+        "width": 3,
+        "height": 2
+      }
+    },
+    {
+      "id": 7,
+      "type": "query_value",
+      "title": "Skipped Tests",
+      "requests": [
+        {
+          "q": "sum:test.results.skipped{*}",
+          "style": {
+            "palette": "gray"
+          }
+        }
+      ],
+      "layout": {
+        "x": 6,
+        "y": 8,
+        "width": 3,
+        "height": 2
+      }
+    }
+  ],
+  "template_variables": [
+    {
+      "name": "suite",
+      "prefix": "suite",
+      "default": "*"
+    }
+  ],
+  "layout_type": "free"
+}

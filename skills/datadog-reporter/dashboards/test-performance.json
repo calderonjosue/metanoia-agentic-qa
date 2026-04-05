@@ -1,0 +1,111 @@
+{
+  "title": "Test Performance Analysis",
+  "description": "Detailed performance analysis of test suites",
+  "widgets": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Average Test Duration by Suite",
+      "requests": [
+        {
+          "q": "avg:test.duration{*} by {suite}",
+          "style": {
+            "palette": "dogorian"
+          }
+        }
+      ],
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "width": 12,
+        "height": 4
+      }
+    },
+    {
+      "id": 2,
+      "type": "toplist",
+      "title": "Slowest Test Suites",
+      "requests": [
+        {
+          "q": "avg:test.duration{*} by {suite}",
+          "sort": {
+            "order": "desc"
+          },
+          "limit": 10
+        }
+      ],
+      "layout": {
+        "x": 0,
+        "y": 4,
+        "width": 6,
+        "height": 4
+      }
+    },
+    {
+      "id": 3,
+      "type": "toplist",
+      "title": "Fastest Test Suites",
+      "requests": [
+        {
+          "q": "avg:test.duration{*} by {suite}",
+          "sort": {
+            "order": "asc"
+          },
+          "limit": 10
+        }
+      ],
+      "layout": {
+        "x": 6,
+        "y": 4,
+        "width": 6,
+        "height": 4
+      }
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Test Duration Trend (P95)",
+      "requests": [
+        {
+          "q": "p95:test.duration{*}",
+          "style": {
+            "palette": "orange"
+          }
+        }
+      ],
+      "layout": {
+        "x": 0,
+        "y": 8,
+        "width": 6,
+        "height": 4
+      }
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Test Duration Trend (P99)",
+      "requests": [
+        {
+          "q": "p99:test.duration{*}",
+          "style": {
+            "palette": "red"
+          }
+        }
+      ],
+      "layout": {
+        "x": 6,
+        "y": 8,
+        "width": 6,
+        "height": 4
+      }
+    }
+  ],
+  "template_variables": [
+    {
+      "name": "suite",
+      "prefix": "suite",
+      "default": "*"
+    }
+  ],
+  "layout_type": "free"
+}

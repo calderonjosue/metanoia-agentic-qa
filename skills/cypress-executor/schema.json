@@ -1,0 +1,56 @@
+{
+  "input": {
+    "type": "object",
+    "properties": {
+      "command": {
+        "type": "string",
+        "enum": ["visit", "click", "type", "contains", "get"],
+        "description": "Cypress command to execute"
+      },
+      "target": {
+        "type": "string",
+        "description": "CSS selector or element identifier"
+      },
+      "url": {
+        "type": "string",
+        "description": "URL for visit command"
+      },
+      "text": {
+        "type": "string",
+        "description": "Text for type command"
+      },
+      "timeout": {
+        "type": "integer",
+        "description": "Timeout in milliseconds",
+        "default": 5000
+      },
+      "options": {
+        "type": "object",
+        "description": "Additional command options"
+      }
+    },
+    "required": ["command"]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": ["success", "error"]
+      },
+      "command": {
+        "type": "string",
+        "description": "Command that was executed"
+      },
+      "result": {
+        "type": "object",
+        "description": "Command result data"
+      },
+      "error": {
+        "type": "string",
+        "description": "Error message if status is error"
+      }
+    },
+    "required": ["status", "command"]
+  }
+}

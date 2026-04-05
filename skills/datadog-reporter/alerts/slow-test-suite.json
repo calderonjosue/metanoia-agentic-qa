@@ -1,0 +1,25 @@
+{
+  "name": "Slow Test Suite Alert",
+  "type": "metric alert",
+  "query": "avg:test.duration{*} > 300",
+  "message": "Test suite duration has exceeded 5 minutes (300 seconds). \n\nSuite: {{suite.name}}\nDuration: {{value}} seconds\n\n Consider optimizing tests or increasing resources.",
+  "tags": ["team:engineering", "monitor:test-alerts"],
+  "options": {
+    "thresholds": {
+      "critical": 300,
+      "warning": 180
+    },
+    "evaluation_delay": 60,
+    "new_host_delay": 300,
+    "no_data_timeframe": 10,
+    "renotify_interval": 60,
+    "notify_audit": true,
+    "notify_no_data": true,
+    "timeout_h": 0
+  },
+  "priority": 3,
+  "restricted_to": {
+    "organizations": [],
+    "roles": []
+  }
+}

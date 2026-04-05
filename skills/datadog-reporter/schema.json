@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://datadog-reporter.example.com/schema.json",
+  "title": "Test Metrics Payload",
+  "description": "Schema for test metrics payload submitted to Datadog",
+  "type": "object",
+  "required": ["suite", "passed", "failed"],
+  "properties": {
+    "suite": {
+      "type": "string",
+      "description": "Name of the test suite",
+      "minLength": 1
+    },
+    "passed": {
+      "type": "integer",
+      "description": "Number of passed tests",
+      "minimum": 0
+    },
+    "failed": {
+      "type": "integer",
+      "description": "Number of failed tests",
+      "minimum": 0
+    },
+    "skipped": {
+      "type": "integer",
+      "description": "Number of skipped tests",
+      "minimum": 0,
+      "default": 0
+    },
+    "duration": {
+      "type": "number",
+      "description": "Test suite duration in seconds",
+      "minimum": 0,
+      "default": 0
+    },
+    "flaky": {
+      "type": "integer",
+      "description": "Number of flaky tests",
+      "minimum": 0,
+      "default": 0
+    },
+    "tags": {
+      "type": "array",
+      "description": "Additional tags for the metrics",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of the test run"
+    }
+  }
+}

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Load Test Plan" enabled="true">
+      <stringProp name="TestPlan.comments">Basic JMeter load test example</stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="base_url" elementType="Argument">
+            <stringProp name="Argument.name">base_url</stringProp>
+            <stringProp name="Argument.value">https://example.com</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+      <boolProp name="TestPlan.use_thread_group">true</boolProp>
+    </TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Load Test Thread Group" enabled="true">
+        <stringProp name="ThreadGroup.num_threads">10</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">5</stringProp>
+        <stringProp name="ThreadGroup.duration">30</stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.scheduler">true</boolProp>
+        <boolProp name="ThreadGroup.is_same_user_on_next_iteration">true</boolProp>
+        <boolProp name="ThreadGroup.implicitly_created">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/health" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">example.com</stringProp>
+          <stringProp name="HTTPSampler.port">443</stringProp>
+          <stringProp name="HTTPSampler.protocol">https</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/api/health</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report" enabled="true">
+            <boolProp name="ResultCollector.error_logging">false</boolProp>
+            <objProp>
+              <name>saveConfig</name>
+              <value class="SaveService">
+                <stringProp name="SaveConfig.saveGraphics">false</stringProp>
+                <stringProp name="SaveConfig.saveFrequency">0</stringProp>
+                <stringProp name="SaveConfig.saveResponseData">true</stringProp>
+                <stringProp name="SaveConfig.saveSamplerResult">true</stringProp>
+                <stringProp name="SaveConfig.saveThreadCounts">true</stringProp>
+              </value>
+            </objProp>
+            <stringProp name="filename"></stringProp>
+          </ResultCollector>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
