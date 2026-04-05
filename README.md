@@ -26,6 +26,7 @@ Equipped with System Prompts based on **ISTQB** and **DevSecOps** methodologies,
 
 ## ✨ Features
 
+### Core (v1.0)
 | Icon | Feature | Description |
 |------|---------|-------------|
 | 🤖 | **Multi-Agent Orchestration** | Hierarchical agent graph mapped to STLC phases |
@@ -35,6 +36,16 @@ Equipped with System Prompts based on **ISTQB** and **DevSecOps** methodologies,
 | 🔒 | **Security Scanning** | OWASP ZAP integration for DAST analysis |
 | 📊 | **Real-Time Dashboard** | Next.js + Tremor for monitoring |
 | 🔄 | **Autonomous** | Self-healing PRs for broken tests |
+
+### New in v2.0
+| Icon | Feature | Description |
+|------|---------|-------------|
+| 🌐 | **LLM Agnostic** | OpenAI, Gemini, Claude, Ollama, vLLM, Llama.cpp |
+| 🏗️ | **IaC Integration** | Terraform + ephemeral lab provisioning |
+| 🔄 | **CI/CD Orchestrator** | Auto-merge at 95% quality gate |
+| 🛒 | **Skill Hub CLI** | `metanoia install skill <name>` - extensible skills |
+| 📊 | **Observability** | Datadog, New Relic, OpenTelemetry |
+| 💥 | **Chaos Engineering** | ChaosAgent + AbortController |
 
 ---
 
@@ -146,9 +157,14 @@ metanoia-qa/
 │   │   └── zap/
 │   └── api/                    # FastAPI routes
 ├── skills/                     # Reusable skill modules
-│   ├── playwright-executor/
-│   ├── k6-executor/
-│   └── visual-healing/
+│   ├── playwright-executor/    # Playwright UI automation
+│   ├── k6-executor/            # k6 load testing
+│   ├── selenium-executor/       # Selenium WebDriver
+│   ├── cypress-executor/       # Cypress E2E testing
+│   ├── jmeter-executor/        # JMeter load testing
+│   ├── postman-executor/       # Postman API testing
+│   ├── datadog-reporter/       # Datadog metrics
+│   └── visual-healing/          # Self-healing selectors
 ├── examples/                   # Demo projects
 ├── docs/                       # Documentation
 └── tests/                      # Unit + integration tests
@@ -229,4 +245,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 ---
 
 *Metanoia-QA: Autonomous Agentic STLC Framework*  
-*Version 1.0.0 | Updated 2026-04-04*
+*Version 2.0.0 | Updated 2026-04-04*
