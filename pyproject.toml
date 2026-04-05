@@ -56,3 +56,7 @@ exclude = [
     "examples/**",
     "skills/*/examples/**",
 ]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = []
