@@ -99,25 +99,25 @@ class StrategyManager:
         """
         module_risks = context.get("module_risks", [])
         module_weights: dict[str, float] = {}
-        
+
         high_risk_modules = [
-            m for m in module_risks 
+            m for m in module_risks
             if m.get("risk_level") in ("high", "critical")
         ]
-        
+
         if not high_risk_modules:
             for module_data in module_risks:
                 module_weights[module_data["module_name"]] = 0.5
         else:
             critical_weight = 0.8 / max(len(high_risk_modules), 1)
             remaining_weight = 0.2 / max(len(module_risks) - len(high_risk_modules), 1)
-            
+
             for module_data in module_risks:
                 if module_data["risk_level"] in ("high", "critical"):
                     module_weights[module_data["module_name"]] = critical_weight
                 else:
                     module_weights[module_data["module_name"]] = remaining_weight
-        
+
         return module_weights
 
     def _calculate_effort_distribution(
@@ -141,30 +141,30 @@ class StrategyManager:
         context.get("risk_score", 0.5)
         flaky_test_count = len(context.get("flaky_tests", []))
         module_risks = context.get("module_risks", [])
-        
+
         sprint_goal_lower = sprint_goal.lower()
         is_performance_focus = any(
-            keyword in sprint_goal_lower 
+            keyword in sprint_goal_lower
             for keyword in ["performance", "load", "scalability", "stress"]
         )
         is_security_focus = any(
-            keyword in sprint_goal_lower 
+            keyword in sprint_goal_lower
             for keyword in ["security", "auth", "permission", "access", "privacy"]
         )
         is_new_feature = any(
-            keyword in sprint_goal_lower 
+            keyword in sprint_goal_lower
             for keyword in ["new", "add", "implement", "create", "feature"]
         )
         is_refactor = any(
-            keyword in sprint_goal_lower 
+            keyword in sprint_goal_lower
             for keyword in ["refactor", "redesign", "optimize", "improve"]
         )
-        
+
         functional_base = 0.4
         regression_base = 0.3
         performance_base = 0.15
         security_base = 0.15
-        
+
         if risk_level == "critical":
             functional_base = 0.25
             regression_base = 0.45
@@ -180,48 +180,48 @@ class StrategyManager:
             regression_base = 0.2
             performance_base = 0.2
             security_base = 0.15
-        
+
         if flaky_test_count > 5:
             regression_base += 0.1
             functional_base -= 0.1
-        
+
         high_defect_modules = sum(
             1 for m in module_risks if m.get("risk_level") in ("high", "critical")
         )
         if high_defect_modules > 2:
             security_base += 0.05
             functional_base -= 0.05
-        
+
         if is_performance_focus:
             performance_base = 0.35
             functional_base = 0.25
             regression_base = 0.2
             security_base = 0.2
-        
+
         if is_security_focus:
             security_base = 0.35
             performance_base = 0.15
             functional_base = 0.3
             regression_base = 0.2
-        
+
         if is_new_feature:
             functional_base += 0.15
             regression_base -= 0.1
             performance_base -= 0.05
-        
+
         if is_refactor:
             regression_base += 0.2
             functional_base -= 0.1
             performance_base -= 0.1
-        
+
         functional_base = max(0.1, min(0.6, functional_base))
         regression_base = max(0.1, min(0.5, regression_base))
         performance_base = max(0.05, min(0.35, performance_base))
         security_base = max(0.05, min(0.35, security_base))
-        
+
         total = functional_base + regression_base + performance_base + security_base
         scale = 1.0 / total
-        
+
         return EffortDistribution(
             functional=round(functional_base * scale, 2),
             regression=round(regression_base * scale, 2),
@@ -246,19 +246,19 @@ class StrategyManager:
             List of prioritized tests.
         """
         prioritized = []
-        
+
         module_risks = context.get("module_risks", [])
         flaky_tests = context.get("flaky_tests", [])
         similar_sprints = context.get("similar_sprints", [])
-        
+
         sprint_goal_lower = sprint_goal.lower()
-        
+
         if module_risks:
             high_risk_modules = [
-                m["module_name"] for m in module_risks 
+                m["module_name"] for m in module_risks
                 if m.get("risk_level") in ("high", "critical")
             ]
-            
+
             for module in high_risk_modules:
                 prioritized.append(TestPriority(
                     test_id=f"CRITICAL_{module}_01",
@@ -268,7 +268,7 @@ class StrategyManager:
                     module=module,
                     reason="Module has critical/high risk level with elevated defect density"
                 ))
-            
+
             for i, module_data in enumerate(module_risks):
                 if module_data.get("risk_level") == "medium":
                     prioritized.append(TestPriority(
@@ -279,7 +279,7 @@ class StrategyManager:
                         module=module_data["module_name"],
                         reason="Module shows moderate defect density"
                     ))
-        
+
         for flaky in flaky_tests[:5]:
             prioritized.append(TestPriority(
                 test_id=f"MEDIUM_FLAKY_{flaky['test_id']}",
@@ -289,7 +289,7 @@ class StrategyManager:
                 module=flaky["module"],
                 reason=f"Test has {flaky['failure_rate']*100:.0f}% failure rate"
             ))
-        
+
         if any(k in sprint_goal_lower for k in ["new", "add", "create"]):
             prioritized.append(TestPriority(
                 test_id="HIGH_NEW_FEATURE_01",
@@ -299,7 +299,7 @@ class StrategyManager:
                 module="new_feature",
                 reason="New feature requires full E2E validation"
             ))
-        
+
         if any(k in sprint_goal_lower for k in ["performance", "load", "scalability"]):
             prioritized.append(TestPriority(
                 test_id="HIGH_PERF_01",
@@ -309,7 +309,7 @@ class StrategyManager:
                 module="system",
                 reason="Performance testing required per sprint goal"
             ))
-        
+
         if any(k in sprint_goal_lower for k in ["security", "auth", "permission"]):
             prioritized.append(TestPriority(
                 test_id="HIGH_SEC_01",
@@ -319,7 +319,7 @@ class StrategyManager:
                 module="system",
                 reason="Security focus identified in sprint goal"
             ))
-        
+
         for sprint in similar_sprints[:2]:
             for i, module in enumerate(sprint.get("shared_modules", [])[:3]):
                 prioritized.append(TestPriority(
@@ -330,7 +330,7 @@ class StrategyManager:
                     module=module,
                     reason=f"Similarity score {sprint['similarity_score']:.2f} with historical sprint"
                 ))
-        
+
         return prioritized
 
     def _create_phased_approach(
@@ -348,7 +348,7 @@ class StrategyManager:
             List of phases with timing and focus areas.
         """
         phases = []
-        
+
         phases.append({
             "phase": 1,
             "name": "Rapid Sanity",
@@ -358,7 +358,7 @@ class StrategyManager:
             "entry_criteria": ["Build successful", "Core functionality intact"],
             "exit_criteria": ["Critical paths working", "No blocker defects"]
         })
-        
+
         phases.append({
             "phase": 2,
             "name": "Functional Deep Dive",
@@ -368,7 +368,7 @@ class StrategyManager:
             "entry_criteria": ["Sanity tests passed", "Test environment ready"],
             "exit_criteria": ["All functional tests passing", "Code coverage targets met"]
         })
-        
+
         phases.append({
             "phase": 3,
             "name": "Regression Suite",
@@ -378,7 +378,7 @@ class StrategyManager:
             "entry_criteria": ["Functional tests stable", "Test data prepared"],
             "exit_criteria": ["Regression suite complete", "No high-severity regressions"]
         })
-        
+
         if effort.performance > 0.1:
             phases.append({
                 "phase": 4,
@@ -389,7 +389,7 @@ class StrategyManager:
                 "entry_criteria": ["System stable", "Performance requirements defined"],
                 "exit_criteria": ["Performance targets met", "No bottlenecks identified"]
             })
-        
+
         if effort.security > 0.1:
             phases.append({
                 "phase": 5,
@@ -400,7 +400,7 @@ class StrategyManager:
                 "entry_criteria": ["Functional testing complete", "Security test plan approved"],
                 "exit_criteria": ["No critical/high vulnerabilities", "Security report generated"]
             })
-        
+
         phases.append({
             "phase": 6,
             "name": "Final Verification",
@@ -410,7 +410,7 @@ class StrategyManager:
             "entry_criteria": ["All test phases complete", "Defects resolved"],
             "exit_criteria": ["All critical tests passing", "Ready for release"]
         })
-        
+
         return phases
 
     def _calculate_resource_requirements(
@@ -465,11 +465,11 @@ class StrategyManager:
                 - risk_mitigations: Risk mitigation strategies
         """
         import uuid
-        
+
         logger.info(f"Creating test plan for sprint: {sprint_goal[:100]}...")
-        
+
         effort_distribution = self._calculate_effort_distribution(context, sprint_goal)
-        
+
         if not effort_distribution.validate_total():
             logger.warning("Effort distribution does not sum to 1.0, normalizing")
             total = (
@@ -485,31 +485,31 @@ class StrategyManager:
                 performance=effort_distribution.performance * scale,
                 security=effort_distribution.security * scale
             )
-        
+
         self._apply_defect_clustering(context)
-        
+
         prioritized_tests = self._prioritize_tests(
             context, effort_distribution, sprint_goal
         )
-        
+
         phased_approach = self._create_phased_approach(effort_distribution, sprint_goal)
-        
+
         base_test_count = 50
         risk_multiplier = 1.0 + (context.get("risk_score", 0.5) * 0.5)
         effort_multiplier = context.get("effort_multiplier", 1.0)
         total_test_cases = int(base_test_count * risk_multiplier * effort_multiplier)
-        
+
         resource_requirements = self._calculate_resource_requirements(
             effort_distribution, total_test_cases
         )
-        
+
         risk_mitigations = []
         if context.get("flaky_tests"):
             risk_mitigations.append(
                 f"Address {len(context['flaky_tests'])} flaky tests in test automation "
                 "before sprint execution to avoid false failures"
             )
-        
+
         high_risk_modules = [
             m["module_name"] for m in context.get("module_risks", [])
             if m.get("risk_level") in ("high", "critical")
@@ -519,18 +519,18 @@ class StrategyManager:
                 f"Focus additional review on high-risk modules: {', '.join(high_risk_modules)}. "
                 "Apply ISTQB defect clustering - 80% of defects likely here."
             )
-        
+
         if context.get("similar_sprints"):
             risk_mitigations.append(
                 "Leverage historical test cases from similar sprints to reduce "
                 "test design effort and improve coverage"
             )
-        
+
         risk_mitigations.append(
             f"Apply {effort_distribution.regression*100:.0f}% regression effort "
             "to catch defects early in the sprint"
         )
-        
+
         test_plan = TestPlan(
             plan_id=str(uuid.uuid4())[:8],
             sprint_goal=sprint_goal,
@@ -541,7 +541,7 @@ class StrategyManager:
             resource_requirements=resource_requirements,
             risk_mitigations=risk_mitigations
         )
-        
+
         logger.info(f"Test plan created: {test_plan.plan_id}")
-        
+
         return test_plan.model_dump()

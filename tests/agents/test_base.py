@@ -1,23 +1,24 @@
 """Tests for base agent classes."""
 
-import pytest
 from datetime import datetime
 
-from src.agents.base import (
-    AgentType,
-    AgentStatus,
-    AgentConfig,
-    AgentResponse,
-    BaseAgent,
-)
+import pytest
+
 from src.agents import (
     ContextAnalyst,
+    PerformanceEngineer,
+    ReleaseAnalyst,
+    SecurityEngineer,
     StrategyManager,
     TestDesignLead,
     UIAutomationEngineer,
-    PerformanceEngineer,
-    SecurityEngineer,
-    ReleaseAnalyst,
+)
+from src.agents.base import (
+    AgentConfig,
+    AgentResponse,
+    AgentStatus,
+    AgentType,
+    BaseAgent,
 )
 
 
@@ -30,7 +31,7 @@ class TestAgentConfig:
             agent_type=AgentType.CONTEXT_ANALYST,
             agent_id="test-001"
         )
-        
+
         assert config.agent_type == AgentType.CONTEXT_ANALYST
         assert config.agent_id == "test-001"
         assert config.model == "gemini-1.5-flash"
@@ -50,7 +51,7 @@ class TestAgentConfig:
             timeout_seconds=600,
             metadata={"key": "value"}
         )
-        
+
         assert config.model == "gemini-1.5-pro"
         assert config.temperature == 0.9
         assert config.max_retries == 5
@@ -69,7 +70,7 @@ class TestAgentResponse:
             status=AgentStatus.COMPLETED,
             output={"result": "success"}
         )
-        
+
         assert response.agent_id == "test-001"
         assert response.agent_type == AgentType.CONTEXT_ANALYST
         assert response.status == AgentStatus.COMPLETED
@@ -86,7 +87,7 @@ class TestAgentResponse:
             status=AgentStatus.FAILED,
             error="Test execution failed"
         )
-        
+
         assert response.status == AgentStatus.FAILED
         assert response.error == "Test execution failed"
 
@@ -99,7 +100,7 @@ class TestAgentResponse:
             status=AgentStatus.RUNNING,
             started_at=started
         )
-        
+
         assert response.started_at == started
 
 
@@ -117,7 +118,7 @@ class TestBaseAgent:
     def test_concrete_agent_inherits_base(self):
         """Test that concrete agents inherit from BaseAgent."""
         agent = ContextAnalyst(supabase_client=None, gemini_client=None)
-        
+
         assert isinstance(agent, BaseAgent)
         assert agent.status == AgentStatus.IDLE
 
@@ -129,7 +130,7 @@ class TestBaseAgent:
             temperature=0.5
         )
         agent = StrategyManager(config=config)
-        
+
         assert agent.config == config
         assert agent.config.temperature == 0.5
 
@@ -141,10 +142,10 @@ class TestBaseAgent:
         )
         agent = ContextAnalyst(supabase_client=None, gemini_client=None)
         agent.config = config
-        
+
         state = {"sprint_goal": "Test sprint"}
         response = agent.run(state)
-        
+
         assert response.agent_id == "test-run"
         assert response.status == AgentStatus.COMPLETED
 
@@ -182,7 +183,7 @@ class TestContextAnalyst:
     def test_context_analyst_initialization(self):
         """Test Context Analyst initialization."""
         agent = ContextAnalyst(supabase_client=None, gemini_client=None)
-        
+
         assert agent.supabase_client is None
         assert agent.gemini_client is None
 
@@ -190,9 +191,9 @@ class TestContextAnalyst:
     async def test_context_analyst_analyze(self):
         """Test Context Analyst analyze returns result."""
         agent = ContextAnalyst(supabase_client=None, gemini_client=None)
-        
+
         result = await agent.analyze("Test sprint goal")
-        
+
         assert "risk_level" in result
         assert "risk_score" in result
 
@@ -203,16 +204,16 @@ class TestStrategyManager:
     def test_strategy_manager_initialization(self):
         """Test Strategy Manager initialization."""
         agent = StrategyManager()
-        
+
         assert agent.config.agent_type == AgentType.STRATEGY_MANAGER
 
     def test_strategy_manager_execute(self):
         """Test Strategy Manager execute returns plan."""
         agent = StrategyManager()
         state = {"context_analysis": {"risk_score": 0.3}}
-        
+
         response = agent.execute(state)
-        
+
         assert response.status == AgentStatus.COMPLETED
         assert "test_plan" in response.output
 
@@ -223,7 +224,7 @@ class TestTestDesignLead:
     def test_design_lead_initialization(self):
         """Test Design Lead initialization."""
         agent = TestDesignLead(gemini_client=None)
-        
+
         assert agent.gemini_client is None
 
 
@@ -233,7 +234,7 @@ class TestUIAutomationEngineer:
     def test_ui_automation_initialization(self):
         """Test UI Automation Engineer initialization."""
         agent = UIAutomationEngineer()
-        
+
         assert agent.config.agent_type == AgentType.UI_AUTOMATION_ENGINEER
 
 
@@ -243,7 +244,7 @@ class TestPerformanceEngineer:
     def test_performance_engineer_initialization(self):
         """Test Performance Engineer initialization."""
         agent = PerformanceEngineer()
-        
+
         assert agent.config.agent_type == AgentType.PERFORMANCE_ENGINEER
 
 
@@ -253,7 +254,7 @@ class TestSecurityEngineer:
     def test_security_engineer_initialization(self):
         """Test Security Engineer initialization."""
         agent = SecurityEngineer()
-        
+
         assert agent.config.agent_type == AgentType.SECURITY_ENGINEER
 
 
@@ -263,5 +264,5 @@ class TestReleaseAnalyst:
     def test_release_analyst_initialization(self):
         """Test Release Analyst initialization."""
         agent = ReleaseAnalyst()
-        
+
         assert agent.config.agent_type == AgentType.RELEASE_ANALYST

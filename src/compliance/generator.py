@@ -3,8 +3,8 @@
 Generates compliance reports in various formats (HTML, PDF, Markdown).
 """
 
-from typing import Any
 from pathlib import Path
+from typing import Any
 
 from src.agents.compliance import ComplianceReport
 

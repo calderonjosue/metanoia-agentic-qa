@@ -107,7 +107,7 @@ class TestDesignLead:
         """
         if self.gemini_client is None:
             return self._generate_default_edge_cases(scenario, module)
-        
+
         try:
             prompt = f"""Analyze this test scenario and identify edge cases and boundary conditions.
 
@@ -128,12 +128,12 @@ Return 3-5 specific edge cases with:
 - expected_behavior: what should happen
 
 Return as JSON array."""
-            
+
             response = await self.gemini_client.generate_content(prompt)
-            
+
             import json
             edge_cases = json.loads(response.text)
-            
+
             return [
                 {
                     "case_name": ec.get("case_name", "Unknown"),
@@ -144,7 +144,7 @@ Return as JSON array."""
                 }
                 for ec in edge_cases
             ]
-            
+
         except Exception as e:
             logger.warning(f"LLM edge case inference failed: {e}")
             return self._generate_default_edge_cases(scenario, module)
@@ -193,7 +193,7 @@ Return as JSON array."""
                 "priority": "high"
             }
         ]
-        
+
         return edge_cases
 
     async def _generate_scenarios(
@@ -212,15 +212,15 @@ Return as JSON array."""
         """
         scenarios = []
         sprint_goal_lower = sprint_goal.lower()
-        
+
         functional_tests = [
             t for t in test_plan.get("prioritized_tests", [])
             if t.get("test_type") == "functional"
         ]
-        
+
         for i, test in enumerate(functional_tests[:5]):
             scenario_id = f"SCEN_{test.get('module', 'unknown')}_{i+1:02d}"
-            
+
             scenario = TestScenario(
                 scenario_id=scenario_id,
                 scenario_name=test.get("test_name", f"Scenario for {test.get('module')}"),
@@ -244,20 +244,20 @@ Return as JSON array."""
                 happy_path=True,
                 edge_cases=[]
             )
-            
+
             edge_cases = await self._infer_edge_cases_llm(scenario, test.get("module", ""))
             scenario.edge_cases = edge_cases
-            
+
             scenarios.append(scenario)
-        
+
         regression_tests = [
             t for t in test_plan.get("prioritized_tests", [])
             if t.get("test_type") == "regression"
         ]
-        
+
         for i, test in enumerate(regression_tests[:3]):
             scenario_id = f"SCEN_REGR_{test.get('module', 'unknown')}_{i+1:02d}"
-            
+
             scenario = TestScenario(
                 scenario_id=scenario_id,
                 scenario_name=f"Regression: {test.get('test_name')}",
@@ -278,9 +278,9 @@ Return as JSON array."""
                 happy_path=True,
                 edge_cases=[]
             )
-            
+
             scenarios.append(scenario)
-        
+
         if any(k in sprint_goal_lower for k in ["performance", "load"]):
             scenario_id = "SCEN_PERF_01"
             scenarios.append(TestScenario(
@@ -306,7 +306,7 @@ Return as JSON array."""
                 happy_path=True,
                 edge_cases=[]
             ))
-        
+
         return scenarios
 
     def _create_test_cases_from_scenarios(
@@ -322,10 +322,10 @@ Return as JSON array."""
             List of detailed test cases.
         """
         test_cases = []
-        
+
         for scenario in scenarios:
             case_id = f"TC_{scenario.scenario_id}_01"
-            
+
             test_case = TestCase(
                 case_id=case_id,
                 case_name=f"Happy Path: {scenario.scenario_name}",
@@ -348,10 +348,10 @@ Return as JSON array."""
                 tags=["happy_path", scenario.scenario_id]
             )
             test_cases.append(test_case)
-            
+
             for edge in scenario.edge_cases:
                 edge_case_id = f"TC_{scenario.scenario_id}_EDGE_{len(test_cases) + 1:02d}"
-                
+
                 edge_case = TestCase(
                     case_id=edge_case_id,
                     case_name=f"Edge: {edge.get('case_name', 'Unknown')}",
@@ -374,7 +374,7 @@ Return as JSON array."""
                     tags=["edge_case", edge.get("case_type", "unknown"), scenario.scenario_id]
                 )
                 test_cases.append(edge_case)
-        
+
         return test_cases
 
     def _generate_test_data_for_scenario(
@@ -391,16 +391,16 @@ Return as JSON array."""
         """
         import random
         import string
-        
+
         def random_string(length: int = 10) -> str:
             return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
-        
+
         def random_email() -> str:
             return f"test_{random_string(8)}@example.com"
-        
+
         def random_number(min_val: int = 1, max_val: int = 1000) -> int:
             return random.randint(min_val, max_val)
-        
+
         data_templates = {
             "user": {
                 "username": random_string(12),
@@ -421,13 +421,13 @@ Return as JSON array."""
                 "currency": "USD"
             }
         }
-        
+
         module = scenario.scenario_id.split("_")[1] if "_" in scenario.scenario_id else "generic"
-        
+
         for key in data_templates:
             if key in module.lower():
                 return data_templates[key]
-        
+
         return {
             "test_id": random_string(10),
             "timestamp": "2024-01-01T00:00:00Z",
@@ -449,48 +449,48 @@ Return as JSON array."""
             TestEnvironment configuration.
         """
         sprint_goal_lower = sprint_goal.lower()
-        
+
         env_type = "staging"
         if "production" in sprint_goal_lower or "release" in sprint_goal_lower:
             env_type = "production"
         elif "uat" in sprint_goal_lower:
             env_type = "uat"
-        
+
         required_services = ["database", "api", "cache"]
-        
+
         if any(k in sprint_goal_lower for k in ["performance", "load"]):
             required_services.append("load_balancer")
             required_services.append("monitoring")
-        
+
         if any(k in sprint_goal_lower for k in ["security", "auth"]):
             required_services.append("identity_provider")
             required_services.append("secret_manager")
-        
+
         config = {
             "base_url": f"https://{env_type}.metanoia.example.com",
             "api_version": "v1",
             "timeout_seconds": 30,
             "retry_attempts": 3
         }
-        
+
         network_config = {
             "vpc_id": f"vpc-{uuid.uuid4().hex[:8]}",
             "subnet_ids": [f"subnet-{i}" for i in range(3)],
             "security_groups": ["sg-web", "sg-api", "sg-db"],
             "load_balancer": "internal" if env_type == "staging" else "external"
         }
-        
+
         secrets = []
         if "payment" in sprint_goal_lower or "billing" in sprint_goal_lower:
             secrets.append("payment_gateway_api_key")
             secrets.append("merchant_id")
-        
+
         if "auth" in sprint_goal_lower or "user" in sprint_goal_lower:
             secrets.append("jwt_secret")
             secrets.append("encryption_key")
-        
+
         secrets.extend(["database_url", "redis_url", "api_secret"])
-        
+
         return TestEnvironment(
             environment_id=f"ENV_{uuid.uuid4().hex[:8]}",
             name=f"Test Environment {env_type.title()}",
@@ -514,12 +514,12 @@ Return as JSON array."""
             List of synthetic data templates.
         """
         templates = []
-        
+
         entity_types = ["user", "order", "product", "payment", "session"]
-        
+
         for entity_type in entity_types:
             template_id = f"TPL_{entity_type.upper()}_{uuid.uuid4().hex[:4]}"
-            
+
             if entity_type == "user":
                 fields = {
                     "id": "uuid",
@@ -582,12 +582,12 @@ Return as JSON array."""
                     "unique_fields": ["session_id"],
                     "referential_integrity": ["user_id"]
                 }
-            
+
             constraints = [
                 f"{entity_type}_id must be unique",
                 f"Referenced {entity_type}s must exist"
             ]
-            
+
             templates.append(SyntheticDataTemplate(
                 template_id=template_id,
                 entity_type=entity_type,
@@ -595,7 +595,7 @@ Return as JSON array."""
                 generation_rules=generation_rules,
                 constraints=constraints
             ))
-        
+
         return templates
 
     def _calculate_coverage_metrics(
@@ -614,13 +614,13 @@ Return as JSON array."""
         """
         happy_path_cases = sum(1 for tc in test_cases if "happy_path" in tc.tags)
         edge_cases = sum(1 for tc in test_cases if "edge_case" in tc.tags)
-        
+
         modules_covered = len(set(
             tc.module for tc in test_cases if tc.module != "unknown"
         ))
-        
+
         total_possible_modules = 10
-        
+
         return {
             "happy_path_coverage": happy_path_cases / max(len(scenarios), 1),
             "edge_case_coverage": edge_cases / max(len(scenarios), 1),
@@ -655,17 +655,17 @@ Return as JSON array."""
                 - coverage_metrics: Coverage statistics
         """
         logger.info(f"Designing tests for sprint goal: {sprint_goal[:100]}...")
-        
+
         scenarios = await self._generate_scenarios(test_plan, sprint_goal)
-        
+
         test_cases = self._create_test_cases_from_scenarios(scenarios)
-        
+
         environment = self._design_test_environment(test_plan, sprint_goal)
-        
+
         synthetic_data = self._generate_synthetic_data_templates(scenarios)
-        
+
         coverage_metrics = self._calculate_coverage_metrics(scenarios, test_cases)
-        
+
         design_rationale = (
             f"Test design based on {len(scenarios)} scenarios covering happy paths "
             f"and edge cases. Generated {len(test_cases)} test cases with "
@@ -673,7 +673,7 @@ Return as JSON array."""
             f"Environment configured for {environment.type} testing with "
             f"{len(environment.required_services)} required services."
         )
-        
+
         result = TestDesignResult(
             scenarios=list(scenarios),
             test_cases=list(test_cases),
@@ -682,10 +682,10 @@ Return as JSON array."""
             design_rationale=design_rationale,
             coverage_metrics=coverage_metrics
         )
-        
+
         logger.info(
             f"Test design complete: {len(scenarios)} scenarios, "
             f"{len(test_cases)} test cases"
         )
-        
+
         return dict(result.model_dump())

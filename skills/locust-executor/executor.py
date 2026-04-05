@@ -1,9 +1,9 @@
-import subprocess
 import json
-import signal
 import os
-from typing import Optional, Dict, Any, List
+import signal
+import subprocess
 from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 
 
 @dataclass

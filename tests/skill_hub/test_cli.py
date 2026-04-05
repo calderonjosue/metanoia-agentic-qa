@@ -1,9 +1,11 @@
 """Tests for Skill Hub CLI."""
 
-from unittest.mock import patch, Mock, AsyncMock
+from unittest.mock import AsyncMock, Mock, patch
+
 from click.testing import CliRunner
 
-from src.skill_hub.cli import install, list as list_cmd, search
+from src.skill_hub.cli import install, search
+from src.skill_hub.cli import list as list_cmd
 
 
 class TestInstallCommand:
@@ -16,9 +18,9 @@ class TestInstallCommand:
             mock_registry = Mock()
             mock_registry.install = AsyncMock(return_value=True)
             mock_get_registry.return_value = mock_registry
-            
+
             result = runner.invoke(install, ["test-skill"])
-            
+
             assert result.exit_code == 0
 
 
@@ -33,13 +35,13 @@ class TestListCommand:
             mock_manifest.name = "test-skill"
             mock_manifest.version = "1.0.0"
             mock_manifest.description = "A test skill"
-            
+
             mock_registry = Mock()
             mock_registry.list_installed = Mock(return_value=[mock_manifest])
             mock_get_registry.return_value = mock_registry
-            
+
             result = runner.invoke(list_cmd)
-            
+
             assert result.exit_code == 0
             assert "test-skill" in result.output
             assert "1.0.0" in result.output
@@ -57,12 +59,12 @@ class TestSearchCommand:
             mock_manifest.version = "2.0.0"
             mock_manifest.description = "Pytest integration"
             mock_manifest.author = "Test Author"
-            
+
             mock_registry = Mock()
             mock_registry.search = AsyncMock(return_value=[mock_manifest])
             mock_get_registry.return_value = mock_registry
-            
+
             result = runner.invoke(search, ["pytest"])
-            
+
             assert result.exit_code == 0
             assert "pytest-skill" in result.output

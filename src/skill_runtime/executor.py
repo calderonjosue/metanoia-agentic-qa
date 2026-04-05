@@ -8,7 +8,7 @@ import asyncio
 import logging
 from typing import Any, TypedDict
 
-from metanoia.skills.base import SkillExecutor, SkillExecutionError
+from metanoia.skills.base import SkillExecutionError, SkillExecutor
 
 logger = logging.getLogger(__name__)
 
@@ -34,8 +34,8 @@ class SkillExecutorEngine:
         self._active_executions: dict[str, asyncio.Task] = {}
 
     async def execute(
-        self, 
-        skill: SkillExecutor, 
+        self,
+        skill: SkillExecutor,
         input_data: dict[str, Any]
     ) -> ExecutionResult:
         """Execute a skill with the given input.
@@ -50,7 +50,7 @@ class SkillExecutorEngine:
         import time
         start_time = time.time()
         execution_id = f"{skill.name}-{start_time}"
-        
+
         try:
             if not await skill.validate_input(input_data):
                 return {
@@ -59,19 +59,19 @@ class SkillExecutorEngine:
                     "error": "Invalid input data",
                     "execution_time_ms": None
                 }
-            
+
             task = asyncio.create_task(
                 skill.execute(input_data)  # type: ignore[arg-type]
             )
             self._active_executions[execution_id] = task
-            
+
             try:
                 result = await asyncio.wait_for(
                     task,
                     timeout=self.timeout_seconds
                 )
                 execution_time_ms = (time.time() - start_time) * 1000
-                
+
                 return {
                     "status": str(result.get("status", "success")),
                     "data": dict(result),
@@ -89,7 +89,7 @@ class SkillExecutorEngine:
                 }
             finally:
                 self._active_executions.pop(execution_id, None)
-                
+
         except SkillExecutionError as e:
             execution_time_ms = (time.time() - start_time) * 1000
             logger.error(f"Skill execution error in {skill.name}: {e}")

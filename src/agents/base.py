@@ -5,10 +5,10 @@ specialized agents must implement.
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Optional
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
+from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 

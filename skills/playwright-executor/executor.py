@@ -7,7 +7,8 @@ automatic recovery when selectors break due to DOM changes.
 import logging
 from typing import Any, TypedDict
 
-from playwright.async_api import async_playwright, Page, Browser, BrowserContext
+from playwright.async_api import Browser, BrowserContext, Page, async_playwright
+
 from metanoia.skills.base import SkillExecutor
 
 logger = logging.getLogger(__name__)
@@ -56,15 +57,15 @@ class VisionHealer:
             screenshot_bytes = await page.screenshot()
             import base64
             base64.b64encode(screenshot_bytes).decode()
-            
+
 
             # This would call Gemini Vision API
             # For now, return a fallback strategy
             logger.info(f"Vision healing for selector: {broken_selector}")
-            
+
             # Fallback: try finding by text content or aria labels
             return await self._fallback_repair(page, original_action)
-            
+
         except Exception as e:
             logger.error(f"Vision healing failed: {e}")
             return None
@@ -92,26 +93,26 @@ class SelectorEngine:
     def generate_selectors(element_info: dict) -> list[str]:
         """Generate multiple selector candidates from element info."""
         selectors = []
-        
+
         if "id" in element_info:
             selectors.append(f"#{element_info['id']}")
-        
+
         if "class" in element_info:
             classes = element_info["class"]
             if isinstance(classes, list):
                 selectors.append("." + ".".join(classes))
             else:
                 selectors.append(f".{classes}")
-        
+
         if "tag" in element_info:
             selectors.append(element_info["tag"])
-        
+
         if "text" in element_info:
             selectors.append(f"text={element_info['text']}")
-        
+
         if "aria_label" in element_info:
             selectors.append(f"[aria-label='{element_info['aria_label']}']")
-        
+
         return selectors
 
     @staticmethod
@@ -154,29 +155,29 @@ class PlaywrightExecutor(SkillExecutor):
         target = input_data.get("target", "")
         url = input_data.get("url", "about:blank")
         timeout = input_data.get("timeout", 30000)
-        
+
         try:
             await self._ensure_browser()
             await self._ensure_page()
-            
+
             if action == "goto":
                 await self._page.goto(url, timeout=timeout)
                 return self._success_output(screenshot=True)
-            
+
             elif action == "click":
                 return await self._execute_with_healing(
                     action="click",
                     target=target,
                     timeout=timeout or 30000
                 )
-            
+
             elif action == "fill":
                 return await self._execute_with_healing(
                     action="fill",
                     target=target,
                     timeout=timeout or 30000
                 )
-            
+
             elif action == "screenshot":
                 await self._page.goto(url, timeout=timeout)
                 screenshot = await self._page.screenshot()
@@ -187,10 +188,10 @@ class PlaywrightExecutor(SkillExecutor):
                     "healed_selector": None,
                     "error": None
                 }
-            
+
             else:
                 return self._error_output(f"Unknown action: {action}")
-                
+
         except Exception as e:
             logger.exception("Playwright execution failed")
             return self._error_output(str(e))
@@ -214,14 +215,14 @@ class PlaywrightExecutor(SkillExecutor):
                     value = ""  # Would come from input_data
                     await element.fill(value)
                 return self._success_output()
-            
+
             # Selector failed - try vision healing
             healed_selector = None
             if self._vision_healer:
                 healed_selector = await self._vision_healer.analyze_and_repair(
                     self._page, target, action
                 )
-            
+
             if healed_selector:
                 element = await self._page.query_selector(healed_selector)
                 if element:
@@ -235,9 +236,9 @@ class PlaywrightExecutor(SkillExecutor):
                         "healed_selector": healed_selector,
                         "error": None
                     }
-            
+
             return self._error_output(f"Selector not found: {target}")
-            
+
         except Exception as e:
             return self._error_output(f"Action failed: {e}")
 

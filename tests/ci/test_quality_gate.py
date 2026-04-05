@@ -1,6 +1,7 @@
 """Tests for quality gate."""
 
 import pytest
+
 from src.ci.quality_gate import QualityGate
 
 

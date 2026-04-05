@@ -1,15 +1,14 @@
 """Provider registry for LLM factory."""
 
 from src.llm.base import LLMProvider
-from src.llm.openai import OpenAIProvider
-from src.llm.ollama import OllamaProvider
-from src.llm.vllm import vLLMProvider
+from src.llm.deepseek import DeepSeekProvider
+from src.llm.glm import GLMProvider
+from src.llm.kimi import KimiProvider
 from src.llm.llamacpp import LlamaCppProvider
 from src.llm.minimax import MiniMaxProvider
-from src.llm.kimi import KimiProvider
-from src.llm.glm import GLMProvider
-from src.llm.deepseek import DeepSeekProvider
-
+from src.llm.ollama import OllamaProvider
+from src.llm.openai import OpenAIProvider
+from src.llm.vllm import vLLMProvider
 
 _PROVIDERS = {
     "openai": OpenAIProvider,

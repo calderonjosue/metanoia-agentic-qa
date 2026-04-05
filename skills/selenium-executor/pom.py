@@ -4,11 +4,12 @@ This module provides utilities for creating maintainable page object models
 following the POM pattern.
 """
 
+from typing import Any, Optional
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from typing import Optional, Any
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 class page_element:

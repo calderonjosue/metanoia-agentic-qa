@@ -18,7 +18,7 @@ class AbortController:
         default_latency_threshold_ms: Default latency threshold in milliseconds.
         abort_timeout_seconds: Maximum time to wait for graceful abort.
     """
-    
+
     def __init__(
         self,
         default_error_rate_threshold: float = 0.5,
@@ -36,7 +36,7 @@ class AbortController:
         self.default_latency_threshold_ms = default_latency_threshold_ms
         self.abort_timeout_seconds = abort_timeout_seconds
         self._active_aborts: dict[str, float] = {}
-    
+
     def should_abort(self, health_metrics: dict) -> tuple[bool, str]:
         """Check if the chaos experiment should be aborted.
         
@@ -59,21 +59,21 @@ class AbortController:
         error_rate = health_metrics.get("error_rate", 0.0)
         if error_rate > self.default_error_rate_threshold:
             return True, f"Error rate {error_rate:.2%} exceeds threshold {self.default_error_rate_threshold:.2%}"
-        
+
         latency_p99 = health_metrics.get("latency_p99_ms", 0.0)
         if latency_p99 > self.default_latency_threshold_ms:
             return True, f"Latency P99 {latency_p99:.0f}ms exceeds threshold {self.default_latency_threshold_ms:.0f}ms"
-        
+
         success_rate = health_metrics.get("success_rate", 1.0)
         if success_rate < (1.0 - self.default_error_rate_threshold):
             return True, f"Success rate {success_rate:.2%} below threshold {1.0 - self.default_error_rate_threshold:.2%}"
-        
+
         error_count = health_metrics.get("error_count", 0)
         if error_count > 100:
             return True, f"Error count {error_count} exceeds threshold 100"
-        
+
         return False, ""
-    
+
     def trigger_abort(self, experiment_id: str) -> None:
         """Trigger immediate abort of a chaos experiment.
         
@@ -82,11 +82,11 @@ class AbortController:
         """
         logger.warning(f"ABORT TRIGGERED for experiment: {experiment_id}")
         self._active_aborts[experiment_id] = time.time()
-        
+
         logger.info(
             f"Experiment {experiment_id} abort initiated at {self._active_aborts[experiment_id]}"
         )
-    
+
     def is_aborted(self, experiment_id: str) -> bool:
         """Check if an experiment has been aborted.
         
@@ -97,7 +97,7 @@ class AbortController:
             True if the experiment has been aborted.
         """
         return experiment_id in self._active_aborts
-    
+
     def get_abort_duration(self, experiment_id: str) -> Optional[float]:
         """Get how long ago an abort was triggered.
         
@@ -110,7 +110,7 @@ class AbortController:
         if experiment_id not in self._active_aborts:
             return None
         return time.time() - self._active_aborts[experiment_id]
-    
+
     def clear_abort(self, experiment_id: str) -> None:
         """Clear abort state for an experiment.
         
@@ -120,7 +120,7 @@ class AbortController:
         if experiment_id in self._active_aborts:
             del self._active_aborts[experiment_id]
             logger.info(f"Abort state cleared for experiment: {experiment_id}")
-    
+
     def abort_if_health_checks_fail(
         self,
         health_metrics: dict,
@@ -141,7 +141,7 @@ class AbortController:
         if should_abort:
             self.trigger_abort(experiment_id)
         return should_abort, reason
-    
+
     def abort_if_error_rate_exceeds(
         self,
         error_rate: float,

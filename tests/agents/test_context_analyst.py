@@ -1,14 +1,15 @@
 """Tests for ContextAnalyst agent."""
 
-import pytest
 from unittest.mock import AsyncMock, Mock
+
+import pytest
 
 from src.agents.context_analyst import (
     ContextAnalyst,
-    SprintScope,
-    HistoricalSimilarity,
     FlakyTest,
+    HistoricalSimilarity,
     ModuleRisk,
+    SprintScope,
 )
 
 
@@ -18,7 +19,7 @@ class TestSprintScope:
     def test_sprint_scope_from_string(self):
         """Test creating SprintScope from string."""
         scope = SprintScope(description="Implement checkout flow")
-        
+
         assert scope.description == "Implement checkout flow"
         assert scope.modules == []
         assert scope.features == []
@@ -32,7 +33,7 @@ class TestSprintScope:
             features=["credit_card", "paypal"],
             test_types=["functional", "security"]
         )
-        
+
         assert scope.modules == ["payment", "billing"]
         assert scope.features == ["credit_card", "paypal"]
         assert scope.test_types == ["functional", "security"]
@@ -52,7 +53,7 @@ class TestHistoricalSimilarity:
             defect_density=0.3,
             test_effectiveness=0.85
         )
-        
+
         assert similarity.sprint_id == "SP-40"
         assert similarity.similarity_score == 0.75
 
@@ -83,7 +84,7 @@ class TestFlakyTest:
             last_failure="2024-01-15T10:30:00Z",
             root_cause="Race condition"
         )
-        
+
         assert flaky.failure_rate == 0.15
         assert flaky.root_cause == "Race condition"
 
@@ -150,7 +151,7 @@ class TestContextAnalyst:
             "payment checkout cart",
             "payment cart billing"
         )
-        
+
         assert 0 <= similarity <= 1
         assert similarity > 0
 
@@ -164,7 +165,7 @@ class TestContextAnalyst:
         """Test module extraction from description."""
         description = "Implement payment processing and user authentication"
         modules = context_analyst._extract_modules_from_description(description)
-        
+
         assert "payment" in modules
         assert "auth" in modules
 
@@ -185,9 +186,9 @@ class TestContextAnalyst:
             ])
         )
         mock_supabase.table.return_value = mock_table
-        
+
         results = await context_analyst._direct_db_search("payment checkout", lookback=3)
-        
+
         assert isinstance(results, list)
         assert len(results) > 0
         assert results[0]["sprint_id"] == "SP-40"
@@ -200,9 +201,9 @@ class TestContextAnalyst:
             return_value=Mock(data=[])
         )
         mock_supabase.table.return_value = mock_table
-        
+
         results = await context_analyst._direct_db_search("xyz123", lookback=3)
-        
+
         assert results == []
 
     @pytest.mark.asyncio
@@ -217,9 +218,9 @@ class TestContextAnalyst:
             ])
         )
         mock_supabase.table.return_value = mock_table
-        
+
         flaky = await context_analyst._get_flaky_tests(["auth"], lookback=3)
-        
+
         assert len(flaky) > 0
         assert flaky[0].module == "auth"
         assert flaky[0].failure_rate > 0
@@ -228,7 +229,7 @@ class TestContextAnalyst:
     async def test_get_flaky_tests_empty_modules(self, context_analyst):
         """Test flaky tests returns empty for no modules."""
         flaky = await context_analyst._get_flaky_tests([], lookback=3)
-        
+
         assert flaky == []
 
     @pytest.mark.asyncio
@@ -241,23 +242,23 @@ class TestContextAnalyst:
                 {"id": "D2", "severity": "high", "detected_at": "2024-01-02"},
             ])
         )
-        
+
         mock_tests_table = Mock()
         mock_tests_table.select.return_value.eq.return_value.execute = AsyncMock(
             return_value=Mock(data=[{"id": "T1"}, {"id": "T2"}, {"id": "T3"}])
         )
-        
+
         def table_side_effect(name):
             if name == "defects":
                 return mock_defects_table
             elif name == "test_results":
                 return mock_tests_table
             return Mock()
-        
+
         mock_supabase.table.side_effect = table_side_effect
-        
+
         risks = await context_analyst._calculate_defect_density(["auth"])
-        
+
         assert len(risks) == 1
         assert risks[0].module_name == "auth"
         assert risks[0].defect_density > 0
@@ -266,7 +267,7 @@ class TestContextAnalyst:
     async def test_calculate_defect_density_empty_modules(self, context_analyst):
         """Test defect density returns empty for no modules."""
         risks = await context_analyst._calculate_defect_density([])
-        
+
         assert risks == []
 
     @pytest.mark.asyncio
@@ -297,12 +298,12 @@ class TestContextAnalyst:
             return_value=Mock(data=[{"id": "T1"}])
         )
         mock_supabase.table.return_value = mock_table
-        
+
         result = await context_analyst.analyze(
             sprint_scope="Implement payment processing",
             lookback=3
         )
-        
+
         assert "risk_level" in result
         assert "risk_score" in result
         assert "similar_sprints" in result
@@ -319,12 +320,12 @@ class TestContextAnalyst:
             return_value=Mock(data=[])
         )
         mock_supabase.table.return_value = mock_table
-        
+
         result = await context_analyst.analyze(
             sprint_scope="Simple sprint goal",
             lookback=1
         )
-        
+
         assert isinstance(result, dict)
         assert "risk_level" in result
 
@@ -332,7 +333,7 @@ class TestContextAnalyst:
     async def test_analyze_risk_level_calculation(self, context_analyst, mock_supabase):
         """Test risk level is calculated correctly based on score."""
         mock_table = Mock()
-        
+
         def mock_select(*args):
             mock_q = Mock()
             mock_q.select.return_value = mock_q
@@ -342,12 +343,12 @@ class TestContextAnalyst:
                 {"id": "SP-1", "name": "S1", "description": "test", "modules": ["auth"], "defect_density": 0.8, "test_effectiveness": 0.5}
             ]))
             return mock_q
-        
+
         mock_table.select.side_effect = mock_select
         mock_supabase.table.return_value = mock_table
-        
+
         result = await context_analyst.analyze("test", lookback=1)
-        
+
         assert result["risk_level"] in ["low", "medium", "high", "critical"]
         expected_levels = ["low", "medium", "high", "critical"]
         assert result["risk_level"] in expected_levels

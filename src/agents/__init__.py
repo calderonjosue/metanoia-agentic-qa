@@ -16,31 +16,35 @@ Execution Agents:
 """
 
 from src.agents.context_analyst import (
-    ContextAnalyst,
     ContextAnalysisResult,
-    SprintScope,
-    HistoricalSimilarity,
+    ContextAnalyst,
     FlakyTest,
+    HistoricalSimilarity,
     ModuleRisk,
-)
-from src.agents.strategy_manager import (
-    StrategyManager,
-    TestPlan,
-    EffortDistribution,
-    TestPriority,
+    SprintScope,
 )
 from src.agents.design_lead import (
+    SyntheticDataTemplate,
+    TestCase,
     TestDesignLead,
     TestDesignResult,
-    TestScenario,
-    TestCase,
     TestEnvironment,
-    SyntheticDataTemplate,
+    TestScenario,
 )
-from src.agents.ui_automation import UIAutomationEngineer, TestResult as UITestResult
-from src.agents.performance import PerformanceEngineer, TestResult as PerfTestResult, PerformanceMetrics
-from src.agents.security import SecurityEngineer, TestResult as SecTestResult, SecurityFinding
-from src.agents.release_analyst import ReleaseAnalyst, TestResult as ReleaseTestResult, ReleaseScore, AgentResult
+from src.agents.performance import PerformanceEngineer, PerformanceMetrics
+from src.agents.performance import TestResult as PerfTestResult
+from src.agents.release_analyst import AgentResult, ReleaseAnalyst, ReleaseScore
+from src.agents.release_analyst import TestResult as ReleaseTestResult
+from src.agents.security import SecurityEngineer, SecurityFinding
+from src.agents.security import TestResult as SecTestResult
+from src.agents.strategy_manager import (
+    EffortDistribution,
+    StrategyManager,
+    TestPlan,
+    TestPriority,
+)
+from src.agents.ui_automation import TestResult as UITestResult
+from src.agents.ui_automation import UIAutomationEngineer
 
 __all__ = [
     "ContextAnalyst",

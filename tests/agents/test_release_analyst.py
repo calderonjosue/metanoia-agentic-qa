@@ -3,8 +3,8 @@
 import pytest
 
 from src.agents.release_analyst import (
-    ReleaseAnalyst,
     AgentResult,
+    ReleaseAnalyst,
     ReleaseScore,
 )
 
@@ -23,7 +23,7 @@ class TestAgentResult:
             status="completed",
             metadata={"findings": []}
         )
-        
+
         assert result.agent_name == "functional-lead"
         assert result.passed == 45
         assert result.failed == 2
@@ -45,7 +45,7 @@ class TestReleaseScore:
                 "performance_contribution": 20.0
             }
         )
-        
+
         assert score.overall == 85.5
         assert score.functional == 90.0
 
@@ -123,7 +123,7 @@ class TestReleaseAnalyst:
             security_pct=100.0,
             ui_pct=100.0
         )
-        
+
         assert score.overall == 100.0
         assert score.functional == 100.0
         assert score.performance == 100.0
@@ -138,7 +138,7 @@ class TestReleaseAnalyst:
             security_pct=100.0,
             ui_pct=100.0
         )
-        
+
         expected = 80.0 * 0.35 + 100.0 * 0.25 + 100.0 * 0.25 + 100.0 * 0.15
         assert score.overall == expected
 
@@ -150,7 +150,7 @@ class TestReleaseAnalyst:
             security_pct=100.0,
             ui_pct=100.0
         )
-        
+
         assert score.weighted_factors["functional_contribution"] == 35.0
         assert score.weighted_factors["performance_contribution"] == 25.0
         assert score.weighted_factors["security_contribution"] == 25.0
@@ -160,9 +160,9 @@ class TestReleaseAnalyst:
     async def test_execute_collects_results(self, release_analyst, sample_agent_results):
         """Test execute collects results from all agents."""
         context = {"agent_results": sample_agent_results}
-        
+
         result = await release_analyst.execute([], context)
-        
+
         assert result.passed == 98
         assert result.failed == 3
         assert result.skipped == 2
@@ -183,9 +183,9 @@ class TestReleaseAnalyst:
                 }
             }
         }
-        
+
         result = await release_analyst.execute([], context)
-        
+
         assert result.passed == 30
         assert result.failed == 2
 
@@ -193,9 +193,9 @@ class TestReleaseAnalyst:
         """Test get_release_score returns current score."""
         for name, result in sample_agent_results.items():
             release_analyst._agent_results[name] = result
-        
+
         score = release_analyst.get_release_score()
-        
+
         assert isinstance(score, ReleaseScore)
         assert 0 <= score.overall <= 100
 
@@ -207,9 +207,9 @@ class TestReleaseAnalyst:
                 duration=100.0, status="completed", metadata={}
             )
         }
-        
+
         score = release_analyst._calculate_release_score()
-        
+
         assert score.overall == 100.0
 
     def test_calculate_release_score_all_fail(self, release_analyst):
@@ -220,17 +220,17 @@ class TestReleaseAnalyst:
                 duration=100.0, status="completed", metadata={}
             )
         }
-        
+
         score = release_analyst._calculate_release_score()
-        
+
         assert score.overall == 0.0
 
     def test_calculate_release_score_missing_agent(self, release_analyst):
         """Test score calculation with missing agents returns 100."""
         release_analyst._agent_results = {}
-        
+
         score = release_analyst._calculate_release_score()
-        
+
         assert score.functional == 100.0
 
     def test_make_recommendation_go(self, release_analyst):
@@ -243,9 +243,9 @@ class TestReleaseAnalyst:
             ui=90.0,
             weighted_factors={}
         )
-        
+
         recommendation = release_analyst._make_recommendation(score, {})
-        
+
         assert recommendation["decision"] in ["GO", "FAST-TRACK GO"]
 
     def test_make_recommendation_no_go_low_score(self, release_analyst):
@@ -258,9 +258,9 @@ class TestReleaseAnalyst:
             ui=60.0,
             weighted_factors={}
         )
-        
+
         recommendation = release_analyst._make_recommendation(score, {})
-        
+
         assert recommendation["decision"] == "NO-GO"
         assert len(recommendation["blockers"]) > 0
 
@@ -277,9 +277,9 @@ class TestReleaseAnalyst:
         results = {
             "security-lead": {"failed": 1, "metadata": {}}
         }
-        
+
         recommendation = release_analyst._make_recommendation(score, results)
-        
+
         assert recommendation["decision"] == "NO-GO"
 
     def test_make_recommendation_fast_track(self, release_analyst):
@@ -292,9 +292,9 @@ class TestReleaseAnalyst:
             ui=95.0,
             weighted_factors={}
         )
-        
+
         recommendation = release_analyst._make_recommendation(score, {})
-        
+
         assert recommendation["decision"] == "FAST-TRACK GO"
 
     def test_make_recommendation_conditional_go(self, release_analyst):
@@ -315,9 +315,9 @@ class TestReleaseAnalyst:
                 }
             }
         }
-        
+
         recommendation = release_analyst._make_recommendation(score, results)
-        
+
         assert recommendation["decision"] == "CONDITIONAL-GO"
 
     def test_count_failures_by_agent(self, release_analyst):
@@ -329,7 +329,7 @@ class TestReleaseAnalyst:
                 skipped=0, duration=100.0, status="completed", metadata={}
             )
         }
-        
+
         assert release_analyst._count_failures_by_agent("security-lead", results) == 3
         assert release_analyst._count_failures_by_agent("performance-lead", results) == 2
         assert release_analyst._count_failures_by_agent("unknown", results) == 0
@@ -353,18 +353,18 @@ class TestReleaseAnalyst:
                 }
             }
         }
-        
+
         count = release_analyst._count_critical_failures(results)
-        
+
         assert count == 2
 
     def test_analyze_business_impact(self, release_analyst, sample_agent_results):
         """Test business impact analysis."""
         for name, result in sample_agent_results.items():
             release_analyst._agent_results[name] = result
-        
+
         impact = release_analyst._analyze_business_impact()
-        
+
         assert "functional-lead" in impact
         assert "performance-lead" in impact
 
@@ -379,15 +379,15 @@ class TestReleaseAnalyst:
             status="completed",
             metadata={}
         )
-        
+
         impact = release_analyst._estimate_business_impact("security-lead", result)
-        
+
         assert impact == "critical"
 
     def test_get_affected_business_areas(self, release_analyst):
         """Test getting affected business areas."""
         areas = release_analyst._get_affected_business_areas("security-lead")
-        
+
         assert "Customer Data" in areas
         assert "Compliance" in areas
 
@@ -398,9 +398,9 @@ class TestReleaseAnalyst:
             security=85.0, ui=85.0, weighted_factors={}
         )
         recommendation = {"decision": "GO", "reasoning": []}
-        
+
         summary = release_analyst._generate_executive_summary(score, recommendation)
-        
+
         assert "85.0%" in summary
         assert "GO" in summary
 
@@ -411,9 +411,9 @@ class TestReleaseAnalyst:
             security=55.0, ui=65.0, weighted_factors={}
         )
         recommendation = {"decision": "NO-GO", "reasoning": ["Score below threshold"]}
-        
+
         summary = release_analyst._generate_executive_summary(score, recommendation)
-        
+
         assert "60.0%" in summary
         assert "NO-GO" in summary
 
@@ -424,9 +424,9 @@ class TestReleaseAnalyst:
             security=98.0, ui=95.0, weighted_factors={}
         )
         recommendation = {"decision": "FAST-TRACK GO"}
-        
+
         cert = release_analyst._determine_certification(score, recommendation)
-        
+
         assert cert["level"] == "GOLD"
 
     def test_determine_certification_silver(self, release_analyst):
@@ -436,9 +436,9 @@ class TestReleaseAnalyst:
             security=85.0, ui=85.0, weighted_factors={}
         )
         recommendation = {"decision": "GO"}
-        
+
         cert = release_analyst._determine_certification(score, recommendation)
-        
+
         assert cert["level"] == "SILVER"
 
     def test_determine_certification_bronze(self, release_analyst):
@@ -448,9 +448,9 @@ class TestReleaseAnalyst:
             security=75.0, ui=75.0, weighted_factors={}
         )
         recommendation = {"decision": "CONDITIONAL-GO"}
-        
+
         cert = release_analyst._determine_certification(score, recommendation)
-        
+
         assert cert["level"] == "BRONZE"
 
     def test_determine_certification_none(self, release_analyst):
@@ -460,35 +460,35 @@ class TestReleaseAnalyst:
             security=45.0, ui=55.0, weighted_factors={}
         )
         recommendation = {"decision": "NO-GO"}
-        
+
         cert = release_analyst._determine_certification(score, recommendation)
-        
+
         assert cert["level"] == "NONE"
 
     def test_generate_next_steps_go(self, release_analyst):
         """Test next steps for GO."""
         recommendation = {"decision": "GO"}
-        
+
         steps = release_analyst._generate_next_steps(recommendation)
-        
+
         assert len(steps) > 0
         assert any("release" in s.lower() for s in steps)
 
     def test_generate_next_steps_no_go(self, release_analyst):
         """Test next steps for NO-GO."""
         recommendation = {"decision": "NO-GO"}
-        
+
         steps = release_analyst._generate_next_steps(recommendation)
-        
+
         assert len(steps) > 0
 
     def test_generate_release_report(self, release_analyst, sample_agent_results):
         """Test complete release report generation."""
         for name, result in sample_agent_results.items():
             release_analyst._agent_results[name] = result
-        
+
         report = release_analyst.generate_release_report()
-        
+
         assert "title" in report
         assert "timestamp" in report
         assert "executive_summary" in report
@@ -500,7 +500,7 @@ class TestReleaseAnalyst:
     def test_generate_report_path(self, release_analyst):
         """Test report path generation."""
         path = release_analyst._generate_report_path()
-        
+
         assert "reports/" in path
         assert "release_certification_" in path
         assert path.endswith(".json")
@@ -513,9 +513,9 @@ class TestReleaseAnalyst:
             "error": "High latency detected",
             "business_impact": "high"
         }
-        
+
         result = await release_analyst.heal(failure)
-        
+
         assert result["status"] == "analyzed"
         assert result["agent"] == "performance-lead"
         assert len(result["recommendations"]) > 0
@@ -528,9 +528,9 @@ class TestReleaseAnalyst:
             "error": "SQL injection vulnerability",
             "business_impact": "critical"
         }
-        
+
         result = await release_analyst.heal(failure)
-        
+
         assert result["block_release"] is True
 
     @pytest.mark.asyncio
@@ -541,7 +541,7 @@ class TestReleaseAnalyst:
             "error": "Broken selectors",
             "business_impact": "medium"
         }
-        
+
         result = await release_analyst.heal(failure)
-        
+
         assert "broken UI selectors" in result["recommendations"][0]

@@ -4,9 +4,10 @@ This module provides endpoints for starting, monitoring, and
 managing quality missions (sprints) in the STLC pipeline.
 """
 
+from typing import Optional
+
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
-from typing import Optional
 
 router = APIRouter(prefix="/v1/metanoia/sprint", tags=["Sprint"])
 

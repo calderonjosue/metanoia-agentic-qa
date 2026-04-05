@@ -28,13 +28,13 @@ class HubExecutorEngine:
         self._active_executions: dict[str, asyncio.Task] = {}
 
     async def execute(
-        self, 
-        skill: "SkillHubExecutor", 
+        self,
+        skill: "SkillHubExecutor",
         input_data: dict[str, Any]
     ) -> ExecutionResult:
         start_time = time.time()
         execution_id = f"{skill.name}-{start_time}"
-        
+
         try:
             if not await skill.validate_input(input_data):
                 return {
@@ -43,14 +43,14 @@ class HubExecutorEngine:
                     "error": "Invalid input data",
                     "execution_time_ms": None
                 }
-            
+
             task = asyncio.create_task(skill.execute(input_data))
             self._active_executions[execution_id] = task
-            
+
             try:
                 result = await asyncio.wait_for(task, timeout=self.timeout_seconds)
                 execution_time_ms = (time.time() - start_time) * 1000
-                
+
                 return {
                     "status": str(result.get("status", "success")),
                     "data": dict(result),
@@ -68,7 +68,7 @@ class HubExecutorEngine:
                 }
             finally:
                 self._active_executions.pop(execution_id, None)
-                
+
         except SkillExecutionError as e:
             execution_time_ms = (time.time() - start_time) * 1000
             logger.error(f"Skill execution error in {skill.name}: {e}")

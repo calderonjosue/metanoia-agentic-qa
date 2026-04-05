@@ -1,9 +1,10 @@
 """Shared test case library for multi-team collaboration."""
 
-from typing import Optional, List
-from pydantic import BaseModel, Field
-from datetime import datetime
 import uuid
+from datetime import datetime
+from typing import List, Optional
+
+from pydantic import BaseModel, Field
 
 
 class SharedTestCase(BaseModel):
@@ -67,12 +68,12 @@ class SharedLibrary:
     """
     Manages shared test case library across teams.
     """
-    
+
     def __init__(self, supabase_client=None):
         self.supabase = supabase_client
         self._storage: dict[str, SharedTestCase] = {}
         self._forks: dict[str, TestCaseFork] = {}
-    
+
     async def create_test_case(
         self,
         team_id: str,
@@ -92,7 +93,7 @@ class SharedLibrary:
         """
         test_case_id = str(uuid.uuid4())
         now = datetime.now()
-        
+
         new_test_case = SharedTestCase(
             id=test_case_id,
             team_id=team_id,
@@ -107,14 +108,14 @@ class SharedLibrary:
             version=1,
             fork_count=0
         )
-        
+
         self._storage[test_case_id] = new_test_case
-        
+
         if self.supabase:
             await self._persist_test_case(new_test_case)
-        
+
         return new_test_case
-    
+
     async def fork_test_case(
         self,
         test_case_id: str,
@@ -137,10 +138,10 @@ class SharedLibrary:
         original = self._storage.get(test_case_id)
         if not original:
             raise ValueError(f"Test case {test_case_id} not found")
-        
+
         fork_id = str(uuid.uuid4())
         now = datetime.now()
-        
+
         fork = TestCaseFork(
             id=fork_id,
             original_id=test_case_id,
@@ -149,12 +150,12 @@ class SharedLibrary:
             modifications=modifications or {},
             created_at=now
         )
-        
+
         self._forks[fork_id] = fork
-        
+
         original.fork_count += 1
         self._storage[test_case_id] = original
-        
+
         new_test_case = SharedTestCase(
             id=f"forked_{fork_id}",
             team_id=target_team,
@@ -170,9 +171,9 @@ class SharedLibrary:
             fork_count=0
         )
         self._storage[new_test_case.id] = new_test_case
-        
+
         return fork
-    
+
     async def search_library(
         self,
         team_id: str,
@@ -194,24 +195,24 @@ class SharedLibrary:
         """
         results = []
         query_lower = query.lower()
-        
+
         for test_case in self._storage.values():
             if test_case.team_id != team_id:
                 continue
-            
+
             if query_lower not in test_case.name.lower() and query_lower not in test_case.description.lower():
                 continue
-            
+
             if tags and not any(tag in test_case.tags for tag in tags):
                 continue
-            
+
             if module and test_case.module != module:
                 continue
-            
+
             results.append(test_case)
-        
+
         return results
-    
+
     async def update_test_case(
         self,
         test_case_id: str,
@@ -232,9 +233,9 @@ class SharedLibrary:
         original = self._storage.get(test_case_id)
         if not original:
             raise ValueError(f"Test case {test_case_id} not found")
-        
+
         now = datetime.now()
-        
+
         updated = SharedTestCase(
             id=original.id,
             team_id=original.team_id,
@@ -249,32 +250,32 @@ class SharedLibrary:
             version=original.version + 1,
             fork_count=original.fork_count
         )
-        
+
         self._storage[test_case_id] = updated
         return updated
-    
+
     async def get_test_case(self, test_case_id: str) -> Optional[SharedTestCase]:
         """Get a specific test case by ID."""
         return self._storage.get(test_case_id)
-    
+
     async def delete_test_case(self, test_case_id: str) -> bool:
         """Delete a test case from the library."""
         if test_case_id in self._storage:
             del self._storage[test_case_id]
             return True
         return False
-    
+
     async def get_team_library(self, team_id: str) -> List[SharedTestCase]:
         """Get all test cases for a team."""
         return [tc for tc in self._storage.values() if tc.team_id == team_id]
-    
+
     async def _persist_test_case(self, test_case: SharedTestCase) -> None:
         """Persist test case to Supabase."""
         if not self.supabase:
             return
-        
+
         data = test_case.model_dump()
         data["created_at"] = data["created_at"].isoformat()
         data["updated_at"] = data["updated_at"].isoformat()
-        
+
         self.supabase.table("shared_test_cases").insert(data).execute()

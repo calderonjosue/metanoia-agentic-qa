@@ -3,8 +3,8 @@
 Local cache of skill manifests and GitHub-based registry lookup.
 """
 
-import logging
 import json
+import logging
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -72,7 +72,7 @@ class CommunitySkillRegistry:
 
     async def fetch_manifest(self, skill_name: str) -> SkillManifest | None:
         import httpx
-        
+
         url = f"https://raw.githubusercontent.com/metanoia-qa/skills/main/{skill_name}/skill-manifest.yaml"
         try:
             async with httpx.AsyncClient() as client:
@@ -96,14 +96,14 @@ class CommunitySkillRegistry:
         manifest = await self.fetch_manifest(skill_name)
         if manifest is None:
             return False
-        
+
         install_path = self.cache_dir / skill_name
         install_path.mkdir(parents=True, exist_ok=True)
-        
+
         manifest_path = install_path / "skill-manifest.yaml"
         with open(manifest_path, "w") as f:
             yaml.dump(manifest.model_dump(), f)
-        
+
         self._cache[skill_name] = CachedSkill(
             manifest=manifest,
             local_path=install_path,
@@ -115,12 +115,12 @@ class CommunitySkillRegistry:
     def uninstall(self, skill_name: str) -> bool:
         if skill_name not in self._cache:
             return False
-        
+
         cached = self._cache[skill_name]
         if cached.local_path and cached.local_path.exists():
             import shutil
             shutil.rmtree(cached.local_path)
-        
+
         del self._cache[skill_name]
         self._save_cache()
         return True

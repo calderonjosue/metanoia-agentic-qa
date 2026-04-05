@@ -1,13 +1,14 @@
 """Tests for DesignLead agent."""
 
-import pytest
 from unittest.mock import AsyncMock, Mock
 
+import pytest
+
 from src.agents.design_lead import (
-    TestDesignLead,
-    TestScenario,
     TestCase,
+    TestDesignLead,
     TestEnvironment,
+    TestScenario,
 )
 
 
@@ -26,7 +27,7 @@ class TestTestScenario:
             happy_path=True,
             edge_cases=[]
         )
-        
+
         assert scenario.scenario_id == "SCEN_001"
         assert scenario.happy_path is True
         assert len(scenario.test_steps) == 3
@@ -50,7 +51,7 @@ class TestTestCase:
             assertions=["User logged in"],
             tags=["smoke", "auth"]
         )
-        
+
         assert test_case.priority == "high"
         assert test_case.module == "auth"
 
@@ -86,7 +87,7 @@ class TestTestEnvironment:
             network_config={"vpc": "vpc-123"},
             secrets_required=["api_key"]
         )
-        
+
         assert env.type == "staging"
         assert len(env.required_services) == 2
 
@@ -183,9 +184,9 @@ class TestTestDesignLead:
             happy_path=True,
             edge_cases=[]
         )
-        
+
         edge_cases = design_lead_no_llm._generate_default_edge_cases(scenario, "auth")
-        
+
         assert len(edge_cases) == 4
         assert all("case_name" in ec for ec in edge_cases)
         assert all("case_type" in ec for ec in edge_cases)
@@ -203,9 +204,9 @@ class TestTestDesignLead:
             happy_path=True,
             edge_cases=[]
         )
-        
+
         edge_cases = await design_lead._infer_edge_cases_llm(scenario, "auth")
-        
+
         assert len(edge_cases) > 0
         assert edge_cases[0]["case_type"] == "boundary"
 
@@ -222,9 +223,9 @@ class TestTestDesignLead:
             happy_path=True,
             edge_cases=[]
         )
-        
+
         edge_cases = await design_lead_no_llm._infer_edge_cases_llm(scenario, "auth")
-        
+
         assert len(edge_cases) == 4
 
     @pytest.mark.asyncio
@@ -233,7 +234,7 @@ class TestTestDesignLead:
         scenarios = await design_lead._generate_scenarios(
             sample_test_plan, "Implement authentication flow"
         )
-        
+
         assert len(scenarios) > 0
         assert all(isinstance(s, TestScenario) for s in scenarios)
 
@@ -243,7 +244,7 @@ class TestTestDesignLead:
         scenarios = await design_lead._generate_scenarios(
             sample_test_plan, "Test sprint"
         )
-        
+
         assert all(len(s.edge_cases) > 0 for s in scenarios[:3])
 
     @pytest.mark.asyncio
@@ -252,7 +253,7 @@ class TestTestDesignLead:
         scenarios = await design_lead._generate_scenarios(
             sample_test_plan, "Performance and load testing sprint"
         )
-        
+
         assert any("performance" in s.scenario_name.lower() for s in scenarios)
 
     def test_create_test_cases_from_scenarios(self, design_lead_no_llm):
@@ -277,9 +278,9 @@ class TestTestDesignLead:
                 ]
             )
         ]
-        
+
         test_cases = design_lead_no_llm._create_test_cases_from_scenarios(scenarios)
-        
+
         assert len(test_cases) == 2
         assert any("happy" in tc.case_name.lower() for tc in test_cases)
         assert any("edge" in tc.case_name.lower() for tc in test_cases)
@@ -296,9 +297,9 @@ class TestTestDesignLead:
             happy_path=True,
             edge_cases=[]
         )
-        
+
         data = design_lead_no_llm._generate_test_data_for_scenario(scenario)
-        
+
         assert isinstance(data, dict)
         assert len(data) > 0
 
@@ -307,7 +308,7 @@ class TestTestDesignLead:
         env = design_lead_no_llm._design_test_environment(
             sample_test_plan, "Staging release sprint"
         )
-        
+
         assert isinstance(env, TestEnvironment)
         assert env.type == "staging"
         assert len(env.required_services) > 0
@@ -317,7 +318,7 @@ class TestTestDesignLead:
         env = design_lead_no_llm._design_test_environment(
             sample_test_plan, "Production release sprint"
         )
-        
+
         assert env.type == "production"
 
     def test_design_test_environment_performance(self, design_lead_no_llm, sample_test_plan):
@@ -325,7 +326,7 @@ class TestTestDesignLead:
         env = design_lead_no_llm._design_test_environment(
             sample_test_plan, "Performance testing sprint"
         )
-        
+
         assert "load_balancer" in env.required_services
         assert "monitoring" in env.required_services
 
@@ -334,7 +335,7 @@ class TestTestDesignLead:
         env = design_lead_no_llm._design_test_environment(
             sample_test_plan, "Security hardening sprint"
         )
-        
+
         assert "identity_provider" in env.required_services
         assert "secret_manager" in env.required_services
 
@@ -352,9 +353,9 @@ class TestTestDesignLead:
                 edge_cases=[]
             )
         ]
-        
+
         templates = design_lead_no_llm._generate_synthetic_data_templates(scenarios)
-        
+
         assert len(templates) == 5
         entity_types = [t.entity_type for t in templates]
         assert "user" in entity_types
@@ -402,9 +403,9 @@ class TestTestDesignLead:
                 tags=["edge_case", "SCEN_01"]
             )
         ]
-        
+
         metrics = design_lead_no_llm._calculate_coverage_metrics(scenarios, test_cases)
-        
+
         assert "happy_path_coverage" in metrics
         assert "edge_case_coverage" in metrics
         assert "module_coverage" in metrics
@@ -417,7 +418,7 @@ class TestTestDesignLead:
         result = await design_lead.design_tests(
             sample_test_plan, "Implement authentication"
         )
-        
+
         assert "scenarios" in result
         assert "test_cases" in result
         assert "environment" in result
@@ -431,7 +432,7 @@ class TestTestDesignLead:
         result = await design_lead.design_tests(
             sample_test_plan, "Test sprint"
         )
-        
+
         assert len(result["test_cases"]) > 0
         assert all("case_id" in tc for tc in result["test_cases"])
 
@@ -441,7 +442,7 @@ class TestTestDesignLead:
         result = await design_lead.design_tests(
             sample_test_plan, "Staging QA sprint"
         )
-        
+
         assert result["environment"] is not None
         assert "environment_id" in result["environment"]
         assert "type" in result["environment"]
@@ -452,7 +453,7 @@ class TestTestDesignLead:
         result = await design_lead.design_tests(
             sample_test_plan, "Test sprint"
         )
-        
+
         metrics = result["coverage_metrics"]
         assert "total_scenarios" in metrics
         assert "total_test_cases" in metrics

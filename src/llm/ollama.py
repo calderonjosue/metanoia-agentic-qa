@@ -81,8 +81,8 @@ class OllamaProvider(LLMProvider):
             False otherwise or if API call fails.
         """
         try:
-            import urllib.request
             import json
+            import urllib.request
 
             url = f"{self.base_url}/api/tags"
             req = urllib.request.Request(url, headers={"Content-Type": "application/json"})

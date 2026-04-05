@@ -1,8 +1,8 @@
 """GitHub integration module for PR status, comments, and merges."""
 
 from src.github.integration import (
-    GitHubIntegration,
     CommitStatus,
+    GitHubIntegration,
     MergeResult,
     PRComment,
 )

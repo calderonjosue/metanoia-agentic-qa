@@ -8,9 +8,8 @@ import os
 from typing import Optional
 from urllib.parse import urlparse
 
-from supabase import create_client, Client
+from supabase import Client, create_client
 from supabase.lib.client_options import ClientOptions
-
 
 _supabase_client: Optional[Client] = None
 

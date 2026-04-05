@@ -1,10 +1,10 @@
 """Team management and collaboration API routes."""
 
+from datetime import datetime
+from typing import List
+
 from fastapi import APIRouter, status
 from pydantic import BaseModel, Field
-from typing import List
-from datetime import datetime
-
 
 router = APIRouter(prefix="/v1/metanoia/teams", tags=["Teams"])
 
@@ -63,7 +63,7 @@ async def create_team(team_data: TeamCreate):
     """Create a new team."""
     team_id = f"team_{datetime.now().timestamp()}"
     now = datetime.now()
-    
+
     return Team(
         id=team_id,
         name=team_data.name,
@@ -92,7 +92,7 @@ async def get_team(team_id: str):
 async def add_member(team_id: str, member_data: MemberAdd):
     """Add a member to team."""
     member_id = f"member_{datetime.now().timestamp()}"
-    
+
     return TeamMember(
         id=member_id,
         user_id=member_data.user_id,

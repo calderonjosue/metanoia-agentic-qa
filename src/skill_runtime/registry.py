@@ -64,7 +64,7 @@ class SkillRegistry:
                 author=getattr(executor_class, "author", "Unknown"),
                 description=getattr(executor_class, "description", ""),
             )
-        
+
         self._skills[name] = metadata
         self._executors[name] = executor_class
         logger.info(f"Registered skill: {name} v{metadata.version}")

@@ -97,12 +97,12 @@ class ContextAnalyst:
         try:
             from langchain_openai import OpenAIEmbeddings
             from langchain_postgres import PGVector
-            
+
             embeddings = OpenAIEmbeddings(
                 model="models/embedding-001",
                 api_key=self.gemini_client.api_key
             )
-            
+
             self._vector_store = PGVector(
                 connection=str(self.supabase_client.connection_string),
                 embeddings=embeddings,
@@ -128,11 +128,11 @@ class ContextAnalyst:
         """
         if self._vector_store is None:
             await self._initialize_vector_store()
-        
+
         if self._vector_store is None:
             logger.warning("Vector store not available, using direct DB query")
             return await self._direct_db_search(query, lookback)
-        
+
         try:
             results = await self._vector_store.similarity_search(
                 query=query,
@@ -163,36 +163,36 @@ class ContextAnalyst:
             ).order(
                 "created_at", desc=True
             ).limit(lookback * 2).execute()
-            
+
             sprints = response.data or []
             scored_sprints = []
-            
+
             for sprint in sprints:
                 query_lower = query.lower()
                 sprint_text = (
                     f"{sprint.get('name', '')} {sprint.get('description', '')} "
                     f"{' '.join(sprint.get('modules', []))}"
                 ).lower()
-                
+
                 similarity = self._calculate_text_similarity(query_lower, sprint_text)
-                
+
                 if similarity > 0.3:
                     scored_sprints.append({
                         "sprint_id": sprint.get("id"),
                         "sprint_name": sprint.get("name"),
                         "similarity_score": similarity,
                         "shared_modules": list(
-                            set(query_lower.split()) & 
+                            set(query_lower.split()) &
                             set(sprint_text.split())
                         ),
                         "shared_features": [],
                         "defect_density": sprint.get("defect_density", 0.0),
                         "test_effectiveness": sprint.get("test_effectiveness", 0.0)
                     })
-            
+
             scored_sprints.sort(key=lambda x: x["similarity_score"], reverse=True)
             return scored_sprints[:lookback]
-            
+
         except Exception as e:
             logger.error(f"Direct DB search failed: {e}")
             return []
@@ -209,13 +209,13 @@ class ContextAnalyst:
         """
         words1 = set(text1.split())
         words2 = set(text2.split())
-        
+
         if not words1 or not words2:
             return 0.0
-        
+
         intersection = words1 & words2
         union = words1 | words2
-        
+
         return len(intersection) / len(union)
 
     async def _get_flaky_tests(
@@ -234,7 +234,7 @@ class ContextAnalyst:
         """
         if not modules:
             return []
-        
+
         try:
             response = self.supabase_client.table("test_results").select(
                 "test_id, test_name, module, status, created_at"
@@ -243,10 +243,10 @@ class ContextAnalyst:
             ).order(
                 "created_at", desc=True
             ).limit(1000).execute()
-            
+
             test_runs = response.data or []
             test_stats: dict[str, dict[str, Any]] = {}
-            
+
             for run in test_runs:
                 test_id = run.get("test_id")
                 if test_id not in test_stats:
@@ -258,12 +258,12 @@ class ContextAnalyst:
                         "total": 0,
                         "last_failure": None
                     }
-                
+
                 test_stats[test_id]["total"] += 1
                 if run.get("status") == "failed":
                     test_stats[test_id]["failures"] += 1
                     test_stats[test_id]["last_failure"] = run.get("created_at")
-            
+
             flaky_tests = []
             for test_id, stats in test_stats.items():
                 failure_rate = stats["failures"] / stats["total"] if stats["total"] > 0 else 0
@@ -276,10 +276,10 @@ class ContextAnalyst:
                         last_failure=stats["last_failure"],
                         root_cause=None
                     ))
-            
+
             flaky_tests.sort(key=lambda x: x.failure_rate, reverse=True)
             return flaky_tests[:10]
-            
+
         except Exception as e:
             logger.error(f"Failed to get flaky tests: {e}")
             return []
@@ -298,9 +298,9 @@ class ContextAnalyst:
         """
         if not modules:
             return []
-        
+
         module_risks = []
-        
+
         for module in modules:
             try:
                 response = self.supabase_client.table("defects").select(
@@ -310,28 +310,28 @@ class ContextAnalyst:
                 ).order(
                     "detected_at", desc=True
                 ).limit(100).execute()
-                
+
                 defects = response.data or []
-                
+
                 response2 = self.supabase_client.table("test_results").select(
                     "id"
                 ).eq(
                     "module", module
                 ).execute()
-                
+
                 total_tests = len(response2.data or [])
                 defect_count = len(defects)
-                
+
                 defect_density = defect_count / max(total_tests, 1)
-                
+
                 severity_counts: dict[str, int] = {}
                 for defect in defects:
                     sev = defect.get("severity", "low")
                     severity_counts[sev] = severity_counts.get(sev, 0) + 1
-                
+
                 critical_count = severity_counts.get("critical", 0)
                 high_count = severity_counts.get("high", 0)
-                
+
                 if critical_count > 0 or defect_density > 0.5:
                     risk_level = "critical"
                 elif high_count > 2 or defect_density > 0.3:
@@ -340,14 +340,14 @@ class ContextAnalyst:
                     risk_level = "medium"
                 else:
                     risk_level = "low"
-                
+
                 recommendations = []
                 if risk_level in ("high", "critical"):
                     recommendations.append("Increase regression test coverage")
                     recommendations.append("Schedule additional security testing")
                 if defect_density > 0.3:
                     recommendations.append("Consider refactoring module")
-                
+
                 module_risks.append(ModuleRisk(
                     module_name=module,
                     defect_density=defect_density,
@@ -356,7 +356,7 @@ class ContextAnalyst:
                     risk_level=risk_level,
                     recommendations=recommendations
                 ))
-                
+
             except Exception as e:
                 logger.error(f"Failed to calculate defect density for {module}: {e}")
                 module_risks.append(ModuleRisk(
@@ -367,7 +367,7 @@ class ContextAnalyst:
                     risk_level="low",
                     recommendations=[]
                 ))
-        
+
         return module_risks
 
     async def analyze(
@@ -399,37 +399,37 @@ class ContextAnalyst:
             scope = SprintScope(description=sprint_scope)
         else:
             scope = sprint_scope
-        
+
         logger.info(f"Analyzing sprint scope: {scope.description[:100]}...")
-        
+
         similar_sprints = await self._search_historical_sprints(
             query=scope.description,
             lookback=lookback
         )
-        
+
         modules = scope.modules or self._extract_modules_from_description(scope.description)
         flaky_tests = await self._get_flaky_tests(modules, lookback)
         module_risks = await self._calculate_defect_density(modules)
-        
+
         historical_similarity_results = [
             HistoricalSimilarity(**sprint) for sprint in similar_sprints
         ]
-        
+
         avg_similarity = sum(
             s.similarity_score for s in historical_similarity_results
         ) / max(len(historical_similarity_results), 1)
-        
+
         high_risk_modules = sum(
             1 for r in module_risks if r.risk_level in ("high", "critical")
         )
         flaky_test_count = len(flaky_tests)
-        
+
         risk_score = (
             avg_similarity * 0.3 +
             (high_risk_modules / max(len(module_risks), 1)) * 0.4 +
             min(flaky_test_count * 0.05, 0.3)
         )
-        
+
         if risk_score > 0.7:
             risk_level = "critical"
         elif risk_score > 0.5:
@@ -438,7 +438,7 @@ class ContextAnalyst:
             risk_level = "medium"
         else:
             risk_level = "low"
-        
+
         recommendations = []
         if flaky_test_count > 0:
             recommendations.append(
@@ -455,9 +455,9 @@ class ContextAnalyst:
         recommendations.append(
             "Plan for at least 20% additional regression testing time"
         )
-        
+
         effort_multiplier = 1.0 + (risk_score * 0.5)
-        
+
         result = ContextAnalysisResult(
             risk_level=risk_level,
             risk_score=risk_score,
@@ -467,7 +467,7 @@ class ContextAnalyst:
             recommendations=recommendations,
             effort_multiplier=effort_multiplier
         )
-        
+
         return dict(result.model_dump())
 
     def _extract_modules_from_description(self, description: str) -> list[str]:
@@ -483,11 +483,11 @@ class ContextAnalyst:
             "auth", "payment", "user", "admin", "api", "ui", "database",
             "notification", "reporting", "analytics", "billing", "checkout"
         ]
-        
+
         description_lower = description.lower()
         found_modules = [
-            m for m in common_modules 
+            m for m in common_modules
             if m in description_lower
         ]
-        
+
         return found_modules

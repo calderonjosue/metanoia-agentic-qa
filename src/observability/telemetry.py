@@ -4,9 +4,9 @@ Collects and stores test duration, pass/fail rates, and agent performance
 metrics using Supabase for storage with 30-day retention.
 """
 
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Optional
-from dataclasses import dataclass
 
 from pydantic import BaseModel, Field
 

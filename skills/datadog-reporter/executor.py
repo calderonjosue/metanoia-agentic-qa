@@ -9,12 +9,12 @@ import argparse
 import json
 import os
 import sys
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from typing import Optional
 
 try:
-    from datadog import initialize, api
+    from datadog import api, initialize
 except ImportError:
     print("Error: datadog package not installed. Run: pip install datadog")
     sys.exit(1)

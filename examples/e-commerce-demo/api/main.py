@@ -1,8 +1,9 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import Optional, List
 import random
 from datetime import datetime
+from typing import List, Optional
+
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 
 app = FastAPI(title="E-Commerce Demo API", version="1.0.0")
 
@@ -59,17 +60,17 @@ async def get_product(product_id: int):
 async def checkout(request: CheckoutRequest) -> OrderResponse:
     if not request.items:
         raise HTTPException(status_code=400, detail="No items in cart")
-    
+
     order_items = []
     total = 0.0
-    
+
     for item in request.items:
         product = next((p for p in PRODUCTS if p["id"] == item.product_id), None)
         if not product:
             raise HTTPException(status_code=404, detail=f"Product {item.product_id} not found")
         if product["stock"] < item.quantity:
             raise HTTPException(status_code=400, detail=f"Insufficient stock for {product['name']}")
-        
+
         item_total = product["price"] * item.quantity
         total += item_total
         order_items.append({
@@ -79,9 +80,9 @@ async def checkout(request: CheckoutRequest) -> OrderResponse:
             "quantity": item.quantity,
             "subtotal": item_total
         })
-    
+
     order_id = f"ORD-{random.randint(10000, 99999)}"
-    
+
     return OrderResponse(
         order_id=order_id,
         status="confirmed",

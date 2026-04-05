@@ -2,8 +2,8 @@
 
 from src.gitlab.integration import (
     GitLabIntegration,
-    MRState,
     MergeResult,
+    MRState,
 )
 
 __all__ = [

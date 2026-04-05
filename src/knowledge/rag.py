@@ -5,13 +5,13 @@ embedding generation using Gemini, and CRUD operations for agent lessons learned
 """
 
 import os
-from typing import Optional, Any
-from datetime import datetime
 from dataclasses import dataclass, field
+from datetime import datetime
+from typing import Any, Optional
 
-from supabase import Client
 from google.genai import Client as GeminiClient
 from google.genai.types import EmbedContentConfig
+from supabase import Client
 
 from src.knowledge.client import get_supabase_client
 

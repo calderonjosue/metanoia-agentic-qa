@@ -7,9 +7,9 @@ execution scenarios.
 
 import json
 import uuid
-from typing import Optional, Any, Iterator
-from datetime import datetime
 from contextlib import contextmanager
+from datetime import datetime
+from typing import Any, Iterator, Optional
 
 from langgraph.checkpoint.base import (
     BaseCheckpointSaver,
@@ -17,7 +17,6 @@ from langgraph.checkpoint.base import (
     CheckpointMetadata,
 )
 from langgraph.checkpoint.serde.base import SerializerProtocol
-
 from supabase import Client
 
 from src.knowledge.client import get_supabase_client

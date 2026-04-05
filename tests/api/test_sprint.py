@@ -1,17 +1,17 @@
 """Tests for Sprint API routes."""
 
-import pytest
 from unittest.mock import AsyncMock, patch
 
+import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from src.api.routes.sprint import (
-    router,
+    CertificationResponse,
     SprintStartRequest,
     SprintStatusResponse,
     TestPlanResponse,
-    CertificationResponse,
+    router,
 )
 
 
@@ -25,7 +25,7 @@ class TestSprintStartRequest:
             sprint_goal="Implement checkout flow",
             run_async=True
         )
-        
+
         assert request.sprint_id == "SP-45"
         assert request.run_async is True
 
@@ -35,7 +35,7 @@ class TestSprintStartRequest:
             sprint_id="SP-46",
             sprint_goal="Fix login bug"
         )
-        
+
         assert request.run_async is False
 
 
@@ -54,7 +54,7 @@ class TestSprintStatusResponse:
             started_at="2024-01-15T10:00:00Z",
             updated_at="2024-01-15T10:30:00Z"
         )
-        
+
         assert response.sprint_id == "SP-45"
         assert response.current_phase == "context_analysis"
         assert response.iteration_count == 1
@@ -70,7 +70,7 @@ class TestSprintStatusResponse:
             started_at="2024-01-15T10:00:00Z",
             updated_at="2024-01-15T10:00:00Z"
         )
-        
+
         assert response.context_analysis is None
         assert response.test_plan is None
         assert response.release_certification is None
@@ -90,7 +90,7 @@ class TestCertificationResponse:
             summary="Release APPROVED",
             certified_at="2024-01-15T15:00:00Z"
         )
-        
+
         assert response.certified is True
         assert response.confidence_score == 0.92
 
@@ -124,7 +124,7 @@ class TestSprintRoutes:
     def test_router_has_correct_prefix(self, app):
         """Test router has correct prefix."""
         routes = [route.path for route in app.routes]
-        
+
         assert any("/v1/metanoia/sprint" in route for route in routes)
 
     def test_router_has_sprint_tag(self):
@@ -154,7 +154,7 @@ class TestSprintRoutesIntegration:
                 "sprint_id": "SP-TEST",
                 "status": "started"
             }
-            
+
             response = client_with_mocks.post(
                 "/v1/metanoia/sprint/start",
                 json={
@@ -162,7 +162,7 @@ class TestSprintRoutesIntegration:
                     "sprint_goal": "Test sprint"
                 }
             )
-            
+
             assert response.status_code in [200, 201, 202, 500]
 
     def test_sprint_status_endpoint_exists(self, client_with_mocks):
@@ -173,9 +173,9 @@ class TestSprintRoutesIntegration:
                 "current_phase": "execution",
                 "iteration_count": 2
             }
-            
+
             response = client_with_mocks.get("/v1/metanoia/sprint/SP-TEST/status")
-            
+
             assert response.status_code in [200, 404, 500]
 
     def test_sprint_start_request_validation(self, client_with_mocks):
@@ -184,7 +184,7 @@ class TestSprintRoutesIntegration:
             "/v1/metanoia/sprint/start",
             json={"sprint_id": "SP-45"}
         )
-        
+
         assert response.status_code in [400, 422, 500]
 
     def test_sprint_start_with_run_async(self, client_with_mocks):
@@ -194,7 +194,7 @@ class TestSprintRoutesIntegration:
                 "sprint_id": "SP-ASYNC",
                 "status": "started_async"
             }
-            
+
             response = client_with_mocks.post(
                 "/v1/metanoia/sprint/start",
                 json={
@@ -203,7 +203,7 @@ class TestSprintRoutesIntegration:
                     "run_async": True
                 }
             )
-            
+
             assert response.status_code in [200, 201, 202, 500]
 
 
@@ -235,7 +235,7 @@ class TestSprintModelsValidation:
             started_at="2024-01-15T10:00:00Z",
             updated_at="2024-01-15T16:00:00Z"
         )
-        
+
         assert response.current_phase == "release"
         assert response.iteration_count == 5
         assert response.context_analysis is not None
@@ -247,7 +247,7 @@ class TestSprintModelsValidation:
             test_plan={"plan_id": "P1"},
             test_cases=[{"case_id": "TC-001"}]
         )
-        
+
         assert response.sprint_id == "SP-45"
         assert len(response.test_cases) == 1
 
@@ -262,6 +262,6 @@ class TestSprintModelsValidation:
             summary="Release DENIED",
             certified_at="2024-01-15T15:00:00Z"
         )
-        
+
         assert response.certified is False
         assert len(response.blockers) == 2

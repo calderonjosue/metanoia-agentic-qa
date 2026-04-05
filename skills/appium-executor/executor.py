@@ -2,13 +2,14 @@
 AppiumExecutor - Mobile testing automation for Android and iOS.
 """
 
-from typing import Optional, List, Dict, Any
+from typing import Any, Dict, List, Optional
+
 from appium import webdriver
-from appium.webdriver.webdriver import WebDriver
 from appium.webdriver.common.appiumby import AppiumBy
-from selenium.webdriver.support.ui import WebDriverWait
+from appium.webdriver.webdriver import WebDriver
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 class AppiumExecutor:

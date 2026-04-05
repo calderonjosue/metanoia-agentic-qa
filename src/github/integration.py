@@ -10,8 +10,9 @@ from enum import Enum
 from typing import Any, Optional
 
 try:
-    from github import Github
     from github.GithubException import GithubException
+
+    from github import Github
 except ImportError:
     Github = None
     GithubException = None

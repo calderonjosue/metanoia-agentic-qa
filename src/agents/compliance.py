@@ -7,10 +7,11 @@ Generates compliance reports for:
 - GDPR
 """
 
-from typing import Optional
-from pydantic import BaseModel
 from datetime import datetime
 from enum import Enum
+from typing import Optional
+
+from pydantic import BaseModel
 
 
 class ComplianceFramework(str, Enum):
@@ -68,7 +69,7 @@ class ComplianceAgent:
 
     def _load_templates(self) -> None:
         """Load compliance framework templates."""
-        from src.compliance.templates import soc2_template, iso27001_template
+        from src.compliance.templates import iso27001_template, soc2_template
 
         self._framework_templates = {
             ComplianceFramework.SOC2: soc2_template.SOC2_CONTROLS,

@@ -4,14 +4,13 @@ Detects anomalies in test duration, pass/fail rates, and agent
 performance using z-score and IQR-based methods.
 """
 
-from datetime import datetime
-from typing import Optional
 from dataclasses import dataclass
+from datetime import datetime
 from enum import Enum
-
-from pydantic import BaseModel, Field
+from typing import Optional
 
 import numpy as np
+from pydantic import BaseModel, Field
 
 
 class AnomalySeverity(str, Enum):

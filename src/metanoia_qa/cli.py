@@ -1,6 +1,7 @@
 """CLI for Metanoia-QA."""
 import click
 
+
 @click.group()
 @click.version_option(version="2.1.0")
 def main():

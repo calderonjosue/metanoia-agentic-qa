@@ -9,8 +9,8 @@ import json
 import logging
 import os
 import subprocess
-from typing import Any, TypedDict
 from pathlib import Path
+from typing import Any, TypedDict
 
 from metanoia.skills.base import SkillExecutor
 
@@ -81,9 +81,9 @@ class PactBrokerClient:
     ) -> dict[str, Any]:
         """Publish a pact to the broker."""
         import urllib.request
-        
+
         url = f"{self.broker_url}/pacts/provider/{provider}/consumer/{consumer}/version/{version}"
-        
+
         data = json.dumps(pact_content).encode("utf-8")
         request = urllib.request.Request(
             url,
@@ -91,7 +91,7 @@ class PactBrokerClient:
             headers=self.headers,
             method="PUT"
         )
-        
+
         try:
             with urllib.request.urlopen(request, timeout=30) as response:
                 return {"status": "success", "url": response.geturl()}
@@ -108,13 +108,13 @@ class PactBrokerClient:
     ) -> dict[str, Any]:
         """Retrieve a pact from the broker."""
         import urllib.request
-        
+
         url = f"{self.broker_url}/pacts/provider/{provider}/consumer/{consumer}"
         if tag:
             url = f"{self.broker_url}/pacts/provider/{provider}/consumer/{consumer}/{tag}"
-        
+
         request = urllib.request.Request(url, headers=self.headers)
-        
+
         try:
             with urllib.request.urlopen(request, timeout=30) as response:
                 content = response.read().decode("utf-8")
@@ -137,9 +137,9 @@ class DockerProviderRunner:
 
     async def start(self) -> str:
         """Start the Docker container and return base URL."""
-        
+
         os.getenv("DOCKER_HOST", "unix:///var/run/docker.sock")
-        
+
         try:
             result = subprocess.run(
                 ["docker", "run", "-d", "-P", self.image],
@@ -149,21 +149,21 @@ class DockerProviderRunner:
             )
             result.check_returncode()
             self.container_id = result.stdout.strip()
-            
+
             container_port = subprocess.run(
                 ["docker", "port", self.container_id, str(self.port)],
                 capture_output=True,
                 text=True,
                 timeout=10
             ).stdout.strip()
-            
+
             host_port = container_port.split("->")[0].split(":")[1] if "->" in container_port else self.port
-            
+
             base_url = f"http://localhost:{host_port}"
-            
+
             await self._wait_for_health(base_url)
             return base_url
-            
+
         except subprocess.TimeoutExpired:
             raise RuntimeError(f"Docker container start timed out after {self.startup_timeout}s")
         except Exception as e:
@@ -172,11 +172,11 @@ class DockerProviderRunner:
     async def _wait_for_health(self, base_url: str) -> None:
         """Wait for container to be healthy."""
         import urllib.request
-        
+
         url = f"{base_url}{self.health_check}"
         elapsed = 0
         interval = 1
-        
+
         while elapsed < self.startup_timeout:
             try:
                 request = urllib.request.Request(url)
@@ -185,10 +185,10 @@ class DockerProviderRunner:
                         return
             except Exception:
                 pass
-            
+
             await asyncio.sleep(interval)
             elapsed += interval
-        
+
         raise RuntimeError(f"Container health check failed after {self.startup_timeout}s")
 
     async def stop(self) -> None:
@@ -222,9 +222,9 @@ class PactVerifier:
         state_handlers: dict[str, str] | None = None
     ) -> dict[str, Any]:
         """Run pact verification using the verifier Docker image."""
-        
+
         verifier_image = "pactfoundation/pact-provider-verifier"
-        
+
         cmd = [
             "docker", "run", "--rm",
             "-v", f"{os.path.abspath(pact_path)}:/pact/contract.json:ro",
@@ -233,11 +233,11 @@ class PactVerifier:
             "--pact-url", "/pact/contract.json",
             "--provider", provider_name,
         ]
-        
+
         if state_handlers:
             for state, handler_url in state_handlers.items():
                 cmd.extend(["--state-change-url", f"{state}={handler_url}"])
-        
+
         try:
             result = subprocess.run(
                 cmd,
@@ -245,9 +245,9 @@ class PactVerifier:
                 text=True,
                 timeout=300
             )
-            
+
             output = result.stdout + result.stderr
-            
+
             if result.returncode == 0:
                 return {
                     "status": "success",
@@ -261,7 +261,7 @@ class PactVerifier:
                     "output": output,
                     "error": f"Verification failed with exit code {result.returncode}"
                 }
-                
+
         except subprocess.TimeoutExpired:
             return {
                 "status": "error",
@@ -297,7 +297,7 @@ class PactExecutor(SkillExecutor):
             PactOutput with status and results.
         """
         mode = input_data.get("mode", "")
-        
+
         try:
             if mode == "consumer":
                 return await self._execute_consumer(input_data)
@@ -320,9 +320,9 @@ class PactExecutor(SkillExecutor):
         interactions = input_data["interactions"]
         pact_dir = Path(input_data.get("pact_dir", "./pacts"))
         version = input_data.get("version", "1.0.0")
-        
+
         pact_dir.mkdir(parents=True, exist_ok=True)
-        
+
         pact_content = {
             "consumer": {"name": consumer},
             "provider": {"name": provider},
@@ -332,13 +332,13 @@ class PactExecutor(SkillExecutor):
                 "version": version
             }
         }
-        
+
         pact_file = pact_dir / f"{consumer}-{provider}.json"
         with open(pact_file, "w") as f:
             json.dump(pact_content, f, indent=2)
-        
+
         logger.info(f"Pact file created: {pact_file}")
-        
+
         return {
             "status": "success",
             "pact_file": str(pact_file),
@@ -351,18 +351,18 @@ class PactExecutor(SkillExecutor):
         provider = input_data["provider"]
         pact_url = input_data["pact_url"]
         docker_config = input_data.get("docker")
-        
+
         provider_base_url = input_data.get("provider_base_url", "http://localhost:8080")
         state_handlers = input_data.get("state_handlers")
-        
+
         docker_runner: DockerProviderRunner | None = None
-        
+
         try:
             if docker_config and docker_config.get("enabled"):
                 docker_runner = DockerProviderRunner(docker_config)
                 provider_base_url = await docker_runner.start()
                 logger.info(f"Provider running at: {provider_base_url}")
-            
+
             if pact_url.startswith("pact://"):
                 parts = pact_url.replace("pact://", "").split("/")
                 if len(parts) >= 2:
@@ -377,10 +377,10 @@ class PactExecutor(SkillExecutor):
                             pact_url = f.name
                     else:
                         return self._error_output(f"Failed to fetch pact: {pact_result.get('error')}")
-            
+
             if not os.path.exists(pact_url):
                 return self._error_output(f"Pact file not found: {pact_url}")
-            
+
             verifier = PactVerifier()
             result = await verifier.verify(
                 pact_url=pact_url,
@@ -388,14 +388,14 @@ class PactExecutor(SkillExecutor):
                 provider_name=provider,
                 state_handlers=state_handlers
             )
-            
+
             return {
                 "status": result["status"],
                 "pact_file": pact_url,
                 "verification_result": result,
                 "error": result.get("error")
             }
-            
+
         finally:
             if docker_runner:
                 await docker_runner.stop()
@@ -406,19 +406,19 @@ class PactExecutor(SkillExecutor):
         broker_url = input_data["broker_url"]
         broker_token = input_data.get("broker_token") or os.getenv("PACT_BROKER_TOKEN")
         consumer_version = input_data.get("consumer_version", "1.0.0")
-        
+
         broker = PactBrokerClient(broker_url, broker_token)
-        
+
         results = []
         for pattern in pact_files:
             from glob import glob
             for file_path in glob(pattern):
                 with open(file_path) as f:
                     pact_content = json.load(f)
-                
+
                 consumer = pact_content["consumer"]["name"]
                 provider = pact_content["provider"]["name"]
-                
+
                 result = await broker.publish_pact(
                     pact_content=pact_content,
                     consumer=consumer,
@@ -431,7 +431,7 @@ class PactExecutor(SkillExecutor):
                     "provider": provider,
                     "result": result
                 })
-        
+
         return {
             "status": "success",
             "pact_file": None,

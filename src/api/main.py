@@ -4,19 +4,19 @@ This module provides the REST API for the autonomous QA system,
 managing sprints, agent coordination, and release certification.
 """
 
-import os
 import logging
+import os
 from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException, status, BackgroundTasks
+from fastapi import BackgroundTasks, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from src.orchestrator.graph import MetanoiaGraph, create_graph
-from src.orchestrator.state import MetanoiaState, AgentStatus
 from src.orchestrator.checkpointing import get_checkpointer
+from src.orchestrator.graph import MetanoiaGraph, create_graph
+from src.orchestrator.state import AgentStatus, MetanoiaState
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

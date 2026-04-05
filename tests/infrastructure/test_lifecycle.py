@@ -1,7 +1,9 @@
 """Tests for lab lifecycle manager."""
 
+from unittest.mock import AsyncMock, Mock
+
 import pytest
-from unittest.mock import Mock, AsyncMock
+
 from src.infrastructure.lab_lifecycle_manager import LabLifecycleManager
 
 

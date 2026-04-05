@@ -9,7 +9,8 @@ import json
 import logging
 from typing import TypedDict
 
-from playwright.async_api import async_playwright, Page
+from playwright.async_api import Page, async_playwright
+
 from metanoia.skills.base import SkillExecutor
 
 logger = logging.getLogger(__name__)

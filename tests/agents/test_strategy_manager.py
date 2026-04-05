@@ -3,8 +3,8 @@
 import pytest
 
 from src.agents.strategy_manager import (
-    StrategyManager,
     EffortDistribution,
+    StrategyManager,
     TestPriority,
 )
 
@@ -20,7 +20,7 @@ class TestEffortDistribution:
             performance=0.15,
             security=0.15
         )
-        
+
         assert effort.functional == 0.4
         assert effort.regression == 0.3
         assert effort.performance == 0.15
@@ -34,7 +34,7 @@ class TestEffortDistribution:
             performance=0.15,
             security=0.15
         )
-        
+
         assert effort.validate_total() is True
 
     def test_effort_distribution_invalid_total(self):
@@ -45,7 +45,7 @@ class TestEffortDistribution:
             performance=0.0,
             security=0.0
         )
-        
+
         assert effort.validate_total() is False
 
 
@@ -62,7 +62,7 @@ class TestTestPriority:
             module="auth",
             reason="Security critical"
         )
-        
+
         assert priority.test_id == "TEST-001"
         assert priority.priority == "high"
 
@@ -134,7 +134,7 @@ class TestStrategyManager:
     def test_apply_defect_clustering_high_risk(self, strategy_manager, sample_context):
         """Test defect clustering focuses on high-risk modules."""
         weights = strategy_manager._apply_defect_clustering(sample_context)
-        
+
         assert "payment" in weights
         assert weights["payment"] > weights.get("auth", 0)
 
@@ -146,9 +146,9 @@ class TestStrategyManager:
                 {"module_name": "ui", "risk_level": "low"}
             ]
         }
-        
+
         weights = strategy_manager._apply_defect_clustering(context)
-        
+
         assert all(w == 0.5 for w in weights.values())
 
     def test_calculate_effort_distribution_critical_risk(self, strategy_manager):
@@ -159,9 +159,9 @@ class TestStrategyManager:
             "flaky_tests": [],
             "module_risks": []
         }
-        
+
         effort = strategy_manager._calculate_effort_distribution(context, "critical sprint")
-        
+
         assert effort.regression > effort.functional
         assert effort.security >= 0.1
 
@@ -173,9 +173,9 @@ class TestStrategyManager:
             "flaky_tests": [],
             "module_risks": []
         }
-        
+
         effort = strategy_manager._calculate_effort_distribution(context, "simple fix")
-        
+
         assert effort.functional > effort.regression
 
     def test_calculate_effort_distribution_performance_focus(self, strategy_manager):
@@ -186,11 +186,11 @@ class TestStrategyManager:
             "flaky_tests": [],
             "module_risks": []
         }
-        
+
         effort = strategy_manager._calculate_effort_distribution(
             context, "Improve performance and load handling"
         )
-        
+
         assert effort.performance >= 0.3
 
     def test_calculate_effort_distribution_security_focus(self, strategy_manager):
@@ -201,11 +201,11 @@ class TestStrategyManager:
             "flaky_tests": [],
             "module_risks": []
         }
-        
+
         effort = strategy_manager._calculate_effort_distribution(
             context, "Implement authentication and authorization"
         )
-        
+
         assert effort.security >= 0.3
 
     def test_calculate_effort_distribution_new_feature(self, strategy_manager):
@@ -216,11 +216,11 @@ class TestStrategyManager:
             "flaky_tests": [],
             "module_risks": []
         }
-        
+
         effort = strategy_manager._calculate_effort_distribution(
             context, "Add new payment method"
         )
-        
+
         assert effort.functional >= 0.3
 
     def test_calculate_effort_distribution_refactor(self, strategy_manager):
@@ -231,11 +231,11 @@ class TestStrategyManager:
             "flaky_tests": [],
             "module_risks": []
         }
-        
+
         effort = strategy_manager._calculate_effort_distribution(
             context, "Refactor authentication module"
         )
-        
+
         assert effort.regression >= 0.3
 
     def test_calculate_effort_distribution_flaky_tests(self, strategy_manager):
@@ -246,9 +246,9 @@ class TestStrategyManager:
             "flaky_tests": [{"test_id": f"T{i}", "failure_rate": 0.2} for i in range(7)],
             "module_risks": []
         }
-        
+
         effort = strategy_manager._calculate_effort_distribution(context, "sprint")
-        
+
         assert effort.regression >= 0.4
 
     def test_calculate_effort_distribution_effort_valid(self, strategy_manager):
@@ -262,9 +262,9 @@ class TestStrategyManager:
                 {"module_name": "m2", "risk_level": "high"}
             ]
         }
-        
+
         effort = strategy_manager._calculate_effort_distribution(context, "test")
-        
+
         assert 0.1 <= effort.functional <= 0.6
         assert 0.1 <= effort.regression <= 0.5
         assert 0.05 <= effort.performance <= 0.35
@@ -275,11 +275,11 @@ class TestStrategyManager:
         effort = EffortDistribution(
             functional=0.4, regression=0.3, performance=0.15, security=0.15
         )
-        
+
         priorities = strategy_manager._prioritize_tests(
             sample_context, effort, "test sprint"
         )
-        
+
         assert any(p.priority == "critical" for p in priorities)
         assert any("payment" in p.module.lower() for p in priorities)
 
@@ -288,11 +288,11 @@ class TestStrategyManager:
         effort = EffortDistribution(
             functional=0.4, regression=0.3, performance=0.15, security=0.15
         )
-        
+
         priorities = strategy_manager._prioritize_tests(
             sample_context, effort, "test sprint"
         )
-        
+
         assert any("flaky" in p.test_name.lower() for p in priorities)
 
     def test_prioritize_tests_new_feature(self, strategy_manager):
@@ -301,11 +301,11 @@ class TestStrategyManager:
         effort = EffortDistribution(
             functional=0.4, regression=0.3, performance=0.15, security=0.15
         )
-        
+
         priorities = strategy_manager._prioritize_tests(
             context, effort, "Add new checkout feature"
         )
-        
+
         assert any("new feature" in p.test_name.lower() for p in priorities)
 
     def test_prioritize_tests_performance(self, strategy_manager):
@@ -314,11 +314,11 @@ class TestStrategyManager:
         effort = EffortDistribution(
             functional=0.4, regression=0.3, performance=0.15, security=0.15
         )
-        
+
         priorities = strategy_manager._prioritize_tests(
             context, effort, "Performance optimization sprint"
         )
-        
+
         assert any("performance" in p.test_name.lower() for p in priorities)
 
     def test_prioritize_tests_security(self, strategy_manager):
@@ -327,11 +327,11 @@ class TestStrategyManager:
         effort = EffortDistribution(
             functional=0.4, regression=0.3, performance=0.15, security=0.15
         )
-        
+
         priorities = strategy_manager._prioritize_tests(
             context, effort, "Security hardening sprint"
         )
-        
+
         assert any("security" in p.test_name.lower() for p in priorities)
 
     def test_create_phased_approach(self, strategy_manager):
@@ -339,9 +339,9 @@ class TestStrategyManager:
         effort = EffortDistribution(
             functional=0.4, regression=0.3, performance=0.15, security=0.15
         )
-        
+
         phases = strategy_manager._create_phased_approach(effort, "test sprint")
-        
+
         assert len(phases) >= 4
         assert any(p["name"] == "Rapid Sanity" for p in phases)
         assert any(p["name"] == "Final Verification" for p in phases)
@@ -351,9 +351,9 @@ class TestStrategyManager:
         effort = EffortDistribution(
             functional=0.5, regression=0.4, performance=0.05, security=0.05
         )
-        
+
         phases = strategy_manager._create_phased_approach(effort, "test sprint")
-        
+
         assert not any(p["name"] == "Performance Testing" for p in phases)
 
     def test_calculate_resource_requirements(self, strategy_manager):
@@ -361,9 +361,9 @@ class TestStrategyManager:
         effort = EffortDistribution(
             functional=0.4, regression=0.3, performance=0.15, security=0.15
         )
-        
+
         resources = strategy_manager._calculate_resource_requirements(effort, 100)
-        
+
         assert "qa_engineers" in resources
         assert "test_environments" in resources
         assert resources["test_environments"] == 3
@@ -375,7 +375,7 @@ class TestStrategyManager:
             sprint_goal="Implement checkout flow",
             context=sample_context
         )
-        
+
         assert "plan_id" in plan
         assert "sprint_goal" in plan
         assert "effort_distribution" in plan
@@ -392,12 +392,12 @@ class TestStrategyManager:
             sprint_goal="Test sprint",
             context=sample_context
         )
-        
+
         base = 50
         risk_mult = 1.0 + (sample_context["risk_score"] * 0.5)
         effort_mult = sample_context["effort_multiplier"]
         expected = int(base * risk_mult * effort_mult)
-        
+
         assert plan["total_test_cases"] == expected
 
     @pytest.mark.asyncio
@@ -407,7 +407,7 @@ class TestStrategyManager:
             sprint_goal="Test sprint",
             context=sample_context
         )
-        
+
         assert len(plan["risk_mitigations"]) > 0
 
     @pytest.mark.asyncio
@@ -423,9 +423,9 @@ class TestStrategyManager:
             ],
             "effort_multiplier": 1.0
         }
-        
+
         plan = await strategy_manager.create_test_plan("Test", context)
         effort = plan["effort_distribution"]
         total = effort["functional"] + effort["regression"] + effort["performance"] + effort["security"]
-        
+
         assert abs(total - 1.0) < 0.01

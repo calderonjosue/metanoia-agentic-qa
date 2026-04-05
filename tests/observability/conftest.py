@@ -11,7 +11,7 @@ def mock_knowledge_client():
     """Mock knowledge.client before imports."""
     mock = Mock()
     mock.get_supabase_client = Mock(return_value=Mock())
-    
+
     if 'src.knowledge.client' in sys.modules:
         old_module = sys.modules['src.knowledge.client']
         sys.modules['src.knowledge.client'] = mock

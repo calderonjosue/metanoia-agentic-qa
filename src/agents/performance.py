@@ -9,8 +9,8 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from skill_runtime.loader import SkillLoader
 from skill_runtime.executor import create_executor
+from skill_runtime.loader import SkillLoader
 
 logger = logging.getLogger(__name__)
 
@@ -99,7 +99,7 @@ class PerformanceEngineer:
 
         try:
             result = await self._executor_engine.execute(k6_executor, input_data)
-            
+
             if result["status"] == "error":
                 return TestResult(
                     passed=0,
@@ -153,7 +153,7 @@ class PerformanceEngineer:
                 "suggestion": f"Consider increasing timeout for {endpoint}",
                 "severity": "medium"
             })
-            
+
         if value > self.THRESHolds.get("http_req_duration_p99", 1000):
             recommendations.append({
                 "type": "bottleneck",
@@ -179,7 +179,7 @@ class PerformanceEngineer:
             List of potentially affected endpoints.
         """
         bottlenecks = []
-        
+
         slow_patterns = [
             r"database",
             r"query",
@@ -191,11 +191,11 @@ class PerformanceEngineer:
             r"requests\.get",
             r"fetch\(",
         ]
-        
+
         for change in code_changes:
             file_path = change.get("file", "")
             diff = change.get("diff", "")
-            
+
             for pattern in slow_patterns:
                 if re.search(pattern, diff, re.IGNORECASE):
                     endpoint = self._infer_endpoint(file_path)
@@ -252,7 +252,7 @@ class PerformanceEngineer:
     def _extract_endpoints(self, test_cases: list[dict]) -> list[dict]:
         """Extract endpoint configurations from test cases."""
         endpoints = []
-        
+
         for tc in test_cases:
             if "endpoint" in tc:
                 endpoints.append({
@@ -271,24 +271,24 @@ class PerformanceEngineer:
                     "headers": tc.get("headers", {}),
                     "body": tc.get("body")
                 })
-        
+
         return endpoints
 
     def _parse_metrics(self, data: dict) -> Optional[PerformanceMetrics]:
         """Parse k6 output into PerformanceMetrics."""
         try:
             metrics = data.get("metrics", {})
-            
+
             http_duration = metrics.get("http_req_duration", {})
             p95 = http_duration.get("p(95)", 0) if isinstance(http_duration, dict) else 0
             p99 = http_duration.get("p(99)", 0) if isinstance(http_duration, dict) else 0
-            
+
             throughput = metrics.get("http_reqs", {})
             rps = throughput.get("rate", 0) if isinstance(throughput, dict) else 0
-            
+
             errors = metrics.get("errors", {})
             error_rate = errors.get("rate", 0) if isinstance(errors, dict) else 0
-            
+
             return PerformanceMetrics(
                 response_time_p95=p95,
                 response_time_p99=p99,
@@ -304,7 +304,7 @@ class PerformanceEngineer:
     def _detect_regressions(self, metrics: Optional[PerformanceMetrics]) -> list[dict]:
         """Detect performance regressions against thresholds or baseline."""
         regressions = []
-        
+
         if metrics is None:
             return [{"type": "parse_error", "message": "Could not parse metrics"}]
 
@@ -352,11 +352,11 @@ class PerformanceEngineer:
     def _infer_endpoint(self, file_path: str) -> str:
         """Infer endpoint from file path."""
         path = file_path.lower()
-        
+
         if "api" in path or "routes" in path or "endpoints" in path:
             parts = file_path.split("/")
             for i, part in enumerate(parts):
                 if part in ("api", "routes", "endpoints") and i + 1 < len(parts):
                     return f"/{parts[i + 1].replace('.py', '')}"
-        
+
         return ""

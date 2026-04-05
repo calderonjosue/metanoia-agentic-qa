@@ -4,9 +4,10 @@ This module provides endpoints for monitoring and controlling
 the various agents in the STLC pipeline.
 """
 
+from typing import Optional
+
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
-from typing import Optional
 
 router = APIRouter(prefix="/v1/metanoia/agents", tags=["Agents"])
 

@@ -4,7 +4,6 @@ import sys
 from unittest.mock import Mock
 
 
-
 class MockKnowledgeClient:
     @staticmethod
     def get_supabase_client():
@@ -21,10 +20,10 @@ sys.modules['src.knowledge'] = Mock()
 sys.modules['src.knowledge.client'] = MockKnowledgeClient()
 
 from src.observability.telemetry import (  # noqa: E402
+    AgentPerformance,
     TelemetryCollector,
     TelemetryConfig,
     TestMetrics,
-    AgentPerformance,
 )
 
 
@@ -34,7 +33,7 @@ class TestTelemetryCollector:
     def test_collector_stores_metrics(self):
         """Test metrics are stored."""
         collector = TelemetryCollector()
-        
+
         metrics = TestMetrics(
             test_case_id="TEST-001",
             duration_seconds=2.5,
@@ -42,13 +41,13 @@ class TestTelemetryCollector:
             agent_id="agent-001",
             sprint_id="SP-45"
         )
-        
+
         collector._metrics_buffer.append({
             "test_case_id": metrics.test_case_id,
             "duration_seconds": metrics.duration_seconds,
             "passed": metrics.passed,
         })
-        
+
         assert len(collector._metrics_buffer) == 1
         assert collector._metrics_buffer[0]["test_case_id"] == "TEST-001"
 
@@ -56,7 +55,7 @@ class TestTelemetryCollector:
         """Test old metrics are cleaned."""
         config = TelemetryConfig(retention_days=30)
         collector = TelemetryCollector(config=config)
-        
+
         assert collector.config.retention_days == 30
 
 
@@ -71,7 +70,7 @@ class TestTestMetrics:
             passed=False,
             module="payment"
         )
-        
+
         assert metrics.test_case_id == "TEST-002"
         assert metrics.duration_seconds == 1.5
         assert metrics.passed is False
@@ -90,7 +89,7 @@ class TestAgentPerformance:
             status="completed",
             output_size=1024
         )
-        
+
         assert perf.agent_id == "agent-002"
         assert perf.agent_type == "el_arqueologo"
         assert perf.duration_seconds == 5.0

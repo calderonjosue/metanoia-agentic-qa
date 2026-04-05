@@ -60,16 +60,21 @@ Agents:
 8. ReleaseAnalyst (closer): Makes release certification decision
 """
 
-import os
 import logging
-from typing import Literal, Optional, Any, Callable
+import os
 from datetime import datetime
+from typing import Any, Callable, Literal, Optional
 
-from langgraph.graph import StateGraph, END
-from langgraph.types import Send
 from langgraph.checkpoint.base import BaseCheckpointSaver
+from langgraph.graph import END, StateGraph
+from langgraph.types import Send
 
-from src.orchestrator.state import MetanoiaState, AgentType, AgentStatus, ExecutionResult
+from src.orchestrator.state import (
+    AgentStatus,
+    AgentType,
+    ExecutionResult,
+    MetanoiaState,
+)
 
 logger = logging.getLogger(__name__)
 

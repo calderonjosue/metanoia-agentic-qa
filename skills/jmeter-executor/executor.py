@@ -57,20 +57,20 @@ class JMeterExecutor(SkillExecutor):
         results_file = input_data.get("results_file", "results.jtl")
         jmeter_properties = input_data.get("jmeter_properties", {})
         heap_size = input_data.get("heap_size", "512m")
-        
+
         try:
             if not await self._check_jmeter_installed():
                 return self._error_output(
                     "JMeter is not installed. Install from https://jmeter.apache.org/download_jmeter.cgi"
                 )
-            
+
             if not jmx_file:
                 return self._error_output("jmx_file is required")
-            
+
             jmx_path = Path(jmx_file)
             if not jmx_path.exists():
                 return self._error_output(f"JMX file not found: {jmx_file}")
-            
+
             result = await self._run_jmeter(
                 str(jmx_path.absolute()),
                 report_output,
@@ -79,7 +79,7 @@ class JMeterExecutor(SkillExecutor):
                 heap_size
             )
             return result
-            
+
         except Exception as e:
             logger.exception("JMeter execution failed")
             return self._error_output(str(e))
@@ -88,7 +88,7 @@ class JMeterExecutor(SkillExecutor):
         """Check if JMeter is installed."""
         if self._jmeter_available is not None:
             return self._jmeter_available
-        
+
         try:
             result = subprocess.run(
                 ["jmeter", "--version"],
@@ -99,7 +99,7 @@ class JMeterExecutor(SkillExecutor):
             self._jmeter_available = result.returncode == 0
         except Exception:
             self._jmeter_available = False
-        
+
         return self._jmeter_available
 
     async def _run_jmeter(
@@ -117,36 +117,36 @@ class JMeterExecutor(SkillExecutor):
             "-t", jmx_path,
             "-l", results_file,
         ]
-        
+
         if report_output:
             report_dir = Path(report_output)
             report_dir.mkdir(parents=True, exist_ok=True)
             cmd.extend(["-e", "-o", str(report_dir.absolute())])
-        
+
         for key, value in jmeter_properties.items():
             cmd.extend(["-J", f"{key}={value}"])
-        
+
         if heap_size:
             cmd.extend(["-X", f"-JHEAP={heap_size}"])
-        
+
         process = await asyncio.create_subprocess_exec(
             *cmd,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE
         )
-        
+
         stdout, stderr = await asyncio.wait_for(
             process.communicate(),
             timeout=3600
         )
-        
+
         if process.returncode != 0:
             error_msg = stderr.decode() if stderr else "Unknown error"
             return self._error_output(f"JMeter failed: {error_msg}")
-        
+
         metrics = self._parse_results(results_file)
         summary = self._generate_summary(metrics, report_output)
-        
+
         return {
             "status": "success",
             "report_path": report_output if report_output else None,
@@ -158,7 +158,7 @@ class JMeterExecutor(SkillExecutor):
     def _parse_results(self, results_file: str) -> dict:
         """Parse JMeter results from CSV/JSON output."""
         metrics = {}
-        
+
         try:
             results_path = Path(results_file)
             if results_path.exists():
@@ -169,19 +169,19 @@ class JMeterExecutor(SkillExecutor):
                         metrics["total_samples"] = len(lines) - 1
         except Exception:
             pass
-        
+
         return metrics
 
     def _generate_summary(self, metrics: dict, report_path: str | None) -> str:
         """Generate human-readable summary from metrics."""
         summary_parts = ["JMeter Performance Test Results", "", "Status: Completed"]
-        
+
         if "total_samples" in metrics:
             summary_parts.append(f"Total Samples: {metrics['total_samples']}")
-        
+
         if report_path:
             summary_parts.append(f"HTML Report: {report_path}")
-        
+
         return "\n".join(summary_parts)
 
     def _error_output(self, error: str) -> JMeterOutput:

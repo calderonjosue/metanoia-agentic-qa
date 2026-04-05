@@ -8,7 +8,7 @@ from typing import Any, Optional
 
 from src.agents.base import AgentConfig, AgentResponse
 from src.agents.chaos_agent import ChaosAgent
-from src.chaos.experiments import ChaosExperiment, AbortCondition
+from src.chaos.experiments import AbortCondition, ChaosExperiment
 
 logger = logging.getLogger(__name__)
 
@@ -25,10 +25,10 @@ class ChaosEngineer(ChaosAgent):
     - Trigger automated aborts when thresholds exceeded
     - Validate experiment safety
     """
-    
+
     name = "chaos-engineer"
     version = "1.0.0"
-    
+
     def __init__(self, config: AgentConfig):
         """Initialize the Chaos Engineer.
         
@@ -38,7 +38,7 @@ class ChaosEngineer(ChaosAgent):
         super().__init__(config)
         self._abort_conditions: list[AbortCondition] = []
         self._cascade_failure_detected = False
-    
+
     def add_abort_condition(self, condition: AbortCondition) -> None:
         """Add an abort condition to the engineer.
         
@@ -47,12 +47,12 @@ class ChaosEngineer(ChaosAgent):
         """
         self._abort_conditions.append(condition)
         logger.info(f"Added abort condition: {condition.condition_type} {condition.comparison} {condition.threshold}")
-    
+
     def clear_abort_conditions(self) -> None:
         """Clear all abort conditions."""
         self._abort_conditions.clear()
         logger.info("Cleared all abort conditions")
-    
+
     def abort_if_health_checks_fail(
         self,
         health_metrics: dict,
@@ -79,15 +79,15 @@ class ChaosEngineer(ChaosAgent):
                     self._cascade_failure_detected = True
                     logger.warning(f"CASCADE FAILURE DETECTED: {reason}")
                     return True, reason
-        
+
         should_abort, reason = self._abort_controller.should_abort(health_metrics)
         if should_abort:
             self._abort_controller.trigger_abort(experiment_id)
             self._cascade_failure_detected = True
             logger.warning(f"CASCADE FAILURE DETECTED: {reason}")
-        
+
         return should_abort, reason
-    
+
     def abort_if_error_rate_exceeds(
         self,
         error_rate: float,
@@ -114,7 +114,7 @@ class ChaosEngineer(ChaosAgent):
             logger.warning(f"CASCADE FAILURE DETECTED: {reason}")
             return True, reason
         return False, ""
-    
+
     def is_cascade_failure_detected(self) -> bool:
         """Check if cascade failure has been detected.
         
@@ -122,12 +122,12 @@ class ChaosEngineer(ChaosAgent):
             True if cascade failure was detected during execution.
         """
         return self._cascade_failure_detected
-    
+
     def reset_cascade_failure(self) -> None:
         """Reset cascade failure detection state."""
         self._cascade_failure_detected = False
         logger.info("Cascade failure detection reset")
-    
+
     def execute(self, state: dict[str, Any]) -> AgentResponse:
         """Execute chaos engineering workflow.
         
@@ -138,19 +138,19 @@ class ChaosEngineer(ChaosAgent):
             AgentResponse with orchestration results.
         """
         self._cascade_failure_detected = False
-        
+
         response = super().execute(state)
-        
+
         response.output["cascade_failure_detected"] = self._cascade_failure_detected
         response.output["abort_conditions_configured"] = len(self._abort_conditions)
-        
+
         if self._cascade_failure_detected:
             response.output["status_message"] = "Experiments completed with cascade failure detection"
         else:
             response.output["status_message"] = "All experiments completed safely"
-        
+
         return response
-    
+
     def validate_experiment_safety(self, experiment: ChaosExperiment) -> tuple[bool, list[str]]:
         """Validate that an experiment has proper safety controls.
         
@@ -162,16 +162,16 @@ class ChaosEngineer(ChaosAgent):
         """
         warnings = []
         is_safe = True
-        
+
         if not experiment.abort_conditions:
             warnings.append(f"Experiment {experiment.name} has no abort conditions")
             is_safe = False
-        
+
         if experiment.duration_seconds > 300:
             warnings.append(f"Experiment {experiment.name} duration exceeds 5 minutes")
-        
+
         if experiment.intensity > 0.8:
             warnings.append(f"Experiment {experiment.name} has high intensity ({experiment.intensity})")
             is_safe = False
-        
+
         return is_safe, warnings

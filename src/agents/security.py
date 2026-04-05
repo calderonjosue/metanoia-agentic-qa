@@ -5,7 +5,7 @@ Executes OWASP ZAP scans and API fuzzing for vulnerability detection.
 
 import asyncio
 import logging
-from typing import Optional, Any
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
@@ -96,9 +96,9 @@ class SecurityEngineer:
                 findings = await self._execute_basic_scan(target_url, test_cases)
 
             owasp_mapping = self._map_to_owasp_top_10(findings)
-            
+
             critical_findings = [f for f in findings if f.severity in ("critical", "high")]
-            
+
             return TestResult(
                 passed=1 if len(critical_findings) == 0 else 0,
                 failed=len(critical_findings),
@@ -130,23 +130,23 @@ class SecurityEngineer:
         """
         vuln_type = failure.get("vuln_type", "")
         failure.get("url", "")
-        
+
         recommendations = []
-        
+
         if "sql" in vuln_type.lower() or "injection" in vuln_type.lower():
             recommendations.append({
                 "type": "input_validation",
                 "suggestion": "Implement parameterized queries",
                 "priority": "high"
             })
-            
+
         if "xss" in vuln_type.lower():
             recommendations.append({
                 "type": "output_encoding",
                 "suggestion": "Implement proper output encoding",
                 "priority": "high"
             })
-            
+
         if "auth" in vuln_type.lower() or "access" in vuln_type.lower():
             recommendations.append({
                 "type": "access_control",
@@ -208,11 +208,11 @@ class SecurityEngineer:
                 "passive_scan": True
             }
         }
-        
+
         from skill_runtime.executor import create_executor
         engine = create_executor(timeout_seconds=1800.0)
         result = await engine.execute(executor, input_data)
-        
+
         if result["status"] == "success":
             return dict(result.get("data", {})) if result.get("data") else {"findings": [], "duration": 0.0}
         return {"findings": [], "duration": 0.0}
@@ -224,14 +224,14 @@ class SecurityEngineer:
     ) -> list[SecurityFinding]:
         """Execute basic security checks without ZAP."""
         findings: list[SecurityFinding] = []
-        
+
         await asyncio.sleep(0.1)
-        
+
         fuzz_results = await self._fuzz_endpoints(target_url, test_cases)
         findings.extend(fuzz_results)
-        
+
         self._scan_results.extend(findings)
-        
+
         return findings
 
     async def _fuzz_endpoints(
@@ -249,17 +249,17 @@ class SecurityEngineer:
             List of security findings from fuzzing.
         """
         findings: list[SecurityFinding] = []
-        
+
         fuzz_patterns = [
             ("'", "sql_injection", "SQL Injection"),
             ("<script>alert('xss')</script>", "xss", "Cross-Site Scripting"),
             ("../../../../etc/passwd", "path_traversal", "Path Traversal"),
             ("${7*7}", "ssti", "Server-Side Template Injection"),
         ]
-        
+
         for endpoint in endpoints:
             url = base_url + endpoint.get("path", "")
-            
+
             for payload, vuln_type, description in fuzz_patterns:
                 try:
                     result = await self._test_payload(url, payload, endpoint)
@@ -289,9 +289,9 @@ class SecurityEngineer:
             Dict with vulnerable=True/False and severity.
         """
         import httpx
-        
+
         method = endpoint.get("method", "GET").upper()
-        
+
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
                 if method == "GET":
@@ -302,24 +302,24 @@ class SecurityEngineer:
                         url,
                         json={endpoint.get("param", "data"): payload}
                     )
-                
+
                 response_text = response.text.lower()
-                
+
                 if "<script>" in payload.lower() and "<script>" in response_text:
                     return {"vulnerable": True, "severity": "high"}
-                    
+
                 if "sql" in payload and any(x in response_text for x in ["syntax", "error", "mysql", "postgres", "sqlite"]):
                     return {"vulnerable": True, "severity": "critical"}
-                    
+
                 if "root:" in response_text or "etc/passwd" in response_text:
                     return {"vulnerable": True, "severity": "high"}
-                    
+
                 if "${" in payload and "49" in response_text:
                     return {"vulnerable": True, "severity": "high"}
-                    
+
         except Exception:
             pass
-        
+
         return {"vulnerable": False}
 
     def _map_to_owasp_top_10(self, findings: list[SecurityFinding]) -> dict:
@@ -329,10 +329,10 @@ class SecurityEngineer:
             Dict with OWASP categories and finding counts.
         """
         mapping: dict[str, dict[str, Any]] = {
-            code: {"name": name, "count": 0, "findings": []} 
+            code: {"name": name, "count": 0, "findings": []}
             for code, name in self.OWASP_TOP_10_2021.items()
         }
-        
+
         category_keywords: dict[str, list[str]] = {
             "A01": ["access", "authorization", "idor", "broken"],
             "A02": ["crypto", "encryption", "password", "hash"],
@@ -345,7 +345,7 @@ class SecurityEngineer:
             "A09": ["logging", "monitoring", "detection"],
             "A10": ["ssrf", "url", "redirect"]
         }
-        
+
         for finding in findings:
             vuln_lower = finding.vuln_type.lower()
             for code, keywords in category_keywords.items():
@@ -372,7 +372,7 @@ class SecurityEngineer:
         total = len(self._scan_results)
         critical = len([f for f in self._scan_results if f.severity == "critical"])
         high = len([f for f in self._scan_results if f.severity == "high"])
-        
+
         return f"""Security scan completed.
         
 Total findings: {total}
@@ -385,16 +385,16 @@ High: {high}
     def _generate_remediation_plan(self) -> list[dict]:
         """Generate prioritized remediation plan."""
         plan = []
-        
+
         by_severity: dict[str, list[SecurityFinding]] = {}
         for finding in self._scan_results:
             severity = finding.severity
             if severity not in by_severity:
                 by_severity[severity] = []
             by_severity[severity].append(finding)
-        
+
         severity_order = ["critical", "high", "medium", "low"]
-        
+
         for severity in severity_order:
             for finding in by_severity.get(severity, []):
                 remediation = self._get_remediation(finding.vuln_type)
@@ -405,7 +405,7 @@ High: {high}
                         "url": finding.url,
                         "remediation": remediation
                     })
-        
+
         return plan
 
     def _get_remediation(self, vuln_type: str) -> Optional[str]:

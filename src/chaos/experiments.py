@@ -36,7 +36,7 @@ class AbortCondition:
     condition_type: str
     threshold: float
     comparison: str = "gt"
-    
+
     def evaluate(self, value: float) -> bool:
         """Evaluate if the condition is met.
         
@@ -82,7 +82,7 @@ class ChaosExperiment:
     intensity: float = 0.5
     tags: list[str] = field(default_factory=list)
     metadata: dict = field(default_factory=dict)
-    
+
     def should_abort(self, health_metrics: dict) -> tuple[bool, Optional[str]]:
         """Check if any abort condition is met.
         
@@ -97,7 +97,7 @@ class ChaosExperiment:
             if metric_value is not None and condition.evaluate(metric_value):
                 return True, f"Abort triggered: {condition.condition_type}={metric_value} (threshold: {condition.threshold})"
         return False, None
-    
+
     @classmethod
     def from_dict(cls, data: dict) -> "ChaosExperiment":
         """Create a ChaosExperiment from a dictionary.
@@ -124,7 +124,7 @@ class ChaosExperiment:
             tags=data.get("tags", []),
             metadata=data.get("metadata", {}),
         )
-    
+
     def to_dict(self) -> dict:
         """Convert experiment to dictionary.
         

@@ -4,9 +4,10 @@ This module defines the core state structure used throughout the Metanoia-QA
 LangGraph state machine, capturing all context needed for multi-agent STLC execution.
 """
 
-from typing import Optional, Any
 from datetime import datetime
 from enum import Enum
+from typing import Any, Optional
+
 from pydantic import BaseModel, Field
 
 from src.agents.types import AgentType  # Re-export for backward compatibility

@@ -300,8 +300,8 @@ class PipelineOrchestrator:
                 download_response = self._client.get(download_url, headers=headers)
                 download_response.raise_for_status()
 
-                import zipfile
                 import io
+                import zipfile
 
                 z = zipfile.ZipFile(io.BytesIO(download_response.content))
                 z.extractall(target_path)
@@ -338,8 +338,8 @@ class PipelineOrchestrator:
 
                 artifact_response = self._client.get(artifact_url, headers=headers)
 
-                import zipfile
                 import io
+                import zipfile
 
                 z = zipfile.ZipFile(io.BytesIO(artifact_response.content))
                 z.extractall(target_path)

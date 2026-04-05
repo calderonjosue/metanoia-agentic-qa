@@ -70,16 +70,16 @@ class SelectorRepairStrategy:
     ) -> list[str]:
         """Generate selectors for similar elements."""
         selectors = []
-        
+
         if class_list:
             base_class = class_list[0] if class_list else ""
             if base_class:
                 selectors.append(f"{tag}.{base_class}")
                 selectors.append(f"[class*='{base_class}']")
-        
+
         if tag:
             selectors.append(tag)
-        
+
         return [s for s in selectors if s != exclude_broken]
 
 
@@ -111,7 +111,7 @@ class VisionAnalyzer:
                 "confidence": 0.0,
                 "reasoning": "No Gemini API key configured"
             }
-        
+
         try:
             # In production, this would call Gemini Vision API
             # For now, return a placeholder analysis
@@ -120,9 +120,9 @@ class VisionAnalyzer:
             
             Provide a CSS selector or XPath that will reliably identify this element.
             Also estimate confidence (0-1) and explain your reasoning."""
-            
+
             logger.info(f"Vision analysis with prompt: {prompt[:100]}...")
-            
+
             # Placeholder - would use Gemini Vision
             return {
                 "found": True,
@@ -130,7 +130,7 @@ class VisionAnalyzer:
                 "confidence": 0.0,
                 "reasoning": "Gemini Vision API not configured"
             }
-            
+
         except Exception as e:
             logger.error(f"Vision analysis failed: {e}")
             return {
@@ -185,7 +185,7 @@ class VisualHealingExecutor(SkillExecutor):
         screenshot_b64 = input_data.get("screenshot", "")
         failed_selector = input_data.get("failed_selector", "")
         action_intent = input_data.get("action_intent", "")
-        
+
         try:
             # Decode screenshot if base64
             screenshot = screenshot_b64
@@ -194,14 +194,14 @@ class VisualHealingExecutor(SkillExecutor):
                     screenshot = base64.b64decode(screenshot_b64)
                 except Exception:
                     pass
-            
+
             # Step 1: Try vision analysis first
             if screenshot and self._analyzer.api_key:
                 analysis = await self._analyzer.analyze_element(
                     screenshot,
                     f"element to {action_intent}"
                 )
-                
+
                 if analysis.get("found") and analysis.get("selector"):
                     self._record_repair(failed_selector, analysis["selector"], "vision")
                     return {
@@ -212,14 +212,14 @@ class VisualHealingExecutor(SkillExecutor):
                         "analysis": analysis.get("reasoning", ""),
                         "error": None
                     }
-            
+
             # Step 2: Fallback to heuristic repair strategies
             alternatives = self._heuristic_repair(failed_selector, action_intent)
-            
+
             if alternatives:
                 best = alternatives[0]
                 self._record_repair(failed_selector, best, "heuristic")
-                
+
                 return {
                     "status": "success",
                     "healed_selector": best,
@@ -228,7 +228,7 @@ class VisualHealingExecutor(SkillExecutor):
                     "analysis": f"Generated {len(alternatives)} heuristic alternatives",
                     "error": None
                 }
-            
+
             return {
                 "status": "error",
                 "healed_selector": None,
@@ -237,7 +237,7 @@ class VisualHealingExecutor(SkillExecutor):
                 "analysis": None,
                 "error": "Could not repair selector"
             }
-            
+
         except Exception as e:
             logger.exception("Visual healing failed")
             return {
@@ -256,7 +256,7 @@ class VisualHealingExecutor(SkillExecutor):
     ) -> list[str]:
         """Generate repair candidates using heuristics."""
         alternatives = []
-        
+
         # Try action-based fallbacks
         if action == "click":
             alternatives.extend([
@@ -272,7 +272,7 @@ class VisualHealingExecutor(SkillExecutor):
                 "textarea",
                 "[contenteditable='true']"
             ])
-        
+
         # Try extracting info from broken selector
         parts = broken_selector.split()
         for part in parts:
@@ -282,12 +282,12 @@ class VisualHealingExecutor(SkillExecutor):
             elif part.startswith("#"):
                 id_name = part[1:]
                 alternatives.append(f"[id*='{id_name}']")
-        
+
         # Check repair history for similar selectors
         for record in self._repair_history:
             if self._selector_similar(broken_selector, record["broken"]):
                 alternatives.append(record["healed"])
-        
+
         # Deduplicate while preserving order
         seen = set()
         unique = []
@@ -295,16 +295,16 @@ class VisualHealingExecutor(SkillExecutor):
             if alt not in seen:
                 seen.add(alt)
                 unique.append(alt)
-        
+
         return unique[:5]
 
     def _selector_similar(self, sel1: str, sel2: str) -> bool:
         """Check if two selectors are similar."""
         import re
-        
+
         def normalize(s: str) -> str:
             return re.sub(r'[^a-zA-Z0-9]', '', s).lower()
-        
+
         return normalize(sel1) in normalize(sel2) or normalize(sel2) in normalize(sel1)
 
     def _record_repair(
@@ -319,7 +319,7 @@ class VisualHealingExecutor(SkillExecutor):
             "healed": healed,
             "method": method
         })
-        
+
         # Keep history bounded
         if len(self._repair_history) > 100:
             self._repair_history = self._repair_history[-100:]
@@ -355,11 +355,11 @@ class SelfHealingOrchestrator:
             ("history", self._heal_from_history),
             ("heuristic", self._heal_heuristic),
         ]
-        
+
         for name, strategy in strategies:
             if strategy is None:
                 continue
-            
+
             try:
                 if name == "visual":
                     result = await strategy({
@@ -371,13 +371,13 @@ class SelfHealingOrchestrator:
                     result = strategy(broken_selector, action)
                 else:
                     result = strategy(broken_selector, action)
-                
+
                 if result.get("status") == "success" and result.get("healed_selector"):
                     self._record_healing(broken_selector, result["healed_selector"], name)
                     return result
             except Exception as e:
                 logger.warning(f"Healing strategy {name} failed: {e}")
-        
+
         return {
             "status": "error",
             "healed_selector": None,

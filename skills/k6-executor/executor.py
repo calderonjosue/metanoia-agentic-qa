@@ -60,12 +60,12 @@ class K6ScriptGenerator:
             'import { check, sleep } from "k6";',
             'import { Rate, Trend } from "k6/metrics";'
         ]
-        
+
         custom_metrics = [
             'const errorRate = new Rate("errors");',
             'const responseTime = new Trend("response_time");'
         ]
-        
+
         options = f'''
 export const options = {{
     vus: {vus},
@@ -76,23 +76,23 @@ export const options = {{
     }}
 }};
 '''
-        
+
         setup = '''
 export function setup() {{
     return {{ baseURL: "__BASE_URL__" }};
 }}
 '''
-        
+
         default_function = '''
 export default function(data) {{
     // Test scenarios here
 '''
-        
+
         scenarios = []
         for i, endpoint in enumerate(endpoints):
             method = endpoint.get("method", "GET").upper()
             path = endpoint.get("path", "/")
-            
+
             if method == "GET":
                 scenarios.append(f'''
     const res_{i} = http.get(data.baseURL + "{path}");
@@ -114,10 +114,10 @@ export default function(data) {{
     errorRate.add(res_{i}.status !== 201);
     responseTime.add(res_{i}.timings.duration);
 ''')
-        
+
         default_function += "".join(scenarios)
         default_function += "\n    sleep(1);\n}"
-        
+
         script = "\n".join(import_payloads + custom_metrics) + options + setup + default_function
         return script.replace('"__BASE_URL__"', '"' + base_url + '"')
 
@@ -145,13 +145,13 @@ class K6Executor(SkillExecutor):
         vus = input_data.get("vus", 10)
         duration = input_data.get("duration", "30s")
         output_json = input_data.get("output_json", True)
-        
+
         try:
             if not await self._check_k6_installed():
                 return self._error_output(
                     "k6 is not installed. Install from https://k6.io/docs/getting-started/installation/"
                 )
-            
+
             # If script looks like config rather than actual k6 script
             if script.startswith("{") or script.startswith("["):
                 try:
@@ -169,10 +169,10 @@ class K6Executor(SkillExecutor):
                         )
                 except json.JSONDecodeError:
                     return self._error_output("Invalid script configuration")
-            
+
             result = await self._run_k6(script, output_json)
             return result
-            
+
         except Exception as e:
             logger.exception("k6 execution failed")
             return self._error_output(str(e))
@@ -181,7 +181,7 @@ class K6Executor(SkillExecutor):
         """Check if k6 is installed."""
         if self._k6_available is not None:
             return self._k6_available
-        
+
         try:
             result = subprocess.run(
                 ["k6", "version"],
@@ -192,7 +192,7 @@ class K6Executor(SkillExecutor):
             self._k6_available = result.returncode == 0
         except Exception:
             self._k6_available = False
-        
+
         return self._k6_available
 
     async def _run_k6(self, script: str, output_json: bool) -> K6Output:
@@ -204,7 +204,7 @@ class K6Executor(SkillExecutor):
         ) as f:
             f.write(script)
             script_path = f.name
-        
+
         try:
             cmd = ["k6", "run"]
             if output_json:
@@ -212,33 +212,33 @@ class K6Executor(SkillExecutor):
                 cmd.append("json=results.json")
             cmd.extend(["--summary-export", "summary.json"])
             cmd.append(script_path)
-            
+
             process = await asyncio.create_subprocess_exec(
                 *cmd,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE
             )
-            
+
             stdout, stderr = await asyncio.wait_for(
                 process.communicate(),
                 timeout=3600  # 1 hour max
             )
-            
+
             if process.returncode != 0:
                 error_msg = stderr.decode() if stderr else "Unknown error"
                 return self._error_output(f"k6 failed: {error_msg}")
-            
+
             # Parse results
             metrics = self._parse_results()
             summary = self._generate_summary(metrics)
-            
+
             return {
                 "status": "success",
                 "metrics": metrics,
                 "summary": summary,
                 "error": None
             }
-            
+
         finally:
             Path(script_path).unlink(missing_ok=True)
 
@@ -250,14 +250,14 @@ class K6Executor(SkillExecutor):
                     return {"raw_output": "see results.json"}
         except Exception:
             pass
-        
+
         try:
             if Path("summary.json").exists():
                 with open("summary.json", "r") as f:
                     return json.load(f)
         except Exception:
             pass
-        
+
         return {}
 
     def _generate_summary(self, metrics: dict) -> str:
