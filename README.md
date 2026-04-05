@@ -40,7 +40,7 @@ Equipped with System Prompts based on **ISTQB** and **DevSecOps** methodologies,
 ### New in v2.0
 | Icon | Feature | Description |
 |------|---------|-------------|
-| 🌐 | **LLM Agnostic** | OpenAI, Gemini, Claude, Ollama, vLLM, Llama.cpp |
+| 🌐 | **LLM Agnostic** | Gemini, GPT-4, Claude, DeepSeek, MiniMax, Kimi, GLM, Ollama, vLLM, Llama.cpp |
 | 🏗️ | **IaC Integration** | Terraform + ephemeral lab provisioning |
 | 🔄 | **CI/CD Orchestrator** | Auto-merge at 95% quality gate |
 | 🛒 | **Skill Hub CLI** | `metanoia install skill <name>` - extensible skills |
@@ -158,13 +158,21 @@ metanoia-qa/
 │   └── api/                    # FastAPI routes
 ├── skills/                     # Reusable skill modules
 │   ├── playwright-executor/    # Playwright UI automation
-│   ├── k6-executor/            # k6 load testing
-│   ├── selenium-executor/       # Selenium WebDriver
-│   ├── cypress-executor/       # Cypress E2E testing
-│   ├── jmeter-executor/        # JMeter load testing
-│   ├── postman-executor/       # Postman API testing
-│   ├── datadog-reporter/       # Datadog metrics
-│   └── visual-healing/          # Self-healing selectors
+│   ├── selenium-executor/     # Selenium WebDriver + POM
+│   ├── cypress-executor/      # Cypress E2E testing
+│   ├── k6-executor/          # k6 load testing
+│   ├── jmeter-executor/       # JMeter load testing
+│   ├── locust-executor/       # Locust Python load testing
+│   ├── appium-executor/       # Mobile (iOS/Android)
+│   ├── behave-executor/       # BDD with Gherkin
+│   ├── postman-executor/      # Postman API testing
+│   ├── pact-executor/         # Contract testing (Pact)
+│   ├── wiremock-executor/     # API mocking
+│   ├── backstopjs-executor/   # Visual regression
+│   ├── graphql-tester/        # GraphQL API testing
+│   ├── a11y-tester/           # Accessibility testing
+│   ├── datadog-reporter/      # Datadog metrics
+│   └── visual-healing/        # Self-healing selectors
 ├── examples/                   # Demo projects
 ├── docs/                       # Documentation
 └── tests/                      # Unit + integration tests
