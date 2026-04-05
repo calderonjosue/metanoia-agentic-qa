@@ -246,6 +246,51 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions and coding standar
 
 ---
 
+## 📅 Roadmap
+
+### v2.2.0 (Q2 2026)
+- [ ] PyPI package publishing
+- [ ] Interactive CLI (`metanoia run`)
+- [ ] One-click Docker deployment
+
+### v3.0.0 (Q3 2026)
+- [ ] Multi-tenancy support
+- [ ] Circuit breakers for LLM failures
+- [ ] Redis caching layer
+- [ ] Async/await architecture refactor
+
+### v3.1.0 (Q4 2026)
+- [ ] Enterprise features (SSO, audit logs)
+- [ ] Cloud-native deployment (Kubernetes)
+- [ ] Advanced analytics dashboard
+
+---
+
+## ❓ FAQ
+
+### ¿Qué diferencia a Metanoia-QA de otros frameworks de QA?
+Metanoia-QA usa agentes IA que razonan sobre el contexto histórico del proyecto, no solo ejecutan tests. El sistema aprende de sprints anteriores.
+
+### ¿Qué LLM providers soporta?
+Gemini, OpenAI GPT-4, Claude, DeepSeek, MiniMax, Kimi, GLM, Ollama, vLLM, y Llama.cpp.
+
+### ¿Necesito API keys para todos los providers?
+No. Puedes usar uno o varios. El framework usa fallback automático.
+
+### ¿Puedo contribuir con nuevos skills?
+¡Sí! Usa el SKILL_TEMPLATE y abre un PR.
+
+### ¿Es enterprise-ready?
+Sí. Soporta SOC2, ISO27001, HIPAA y GDPR compliance reports.
+
+---
+
+## 🏢 Who's Using Metanoia-QA
+
+*¿Usas Metanoia-QA? Haz un PR para agregar tu empresa.*
+
+---
+
 ## 📜 License
 
 MIT License - see [LICENSE](LICENSE) for details.

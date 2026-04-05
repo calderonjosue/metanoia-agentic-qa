@@ -4,64 +4,49 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "metanoia-qa"
-version = "1.0.0"
+version = "2.1.0"
 description = "Autonomous Agentic STLC Framework"
 readme = "README.md"
-requires-python = ">=3.12"
-license = {text = "MIT"}
+license = {text = "Apache-2.0"}
 authors = [
-    {name = "Metanoia-QA Team", email = "team@metanoia-qa.dev"}
+    {name = "Josue Calderon", email = "calderonjosue@gmail.com"}
 ]
-keywords = ["qa", "testing", "automation", "ai", "agents", "langgraph", "stlc"]
+keywords = ["qa", "testing", "automation", "langgraph", "agents", "stlc"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3.12",
 ]
-
 dependencies = [
-    "fastapi>=0.109.0",
-    "uvicorn>=0.27.0",
-    "pydantic>=2.5.0",
     "langgraph>=0.0.20",
     "langchain>=0.1.0",
-    "langchain-google-genai>=0.0.5",
-    "supabase>=2.3.0",
-    "pgvector>=0.2.0",
-    "playwright>=1.40.0",
-    "python-dotenv>=1.0.0",
-    "httpx>=0.26.0",
-    "tenacity>=8.2.0",
+    "fastapi>=0.109.0",
+    "supabase>=2.0.0",
 ]
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=7.4.0",
-    "pytest-asyncio>=0.23.0",
-    "pytest-cov>=4.1.0",
-    "ruff>=0.1.0",
-    "mypy>=1.8.0",
-]
+playwright = ["playwright>=1.40.0"]
+k6 = ["k6runner>=0.1.0"]
+openai = ["langchain-openai>=0.0.5"]
+anthropic = ["langchain-anthropic>=0.1.0"]
+ollama = ["langchain-ollama>=0.0.1"]
+dev = ["pytest>=7.4.0", "pytest-asyncio>=0.23.0", "black>=23.0", "ruff>=0.1.0"]
 
 [project.scripts]
-metanoia = "metanoia.cli:main"
+metanoia = "metanoia_qa.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/calderonjosue/metanoia-agentic-qa"
+Documentation = "https://metanoia-qa.github.io"
+Repository = "https://github.com/calderonjosue/metanoia-agentic-qa"
+Issues = "https://github.com/calderonjosue/metanoia-agentic-qa/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-asyncio_mode = "auto"
+[tool.black]
+line-length = 88
 
 [tool.ruff]
-line-length = 100
-target-version = "py312"
-
-[tool.mypy]
-python_version = "3.12"
-warn_return_any = true
-warn_unused_configs = true
-mypy_path = "src"
-follow_imports = "normal"
-ignore_missing_imports = false
+line-length = 88

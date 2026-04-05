@@ -1,1 +1,1 @@
-# Metanoia-QA Core Infrastructure Package
+"""Metanoia-QA package."""
