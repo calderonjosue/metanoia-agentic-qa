@@ -68,12 +68,12 @@ class QA_Manager_Dashboard:
     ) -> CrossTeamSprint:
         """
         Create a sprint spanning multiple teams.
-        
+
         Args:
             name: Sprint name
             teams: List of team IDs participating
             goals: List of sprint goals
-            
+
         Returns:
             Created CrossTeamSprint instance
         """
@@ -106,11 +106,11 @@ class QA_Manager_Dashboard:
     ) -> List[ModuleAssignment]:
         """
         Assign modules to teams for cross-team sprint.
-        
+
         Args:
             sprint_id: Sprint ID
             team_assignments: List of dicts with team_id and modules
-            
+
         Returns:
             List of created ModuleAssignment instances
         """
@@ -137,10 +137,10 @@ class QA_Manager_Dashboard:
     async def get_dashboard_summary(self, sprint_id: str) -> dict:
         """
         Get summary for QA manager dashboard.
-        
+
         Args:
             sprint_id: Sprint ID
-            
+
         Returns:
             Dictionary containing dashboard summary
         """
@@ -186,10 +186,10 @@ class QA_Manager_Dashboard:
     ) -> List[BlockerReport]:
         """
         Identify and list cross-team blockers.
-        
+
         Args:
             sprint_id: Sprint ID
-            
+
         Returns:
             List of blocker reports
         """
@@ -209,14 +209,14 @@ class QA_Manager_Dashboard:
     ) -> BlockerReport:
         """
         Report a cross-team blocker.
-        
+
         Args:
             sprint_id: Sprint ID
             description: Blocker description
             affected_teams: List of affected team IDs
             affected_modules: List of affected module names
             severity: Blocker severity (low, medium, high, critical)
-            
+
         Returns:
             Created BlockerReport instance
         """
@@ -248,12 +248,12 @@ class QA_Manager_Dashboard:
     ) -> BlockerReport:
         """
         Mark a blocker as resolved.
-        
+
         Args:
             sprint_id: Sprint ID
             blocker_id: Blocker ID
             resolution_notes: Resolution notes
-            
+
         Returns:
             Updated BlockerReport instance
         """
@@ -277,14 +277,14 @@ class QA_Manager_Dashboard:
     ) -> TeamContribution:
         """
         Update a team's progress in the sprint.
-        
+
         Args:
             sprint_id: Sprint ID
             team_id: Team ID
             completed_tests: Number of completed tests
             total_tests: Total number of tests
             blockers: Optional list of current blockers
-            
+
         Returns:
             Updated TeamContribution instance
         """
@@ -329,10 +329,10 @@ class QA_Manager_Dashboard:
     async def close_sprint(self, sprint_id: str) -> CrossTeamSprint:
         """
         Close a cross-team sprint.
-        
+
         Args:
             sprint_id: Sprint ID
-            
+
         Returns:
             Updated CrossTeamSprint instance
         """

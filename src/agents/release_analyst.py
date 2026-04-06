@@ -43,7 +43,7 @@ class TestResult(BaseModel):
 
 class ReleaseAnalyst:
     """QA Release Analyst that collects results and generates release recommendations.
-    
+
     Responsibilities:
     - Collect results from all execution agents
     - Calculate weighted release score
@@ -75,11 +75,11 @@ class ReleaseAnalyst:
 
     async def execute(self, test_cases: list[dict], context: dict) -> TestResult:
         """Collect agent results and generate release analysis.
-        
+
         Args:
             test_cases: Not used directly - results collected from agents.
             context: Must contain 'agent_results' with results from all agents.
-            
+
         Returns:
             TestResult with release score and recommendation.
         """
@@ -128,10 +128,10 @@ class ReleaseAnalyst:
 
     async def heal(self, failure: dict) -> dict:
         """Investigate a failure and provide remediation guidance.
-        
+
         Args:
             failure: Failure information with agent, error, business_impact.
-            
+
         Returns:
             Analysis with remediation steps.
         """
@@ -181,13 +181,13 @@ class ReleaseAnalyst:
         ui_pct: float
     ) -> ReleaseScore:
         """Calculate weighted release score.
-        
+
         Args:
             functional_pct: Functional test pass percentage.
             performance_pct: Performance test pass percentage.
             security_pct: Security test pass percentage.
             ui_pct: UI test pass percentage.
-            
+
         Returns:
             ReleaseScore with breakdown.
         """
@@ -216,7 +216,7 @@ class ReleaseAnalyst:
 
     def generate_release_report(self) -> dict:
         """Generate comprehensive release certification report.
-        
+
         Returns:
             Release certification report with all details.
         """
@@ -277,7 +277,7 @@ class ReleaseAnalyst:
         agent_results: dict
     ) -> dict:
         """Make go/no-go release recommendation.
-        
+
         Returns:
             Recommendation with decision and reasoning.
         """

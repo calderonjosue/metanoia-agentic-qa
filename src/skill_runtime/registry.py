@@ -51,7 +51,7 @@ class SkillRegistry:
         metadata: SkillMetadata | None = None
     ) -> None:
         """Register a skill.
-        
+
         Args:
             name: Unique skill name.
             executor_class: The executor class.
@@ -71,10 +71,10 @@ class SkillRegistry:
 
     def unregister(self, name: str) -> bool:
         """Unregister a skill.
-        
+
         Args:
             name: Name of the skill to unregister.
-            
+
         Returns:
             True if unregistered, False if not found.
         """
@@ -87,10 +87,10 @@ class SkillRegistry:
 
     def get_metadata(self, name: str) -> SkillMetadata | None:
         """Get metadata for a skill.
-        
+
         Args:
             name: Skill name.
-            
+
         Returns:
             SkillMetadata or None if not found.
         """
@@ -98,10 +98,10 @@ class SkillRegistry:
 
     def get_executor(self, name: str) -> type[SkillExecutor] | None:
         """Get the executor class for a skill.
-        
+
         Args:
             name: Skill name.
-            
+
         Returns:
             Executor class or None.
         """
@@ -109,10 +109,10 @@ class SkillRegistry:
 
     def create_executor(self, name: str) -> SkillExecutor | None:
         """Create an instance of a skill's executor.
-        
+
         Args:
             name: Skill name.
-            
+
         Returns:
             Executor instance or None.
         """
@@ -137,10 +137,10 @@ class SkillRegistry:
 
     def find_by_trigger(self, trigger: str) -> list[str]:
         """Find skills that match a trigger.
-        
+
         Args:
             trigger: Trigger keyword.
-            
+
         Returns:
             List of matching skill names.
         """
@@ -148,10 +148,10 @@ class SkillRegistry:
 
     def find_by_prefix(self, prefix: str) -> list[str]:
         """Find skills whose names start with prefix.
-        
+
         Args:
             prefix: Name prefix to search.
-            
+
         Returns:
             List of matching skill names.
         """

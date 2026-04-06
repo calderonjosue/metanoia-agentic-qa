@@ -38,7 +38,7 @@ class TestResult(BaseModel):
 
 class PerformanceEngineer:
     """Performance Test Engineer that executes k6 load tests.
-    
+
     Responsibilities:
     - Identify bottleneck endpoints from code changes
     - Generate k6 load scripts using k6-executor skill
@@ -65,11 +65,11 @@ class PerformanceEngineer:
 
     async def execute(self, test_cases: list[dict], context: dict) -> TestResult:
         """Execute performance tests and return results.
-        
+
         Args:
             test_cases: List of endpoint configurations.
             context: Execution context with base_url, vus, duration.
-            
+
         Returns:
             TestResult with metrics and regression flags.
         """
@@ -134,10 +134,10 @@ class PerformanceEngineer:
 
     async def heal(self, failure: dict) -> dict:
         """Attempt to address performance issues.
-        
+
         Args:
             failure: Failure information with endpoint, metric, value.
-            
+
         Returns:
             Analysis result with recommendations.
         """
@@ -171,10 +171,10 @@ class PerformanceEngineer:
 
     def identify_bottlenecks(self, code_changes: list[dict]) -> list[str]:
         """Identify potential bottleneck endpoints from code changes.
-        
+
         Args:
             code_changes: List of code change dictionaries.
-            
+
         Returns:
             List of potentially affected endpoints.
         """
@@ -212,13 +212,13 @@ class PerformanceEngineer:
         duration: str = "30s"
     ) -> str:
         """Generate k6 load script from endpoint configuration.
-        
+
         Args:
             endpoints: List of endpoint configs.
             base_url: Base URL for the API.
             vus: Number of virtual users.
             duration: Test duration.
-            
+
         Returns:
             k6 script as string.
         """
@@ -231,7 +231,7 @@ class PerformanceEngineer:
 
     def set_baseline(self, metrics: dict) -> None:
         """Set baseline metrics for regression comparison.
-        
+
         Args:
             metrics: Baseline performance metrics.
         """

@@ -27,7 +27,7 @@ class ExperimentAction(str, Enum):
 @dataclass
 class AbortCondition:
     """Abort condition for a chaos experiment.
-    
+
     Attributes:
         condition_type: Type of condition (e.g., "error_rate", "latency").
         threshold: Threshold value that triggers abort.
@@ -39,10 +39,10 @@ class AbortCondition:
 
     def evaluate(self, value: float) -> bool:
         """Evaluate if the condition is met.
-        
+
         Args:
             value: The current metric value.
-            
+
         Returns:
             True if the condition should trigger abort.
         """
@@ -60,7 +60,7 @@ class AbortCondition:
 @dataclass
 class ChaosExperiment:
     """Declarative chaos experiment definition.
-    
+
     Attributes:
         name: Unique experiment name.
         description: Human-readable description.
@@ -85,10 +85,10 @@ class ChaosExperiment:
 
     def should_abort(self, health_metrics: dict) -> tuple[bool, Optional[str]]:
         """Check if any abort condition is met.
-        
+
         Args:
             health_metrics: Current health metrics dictionary.
-            
+
         Returns:
             Tuple of (should_abort, reason_if_abort).
         """
@@ -101,10 +101,10 @@ class ChaosExperiment:
     @classmethod
     def from_dict(cls, data: dict) -> "ChaosExperiment":
         """Create a ChaosExperiment from a dictionary.
-        
+
         Args:
             data: Dictionary with experiment configuration.
-            
+
         Returns:
             ChaosExperiment instance.
         """
@@ -127,7 +127,7 @@ class ChaosExperiment:
 
     def to_dict(self) -> dict:
         """Convert experiment to dictionary.
-        
+
         Returns:
             Dictionary representation.
         """

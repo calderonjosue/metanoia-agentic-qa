@@ -82,12 +82,12 @@ class SharedLibrary:
     ) -> SharedTestCase:
         """
         Create a test case in shared library.
-        
+
         Args:
             team_id: ID of the team creating the test case
             test_case: Test case data
             user_id: ID of the user creating the test case
-            
+
         Returns:
             Created SharedTestCase instance
         """
@@ -125,13 +125,13 @@ class SharedLibrary:
     ) -> TestCaseFork:
         """
         Fork a test case to another team.
-        
+
         Args:
             test_case_id: ID of the test case to fork
             target_team: ID of the target team
             user_id: ID of the user forking
             modifications: Optional modifications to apply
-            
+
         Returns:
             Created TestCaseFork instance
         """
@@ -183,13 +183,13 @@ class SharedLibrary:
     ) -> List[SharedTestCase]:
         """
         Search shared library.
-        
+
         Args:
             team_id: ID of the team searching
             query: Search query string
             tags: Optional list of tags to filter by
             module: Optional module to filter by
-            
+
         Returns:
             List of matching SharedTestCase instances
         """
@@ -221,12 +221,12 @@ class SharedLibrary:
     ) -> SharedTestCase:
         """
         Update a shared test case (creates new version).
-        
+
         Args:
             test_case_id: ID of the test case to update
             updates: Dictionary of fields to update
             user_id: ID of the user making the update
-            
+
         Returns:
             Updated SharedTestCase instance
         """

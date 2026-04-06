@@ -28,7 +28,7 @@ class TestResult(BaseModel):
 
 class UIAutomationEngineer:
     """UI Automation Engineer that executes Playwright tests with self-healing.
-    
+
     Responsibilities:
     - Execute Playwright tests using playwright-executor skill
     - Use vision-healing skill on selector failure
@@ -49,11 +49,11 @@ class UIAutomationEngineer:
 
     async def execute(self, test_cases: list[dict], context: dict) -> TestResult:
         """Execute UI tests and return results.
-        
+
         Args:
             test_cases: List of test case dictionaries with url, selectors, actions.
             context: Execution context with base_url, timeout, etc.
-            
+
         Returns:
             TestResult with pass/fail counts and screenshots.
         """
@@ -124,10 +124,10 @@ class UIAutomationEngineer:
 
     async def heal(self, failure: dict) -> dict:
         """Attempt self-healing on a test failure.
-        
+
         Args:
             failure: Failure information with selector, action, screenshot.
-            
+
         Returns:
             Healing result with repaired selector.
         """
@@ -165,7 +165,7 @@ class UIAutomationEngineer:
 
     def generate_selector_fix_pr(self) -> dict:
         """Generate a PR for fixing broken selectors.
-        
+
         Returns:
             PR details with changes.
         """

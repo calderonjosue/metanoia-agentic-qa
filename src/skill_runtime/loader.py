@@ -17,9 +17,9 @@ class SkillLoader:
 
     def __init__(self, skills_path: Path | None = None):
         """Initialize the skill loader.
-        
+
         Args:
-            skills_path: Path to the skills directory. 
+            skills_path: Path to the skills directory.
                         Defaults to metanoia/skills/
         """
         if skills_path is None:
@@ -31,7 +31,7 @@ class SkillLoader:
 
     def discover_skills(self) -> list[str]:
         """Discover all available skills in the skills directory.
-        
+
         Returns:
             List of skill directory names.
         """
@@ -50,10 +50,10 @@ class SkillLoader:
 
     def load_skill(self, skill_name: str) -> type[SkillExecutor] | None:
         """Load a specific skill by name.
-        
+
         Args:
             skill_name: Name of the skill directory.
-            
+
         Returns:
             The skill's executor class, or None if not found.
         """
@@ -97,7 +97,7 @@ class SkillLoader:
 
     def load_all_skills(self) -> dict[str, type[SkillExecutor]]:
         """Load all discovered skills.
-        
+
         Returns:
             Dictionary mapping skill names to executor classes.
         """
@@ -109,10 +109,10 @@ class SkillLoader:
 
     def get_skill(self, skill_name: str) -> type[SkillExecutor] | None:
         """Get a loaded skill by name.
-        
+
         Args:
             skill_name: Name of the skill.
-            
+
         Returns:
             The executor class, or None if not loaded.
         """
@@ -120,10 +120,10 @@ class SkillLoader:
 
     def get_skill_metadata(self, skill_name: str) -> dict[str, Any] | None:
         """Get metadata for a skill.
-        
+
         Args:
             skill_name: Name of the skill.
-            
+
         Returns:
             Dictionary with name, version, etc., or None.
         """
@@ -141,10 +141,10 @@ class SkillLoader:
 
     def reload_skill(self, skill_name: str) -> type[SkillExecutor] | None:
         """Reload a skill (useful after updates).
-        
+
         Args:
             skill_name: Name of the skill to reload.
-            
+
         Returns:
             The reloaded executor class, or None.
         """

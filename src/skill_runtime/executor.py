@@ -26,7 +26,7 @@ class SkillExecutorEngine:
 
     def __init__(self, timeout_seconds: float = 300.0):
         """Initialize the execution engine.
-        
+
         Args:
             timeout_seconds: Maximum time for skill execution.
         """
@@ -39,11 +39,11 @@ class SkillExecutorEngine:
         input_data: dict[str, Any]
     ) -> ExecutionResult:
         """Execute a skill with the given input.
-        
+
         Args:
             skill: The skill executor instance.
             input_data: Input data for the skill.
-            
+
         Returns:
             ExecutionResult with status, data, and timing.
         """
@@ -119,10 +119,10 @@ class SkillExecutorEngine:
         skills: list[tuple[SkillExecutor, dict[str, Any]]]
     ) -> list[ExecutionResult]:
         """Execute multiple skills in parallel.
-        
+
         Args:
             skills: List of (skill, input_data) tuples.
-            
+
         Returns:
             List of ExecutionResults in same order as input.
         """
@@ -134,10 +134,10 @@ class SkillExecutorEngine:
 
     async def cancel_execution(self, execution_id: str) -> bool:
         """Cancel an active execution.
-        
+
         Args:
             execution_id: ID of the execution to cancel.
-            
+
         Returns:
             True if cancelled, False if not found.
         """

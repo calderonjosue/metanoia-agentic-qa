@@ -16,7 +16,7 @@ class SkillHubOutput(TypedDict):
 
 class SkillHubExecutor(BaseSkillExecutor):
     """Base class for Skill Hub community skills.
-    
+
     Community skills extend the base SkillExecutor with additional
     capabilities for registry discovery, version checking, and
     community features.

@@ -63,18 +63,18 @@ class TestPlan(BaseModel):
 
 class StrategyManager:
     """Agent for creating test strategies based on context analysis.
-    
+
     Receives Context Analyst output and applies ISTQB Defect Clustering
     principle (80% of defects cluster in 20% of modules) to calculate
     effort distribution and generate prioritized test plans.
-    
+
     Attributes:
         context_analyst: ContextAnalyst instance for historical data.
     """
 
     def __init__(self, context_analyst: Any | None = None):
         """Initialize the Strategy Manager.
-        
+
         Args:
             context_analyst: Optional ContextAnalyst instance for coordination.
         """
@@ -87,13 +87,13 @@ class StrategyManager:
         context: dict[str, Any]
     ) -> dict[str, float]:
         """Apply ISTQB Defect Clustering principle to focus testing.
-        
+
         The principle states that 80% of defects are found in 20% of modules.
         This method identifies high-risk modules and adjusts focus accordingly.
-        
+
         Args:
             context: Context analysis results.
-            
+
         Returns:
             Dictionary of module focus weights.
         """
@@ -126,14 +126,14 @@ class StrategyManager:
         sprint_goal: str
     ) -> EffortDistribution:
         """Calculate effort distribution across test types.
-        
+
         Uses context analysis (risk level, defect density, flaky tests) and
         sprint goal to determine optimal effort allocation.
-        
+
         Args:
             context: Context analysis results.
             sprint_goal: Sprint goal description.
-            
+
         Returns:
             EffortDistribution with percentages for each test type.
         """
@@ -236,12 +236,12 @@ class StrategyManager:
         sprint_goal: str
     ) -> list[TestPriority]:
         """Generate prioritized test list based on context and effort.
-        
+
         Args:
             context: Context analysis results.
             effort: Calculated effort distribution.
             sprint_goal: Sprint goal description.
-            
+
         Returns:
             List of prioritized tests.
         """
@@ -339,11 +339,11 @@ class StrategyManager:
         sprint_goal: str
     ) -> list[dict[str, Any]]:
         """Create a phased testing approach for sprint execution.
-        
+
         Args:
             effort: Effort distribution across test types.
             sprint_goal: Sprint goal description.
-            
+
         Returns:
             List of phases with timing and focus areas.
         """
@@ -419,11 +419,11 @@ class StrategyManager:
         test_count: int
     ) -> dict[str, int]:
         """Calculate resource requirements for the test plan.
-        
+
         Args:
             effort: Effort distribution across test types.
             test_count: Total number of test cases.
-            
+
         Returns:
             Dictionary of resource requirements.
         """
@@ -443,16 +443,16 @@ class StrategyManager:
         context: dict[str, Any]
     ) -> dict[str, Any]:
         """Create a comprehensive test plan based on context analysis.
-        
+
         Receives Context Analyst output and applies ISTQB Defect Clustering
         principle to calculate effort distribution across functional,
         regression, performance, and security testing. Generates a prioritized
         test plan with phased approach.
-        
+
         Args:
             sprint_goal: Description of sprint goal.
             context: Context analysis results from ContextAnalyst.
-            
+
         Returns:
             Dictionary containing:
                 - plan_id: Unique identifier for the plan

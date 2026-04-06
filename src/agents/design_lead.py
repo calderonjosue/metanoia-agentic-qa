@@ -73,18 +73,18 @@ class TestDesignResult(BaseModel):
 
 class TestDesignLead:
     """Agent for designing test scenarios, cases, and environments.
-    
+
     Generates test scenarios (happy paths), infers edge cases using LLM,
     creates synthetic test data, designs test environment requirements,
     and outputs test cases to execution agents.
-    
+
     Attributes:
         gemini_client: Gemini client for LLM-based edge case inference.
     """
 
     def __init__(self, gemini_client: Any | None = None):
         """Initialize the Test Design Lead.
-        
+
         Args:
             gemini_client: Optional Gemini client for LLM inference.
         """
@@ -97,11 +97,11 @@ class TestDesignLead:
         module: str
     ) -> list[dict[str, Any]]:
         """Use LLM to infer edge cases for a scenario.
-        
+
         Args:
             scenario: The base test scenario.
             module: Module name for context.
-            
+
         Returns:
             List of inferred edge cases with descriptions and approaches.
         """
@@ -155,11 +155,11 @@ Return as JSON array."""
         module: str
     ) -> list[dict[str, Any]]:
         """Generate default edge cases without LLM.
-        
+
         Args:
             scenario: The base test scenario.
             module: Module name for context.
-            
+
         Returns:
             List of common edge cases.
         """
@@ -202,11 +202,11 @@ Return as JSON array."""
         sprint_goal: str
     ) -> list[TestScenario]:
         """Generate test scenarios from test plan.
-        
+
         Args:
             test_plan: Test plan from StrategyManager.
             sprint_goal: Sprint goal description.
-            
+
         Returns:
             List of generated test scenarios.
         """
@@ -314,10 +314,10 @@ Return as JSON array."""
         scenarios: list[TestScenario]
     ) -> list[TestCase]:
         """Create detailed test cases from scenarios.
-        
+
         Args:
             scenarios: List of test scenarios.
-            
+
         Returns:
             List of detailed test cases.
         """
@@ -382,10 +382,10 @@ Return as JSON array."""
         scenario: TestScenario
     ) -> dict[str, Any]:
         """Generate synthetic test data for a scenario.
-        
+
         Args:
             scenario: The test scenario.
-            
+
         Returns:
             Dictionary of test data.
         """
@@ -440,11 +440,11 @@ Return as JSON array."""
         sprint_goal: str
     ) -> TestEnvironment:
         """Design test environment requirements.
-        
+
         Args:
             test_plan: Test plan from StrategyManager.
             sprint_goal: Sprint goal description.
-            
+
         Returns:
             TestEnvironment configuration.
         """
@@ -506,10 +506,10 @@ Return as JSON array."""
         scenarios: list[TestScenario]
     ) -> list[SyntheticDataTemplate]:
         """Generate synthetic data templates for test data creation.
-        
+
         Args:
             scenarios: List of test scenarios.
-            
+
         Returns:
             List of synthetic data templates.
         """
@@ -604,11 +604,11 @@ Return as JSON array."""
         test_cases: list[TestCase]
     ) -> dict[str, float]:
         """Calculate test coverage metrics.
-        
+
         Args:
             scenarios: List of test scenarios.
             test_cases: List of test cases.
-            
+
         Returns:
             Dictionary of coverage metrics.
         """
@@ -636,15 +636,15 @@ Return as JSON array."""
         sprint_goal: str
     ) -> dict[str, Any]:
         """Design comprehensive tests based on test plan.
-        
+
         Generates test scenarios (happy paths), infers edge cases using LLM,
         creates synthetic test data, designs test environment requirements,
         and outputs test cases to execution agents.
-        
+
         Args:
             test_plan: Test plan from StrategyManager.
             sprint_goal: Sprint goal description.
-            
+
         Returns:
             Dictionary containing:
                 - scenarios: Generated test scenarios

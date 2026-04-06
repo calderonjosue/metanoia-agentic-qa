@@ -15,10 +15,10 @@ logger = logging.getLogger(__name__)
 
 class ChaosEngineer(ChaosAgent):
     """Chaos Engineer that orchestrates experiments with abort triggers.
-    
+
     Extends ChaosAgent with advanced cascade failure detection
     and automated abort capabilities.
-    
+
     Responsibilities:
     - Define and orchestrate chaos experiments
     - Monitor for cascade failure conditions
@@ -31,7 +31,7 @@ class ChaosEngineer(ChaosAgent):
 
     def __init__(self, config: AgentConfig):
         """Initialize the Chaos Engineer.
-        
+
         Args:
             config: Agent configuration.
         """
@@ -41,7 +41,7 @@ class ChaosEngineer(ChaosAgent):
 
     def add_abort_condition(self, condition: AbortCondition) -> None:
         """Add an abort condition to the engineer.
-        
+
         Args:
             condition: AbortCondition to add.
         """
@@ -59,14 +59,14 @@ class ChaosEngineer(ChaosAgent):
         experiment_id: str,
     ) -> tuple[bool, str]:
         """Abort experiment if health checks fail.
-        
+
         Checks all configured abort conditions against current
         health metrics and triggers abort if any condition is met.
-        
+
         Args:
             health_metrics: Current health metrics dictionary.
             experiment_id: ID of the running experiment.
-            
+
         Returns:
             Tuple of (abort_triggered, reason).
         """
@@ -95,14 +95,14 @@ class ChaosEngineer(ChaosAgent):
         threshold: Optional[float] = None,
     ) -> tuple[bool, str]:
         """Abort if error rate exceeds threshold.
-        
+
         Specialized abort trigger for error rate monitoring.
-        
+
         Args:
             error_rate: Current error rate (0.0 to 1.0).
             experiment_id: ID of the running experiment.
             threshold: Custom threshold (uses default 0.5 if None).
-            
+
         Returns:
             Tuple of (abort_triggered, reason).
         """
@@ -117,7 +117,7 @@ class ChaosEngineer(ChaosAgent):
 
     def is_cascade_failure_detected(self) -> bool:
         """Check if cascade failure has been detected.
-        
+
         Returns:
             True if cascade failure was detected during execution.
         """
@@ -130,10 +130,10 @@ class ChaosEngineer(ChaosAgent):
 
     def execute(self, state: dict[str, Any]) -> AgentResponse:
         """Execute chaos engineering workflow.
-        
+
         Args:
             state: Pipeline state with experiment definitions.
-            
+
         Returns:
             AgentResponse with orchestration results.
         """
@@ -153,10 +153,10 @@ class ChaosEngineer(ChaosAgent):
 
     def validate_experiment_safety(self, experiment: ChaosExperiment) -> tuple[bool, list[str]]:
         """Validate that an experiment has proper safety controls.
-        
+
         Args:
             experiment: The experiment to validate.
-            
+
         Returns:
             Tuple of (is_safe, list of warnings).
         """

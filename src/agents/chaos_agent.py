@@ -33,7 +33,7 @@ class ChaosExperimentResult(BaseModel):
 
 class ChaosAgent(BaseAgent):
     """Chaos Agent that executes declarative chaos experiments.
-    
+
     Responsibilities:
     - Execute chaos experiments with controlled failure injection
     - Monitor system health during experiments
@@ -46,7 +46,7 @@ class ChaosAgent(BaseAgent):
 
     def __init__(self, config: AgentConfig):
         """Initialize the Chaos Agent.
-        
+
         Args:
             config: Agent configuration.
         """
@@ -56,11 +56,11 @@ class ChaosAgent(BaseAgent):
 
     def execute(self, state: dict[str, Any]) -> AgentResponse:
         """Execute chaos experiments.
-        
+
         Args:
             state: Pipeline state containing experiment definitions
                    and execution context.
-                   
+
         Returns:
             AgentResponse with experiment results.
         """
@@ -93,10 +93,10 @@ class ChaosAgent(BaseAgent):
 
     def _execute_experiment(self, experiment: ChaosExperiment) -> ChaosExperimentResult:
         """Execute a single chaos experiment.
-        
+
         Args:
             experiment: The experiment to execute.
-            
+
         Returns:
             ChaosExperimentResult with execution details.
         """
@@ -142,10 +142,10 @@ class ChaosAgent(BaseAgent):
 
     def _run_experiment_loop(self, experiment: ChaosExperiment) -> dict:
         """Run the experiment loop monitoring health metrics.
-        
+
         Args:
             experiment: The experiment being executed.
-            
+
         Returns:
             Final health metrics dictionary.
         """
@@ -174,13 +174,13 @@ class ChaosAgent(BaseAgent):
 
     def _collect_health_metrics(self, experiment: ChaosExperiment) -> dict:
         """Collect current health metrics.
-        
+
         In a real implementation, this would integrate with APM
         and monitoring systems.
-        
+
         Args:
             experiment: The experiment being executed.
-            
+
         Returns:
             Current health metrics.
         """
@@ -198,10 +198,10 @@ class ChaosAgent(BaseAgent):
 
     def abort_experiment(self, experiment_id: str) -> bool:
         """Abort a running experiment.
-        
+
         Args:
             experiment_id: Name/ID of the experiment to abort.
-            
+
         Returns:
             True if the experiment was found and aborted.
         """
@@ -214,7 +214,7 @@ class ChaosAgent(BaseAgent):
 
     def get_active_experiments(self) -> list[str]:
         """Get list of currently running experiments.
-        
+
         Returns:
             List of active experiment IDs.
         """

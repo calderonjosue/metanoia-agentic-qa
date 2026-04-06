@@ -71,11 +71,11 @@ class ContextAnalysisResult(BaseModel):
 
 class ContextAnalyst:
     """Agent for analyzing historical context and regression risks.
-    
+
     Connects to Supabase pgvector to search historical sprints for similar
     modules/features, identifies flaky tests from history, and calculates
     defect density per module to return risk assessments.
-    
+
     Attributes:
         supabase_client: Supabase client for pgvector operations.
         gemini_client: Gemini client for LLM-based analysis.
@@ -83,7 +83,7 @@ class ContextAnalyst:
 
     def __init__(self, supabase_client: Any, gemini_client: Any):
         """Initialize the Context Analyst.
-        
+
         Args:
             supabase_client: Supabase client instance for database operations.
             gemini_client: Gemini client for LLM-based analysis.
@@ -118,11 +118,11 @@ class ContextAnalyst:
         lookback: int = 3
     ) -> list[dict[str, Any]]:
         """Search for similar historical sprints using vector similarity.
-        
+
         Args:
             query: Search query text.
             lookback: Number of past sprints to consider.
-            
+
         Returns:
             List of similar sprint records.
         """
@@ -149,11 +149,11 @@ class ContextAnalyst:
         lookback: int
     ) -> list[dict[str, Any]]:
         """Fallback direct database search for similar sprints.
-        
+
         Args:
             query: Search query text.
             lookback: Number of past sprints to consider.
-            
+
         Returns:
             List of similar sprint records from direct DB query.
         """
@@ -199,11 +199,11 @@ class ContextAnalyst:
 
     def _calculate_text_similarity(self, text1: str, text2: str) -> float:
         """Calculate simple text similarity score.
-        
+
         Args:
             text1: First text string.
             text2: Second text string.
-            
+
         Returns:
             Similarity score between 0 and 1.
         """
@@ -224,11 +224,11 @@ class ContextAnalyst:
         lookback: int = 3
     ) -> list[FlakyTest]:
         """Retrieve flaky tests from historical data.
-        
+
         Args:
             modules: List of modules to check.
             lookback: Number of past sprints to analyze.
-            
+
         Returns:
             List of flaky tests with failure rates.
         """
@@ -289,10 +289,10 @@ class ContextAnalyst:
         modules: list[str]
     ) -> list[ModuleRisk]:
         """Calculate defect density per module.
-        
+
         Args:
             modules: List of modules to analyze.
-            
+
         Returns:
             List of module risk assessments.
         """
@@ -376,15 +376,15 @@ class ContextAnalyst:
         lookback: int = 3
     ) -> dict[str, Any]:
         """Analyze sprint scope against historical data for risk assessment.
-        
+
         Connects to Supabase pgvector to search historical sprints for
         similar modules/features, identifies flaky tests, and calculates
         defect density per module to provide comprehensive risk assessment.
-        
+
         Args:
             sprint_scope: Description of sprint scope (string or SprintScope).
             lookback: Number of past sprints to analyze for context.
-            
+
         Returns:
             Dictionary containing:
                 - risk_level: Overall risk level (low/medium/high/critical)
@@ -472,10 +472,10 @@ class ContextAnalyst:
 
     def _extract_modules_from_description(self, description: str) -> list[str]:
         """Extract module names from sprint description using common patterns.
-        
+
         Args:
             description: Sprint description text.
-            
+
         Returns:
             List of potential module names.
         """

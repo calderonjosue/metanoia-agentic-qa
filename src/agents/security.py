@@ -36,14 +36,14 @@ class TestResult(BaseModel):
 
 class SecurityEngineer:
     """Security Test Engineer that runs ZAP scans and API fuzzing.
-    
+
     Responsibilities:
     - Run OWASP ZAP scans using zap-executor skill
     - Perform API fuzzing
     - Check for OWASP Top 10 vulnerabilities
     - Generate security report
     - Integrate with skill_runtime (zap-executor)
-    
+
     Note: zap-executor skill not yet implemented. Using subprocess approach.
     """
 
@@ -71,11 +71,11 @@ class SecurityEngineer:
 
     async def execute(self, test_cases: list[dict], context: dict) -> TestResult:
         """Execute security tests and return results.
-        
+
         Args:
             test_cases: List of target configurations (urls, endpoints).
             context: Execution context with target_url, scan_type, etc.
-            
+
         Returns:
             TestResult with findings and OWASP Top 10 mapping.
         """
@@ -121,10 +121,10 @@ class SecurityEngineer:
 
     async def heal(self, failure: dict) -> dict:
         """Attempt to remediate or investigate a security finding.
-        
+
         Args:
             failure: Security finding to investigate.
-            
+
         Returns:
             Investigation result with recommendations.
         """
@@ -162,7 +162,7 @@ class SecurityEngineer:
 
     def generate_security_report(self) -> dict:
         """Generate comprehensive security report.
-        
+
         Returns:
             Security report with findings and remediation steps.
         """
@@ -240,11 +240,11 @@ class SecurityEngineer:
         endpoints: list[dict]
     ) -> list[SecurityFinding]:
         """Perform basic API fuzzing.
-        
+
         Args:
             base_url: Base URL for fuzzing.
             endpoints: List of endpoint configs.
-            
+
         Returns:
             List of security findings from fuzzing.
         """
@@ -284,7 +284,7 @@ class SecurityEngineer:
         endpoint: dict
     ) -> dict:
         """Test a single payload against an endpoint.
-        
+
         Returns:
             Dict with vulnerable=True/False and severity.
         """
@@ -324,7 +324,7 @@ class SecurityEngineer:
 
     def _map_to_owasp_top_10(self, findings: list[SecurityFinding]) -> dict:
         """Map findings to OWASP Top 10 categories.
-        
+
         Returns:
             Dict with OWASP categories and finding counts.
         """
@@ -374,7 +374,7 @@ class SecurityEngineer:
         high = len([f for f in self._scan_results if f.severity == "high"])
 
         return f"""Security scan completed.
-        
+
 Total findings: {total}
 Critical: {critical}
 High: {high}

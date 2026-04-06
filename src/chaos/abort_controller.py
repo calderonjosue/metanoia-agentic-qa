@@ -9,10 +9,10 @@ logger = logging.getLogger(__name__)
 
 class AbortController:
     """Cascade failure detection and abort controller.
-    
+
     Monitors health metrics and triggers abort when conditions
     indicate cascading failure.
-    
+
     Attributes:
         default_error_rate_threshold: Default error rate threshold (0.5 = 50%).
         default_latency_threshold_ms: Default latency threshold in milliseconds.
@@ -26,7 +26,7 @@ class AbortController:
         abort_timeout_seconds: float = 30.0,
     ):
         """Initialize the abort controller.
-        
+
         Args:
             default_error_rate_threshold: Default error rate threshold.
             default_latency_threshold_ms: Default latency threshold in ms.
@@ -39,10 +39,10 @@ class AbortController:
 
     def should_abort(self, health_metrics: dict) -> tuple[bool, str]:
         """Check if the chaos experiment should be aborted.
-        
+
         Evaluates health metrics against configured thresholds
         to determine if cascade failure is occurring.
-        
+
         Args:
             health_metrics: Dictionary of health metric name to value.
                 Expected keys:
@@ -50,7 +50,7 @@ class AbortController:
                 - latency_p99_ms: float (milliseconds)
                 - error_count: int
                 - success_rate: float (0.0 to 1.0)
-                
+
         Returns:
             Tuple of (should_abort, reason).
             should_abort is True if abort should be triggered.
@@ -76,7 +76,7 @@ class AbortController:
 
     def trigger_abort(self, experiment_id: str) -> None:
         """Trigger immediate abort of a chaos experiment.
-        
+
         Args:
             experiment_id: Unique identifier of the experiment to abort.
         """
@@ -89,10 +89,10 @@ class AbortController:
 
     def is_aborted(self, experiment_id: str) -> bool:
         """Check if an experiment has been aborted.
-        
+
         Args:
             experiment_id: Unique identifier of the experiment.
-            
+
         Returns:
             True if the experiment has been aborted.
         """
@@ -100,10 +100,10 @@ class AbortController:
 
     def get_abort_duration(self, experiment_id: str) -> Optional[float]:
         """Get how long ago an abort was triggered.
-        
+
         Args:
             experiment_id: Unique identifier of the experiment.
-            
+
         Returns:
             Seconds since abort was triggered, or None if not aborted.
         """
@@ -113,7 +113,7 @@ class AbortController:
 
     def clear_abort(self, experiment_id: str) -> None:
         """Clear abort state for an experiment.
-        
+
         Args:
             experiment_id: Unique identifier of the experiment.
         """
@@ -127,13 +127,13 @@ class AbortController:
         experiment_id: str,
     ) -> tuple[bool, str]:
         """Check health metrics and abort if failure is detected.
-        
+
         Convenience method that combines should_abort and trigger_abort.
-        
+
         Args:
             health_metrics: Dictionary of health metrics.
             experiment_id: Unique identifier of the experiment.
-            
+
         Returns:
             Tuple of (abort_triggered, reason).
         """
@@ -149,12 +149,12 @@ class AbortController:
         threshold: Optional[float] = None,
     ) -> tuple[bool, str]:
         """Abort if error rate exceeds threshold.
-        
+
         Args:
             error_rate: Current error rate (0.0 to 1.0).
             experiment_id: Unique identifier of the experiment.
             threshold: Optional custom threshold (uses default if None).
-            
+
         Returns:
             Tuple of (abort_triggered, reason).
         """
